@@ -30,20 +30,21 @@ class AmeliAPI:
         where = (f"profession_sante=\"{profession}\" AND "
         f"departement=\"{departement_code}\" AND "
         f"libelle_classe_age=\"Tout âge\" AND "
-        f"libelle_sexe=\"Tout sexe\""
+        f"libelle_sexe=\"tout sexe\""
         )
         return self._requete(
         "demographie-effectifs-et-les-densites",
         {"select": "annee,effectif,densite", "where": where,
         "order_by": "annee", "limit": 100},
         )
-    
+            
     def _requete(self, dataset, params):
         """Méthode privée : effectue une requête GET et gère les erreurs."""
         url = f"{self.BASE_URL}/{dataset}/records"
         try:
             resp = self._session.get(url, params=params, timeout=self._timeout)
             resp.raise_for_status()
+            print("OK")
             return resp.json().get("results", [])
         except requests.RequestException as e:
             print(f"[AmeliAPI] Erreur : {e}")
