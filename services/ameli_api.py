@@ -16,9 +16,9 @@ class AmeliAPI:
         where = (
         f"profession_sante=\"{profession}\" AND "
         f"departement=\"{departement_code}\" AND "
-        f"annee={annee} AND "
+        f"year(annee)={annee} AND "
         f"libelle_classe_age=\"Tout âge\" AND "
-        f"libelle_sexe=\"Tout sexe\""
+        f"libelle_sexe=\"tout sexe\""
         )
         return self._requete(
         "demographie-effectifs-et-les-densites",
