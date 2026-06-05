@@ -12,6 +12,16 @@
             <nav>
                 <a href="{{ url_for('accueil.index') }}">Accueil</a>
             </nav>
+            <div id="user_login">
+                <img src="{{ url_for('static', filename='images/login_user_icon.svg') }}" alt="icone d'utilisateur" 
+                height="80" width="80">
+                {% if  current_user.id %}
+                    {{ current_user.id }}
+                    <a href="{{ url_for('login.logout') }}">Se deconnecte</a>
+                {% else %}
+                    <a href="{{ url_for('login.login') }}">Se connecter</aSe>
+                {% endif %}
+            </div>
         </header>
         
         <main>

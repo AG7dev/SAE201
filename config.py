@@ -16,3 +16,7 @@ class Config:
         """Construit l'URL de connexion MySQL."""
         return (f"mysql+pymysql://{cls.DB_USER}:{cls.DB_PASSWORD}"
         f"@{cls.DB_HOST}/{cls.DB_NAME}")
+        
+    @classmethod
+    def get_secret_key(cls):
+        return cls.SECRET_KEY

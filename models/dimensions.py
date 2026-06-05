@@ -135,3 +135,15 @@ class TypePrescription(Base):
 
     def __repr__(self):
         return self.libelle
+    
+class UserTable(Base):
+    """Tables contenant les utilisateurs"""
+    __tablename__ = "user_table"
+    
+    username = Column(String(52), primary_key=True)
+    password = Column(String(52), nullable=False)
+    
+    def __repr__(self):
+        return self.username
+    
+    

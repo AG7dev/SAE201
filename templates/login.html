@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block titre %}Login{% endblock %}
+
+{% block contenu %}
+    {% if option == "login" %}
+        <form method="post">
+            <input name="username" placeholder="Nom d'utilisateur">
+            <input name="password" type="password" placeholder="Mot de passe">
+            <button type="submit">Connexion</button>
+        </form>
+        <a href="{{ url_for('login.createUser') }}">Pas de Compte ? Créer en un</a>
+    {% elif option == "createUser" %}
+        <form method="post">
+            <input name="username" placeholder="Nom d'utilisateur">
+            <input name="password" type="password" placeholder="Mot de passe">
+            <button type="submit">Créer un compte</button>
+        </form>
+        <a href="{{ url_for('login.login') }}"> Vous avez un compte ? Connecter vous</a>
+    {% endif %}
+{% endblock %}
