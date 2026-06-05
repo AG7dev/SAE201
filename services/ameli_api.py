@@ -44,7 +44,6 @@ class AmeliAPI:
         try:
             resp = self._session.get(url, params=params, timeout=self._timeout)
             resp.raise_for_status()
-            print("OK")
             return resp.json().get("results", [])
         except requests.RequestException as e:
             print(f"[AmeliAPI] Erreur : {e}")
