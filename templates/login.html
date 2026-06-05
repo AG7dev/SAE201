@@ -5,17 +5,31 @@
 {% block contenu %}
     {% if option == "login" %}
         <form method="post">
-            <input name="username" placeholder="Nom d'utilisateur">
-            <input name="password" type="password" placeholder="Mot de passe">
+            <input name="username" placeholder="Nom d'utilisateur" required>
+            <input name="password" type="password" placeholder="Mot de passe" required>
             <button type="submit">Connexion</button>
         </form>
         <a href="{{ url_for('login.createUser') }}">Pas de Compte ? Créer en un</a>
     {% elif option == "createUser" %}
         <form method="post">
-            <input name="username" placeholder="Nom d'utilisateur">
-            <input name="password" type="password" placeholder="Mot de passe">
+            <input name="username" placeholder="Nom d'utilisateur" required>
+            <input name="password" type="password" placeholder="Mot de passe" required>
             <button type="submit">Créer un compte</button>
         </form>
         <a href="{{ url_for('login.login') }}"> Vous avez un compte ? Connecter vous</a>
     {% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <script>
+                Swal.fire({
+                    title: "Erreur",
+                    text: "{{ message }}",
+                    icon: "error"
+                });
+            </script>
+        {% endfor %}
+    {% endwith %}
+
 {% endblock %}

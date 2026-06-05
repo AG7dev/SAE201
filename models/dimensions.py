@@ -140,8 +140,9 @@ class UserTable(Base):
     """Tables contenant les utilisateurs"""
     __tablename__ = "user_table"
     
-    username = Column(String(52), primary_key=True)
-    password = Column(String(52), nullable=False)
+    username = Column(String(64), primary_key=True)
+    password = Column(String(64), nullable=False)
+    permissions = Column(String(64), default=None)
     
     def __repr__(self):
         return self.username
