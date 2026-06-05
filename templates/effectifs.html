@@ -20,14 +20,21 @@
 
         </tbody>
         </table>
+        <a href="{{ url_for('static', filename='csv/donnees.csv') }}" download>Télécharger les données</a>
 
     {% else %}
         <p>Aucune donnée disponible pour cette sélection.</p>
     {% endif %}
 
     <h3>Évolution sur plusieurs années</h3>
-    <canvas id="graphique"></canvas>
+    <div id="div-graphique">
+        <canvas id="graphique"></canvas>
+    </div>
+    <button id="chartJsDownloadButton">Télécharger</button>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/download.js') }}"></script>
     <script>
         const donnees = {{ evolution|tojson }};
         new Chart(document.getElementById("graphique"), {
