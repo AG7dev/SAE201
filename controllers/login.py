@@ -4,11 +4,13 @@ from utils.user import User
 from models.db import Session
 from models.dimensions import UserTable
 from hashlib import sha3_256
+from datetime import datetime
 
 login_controller = Blueprint("login", __name__)
 
 @login_controller.route("/login", methods=["GET", "POST"])
-def login():    
+def login():
+    """Route qui gère la connection d'un utilisateur"""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -21,7 +23,6 @@ def login():
             if user and user.password == password: # type: ignore
                 login_user(User(username))
                 return redirect(url_for("accueil.index"))
-
             flash("Identifiant incorrect", "erreur")
 
         finally:
@@ -32,11 +33,13 @@ def login():
 @login_controller.route("/logout")
 @login_required
 def logout():
+    """Route qui gère la déconnection de l'utilisateur"""
     logout_user()
     return redirect(url_for("accueil.index"))
 
 @login_controller.route("/createUser", methods=["GET", "POST"])
 def createUser():
+    """Route qui gère la création d'un utilisateur"""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -45,12 +48,13 @@ def createUser():
         try:
             password = sha3_256(password.encode(), usedforsecurity=True).hexdigest()
             if not session.query(UserTable).filter(UserTable.username == username).first():
-                session.add(UserTable(username=username, password=password))
+                session.add(UserTable(username=username, password=password, 
+                                      date=datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
                 session.commit()
-                flash("utilisateur créé", "message")
-                return render_template(url_for("login.login"))
+                flash("Utilisateur créé", "succes")
+                return render_template("login.html", option="login")
             else:
-                flash("utilisateur déjà pris", "erreur")
+                flash("Utilisateur déjà pris", "erreur")
         finally:
             session.close()
     

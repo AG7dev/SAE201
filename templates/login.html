@@ -20,8 +20,9 @@
     {% endif %}
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            {% if category == "erreur" %}
             <script>
                 Swal.fire({
                     title: "Erreur",
@@ -29,6 +30,15 @@
                     icon: "error"
                 });
             </script>
+            {% elif category == "succes" %}
+            <script>
+                Swal.fire({
+                    title: "Succés",
+                    text: "{{ message }}",
+                    icon: "success"
+                });
+            </script>
+            {% endif %}
         {% endfor %}
     {% endwith %}
 
