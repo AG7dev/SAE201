@@ -3,7 +3,8 @@
 {% block titre  %}A propos{% endblock %}
 
 {% block contenu %}
-<!-- Affichage des informations "à propos" -->
+    {% if option == "about" %}
+    <!-- Affichage des informations "à propos" -->
     <table id="aboutTable">
         <tbody>
             {% for item in data %}
@@ -31,6 +32,85 @@
                     </td>
                 </tr>
             {% endfor %}
+            <tr>
+                <td><strong>Nous contacter</strong></td>
+                <td>{% if current_user.id %}<a href="{{ url_for('about.form') }}" >Remplir un formulaire</a>{% else %}<p>Vous devez être connecté !</p>{% endif %}</td>
+            </tr>
         </tbody>
     </table>
+    {% elif option == "form" %}
+    <h2>Formulaire de contact</h2>
+    <form method="POST">
+        <table>
+            <tr>
+                <td><label>Satisfaction générale<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteSatisfaction" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+            </tr>
+            <tr>
+                <td><label>Facilité d'utilisation<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteFacilite" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+            </tr>
+            <tr>
+                <td><label>Design du site<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteDesign" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+            </tr>
+            <tr>
+                <td><label>Rapidité du site<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteRapidite" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+            </tr>
+            <tr>
+                <td><label>Utilité des fonctionnalités<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteFonctionelite" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+            </tr>
+            <tr>
+                <td><label required>Recommanderez-vous ce site ?<strong>*</strong></label></td>
+                <td></td>
+                <td>
+                    <input type="radio" name="recommendation" value="oui"> Oui
+                    <input type="radio" name="recommendation" value="non"> Non
+                </td>
+            </tr>
+            <tr>
+                <td><label>Quelle fonctionnalité utilisez-vous le plus ?<strong>*</strong></label></td>
+                <td></td>
+                <td><select name="fonction" required>
+                    <option>Recherche</option>
+                    <option>Graphiques</option>
+                    <option>Export de données</option>
+                    <option>Autre</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td><label>Quels problèmes avez-vous rencontrés ?</label></td>
+                <td></td>
+                <td>
+                    <input type="checkbox" name="probleme"> Bugs
+                    <input type="checkbox" name="probleme"> Lenteurs
+                    <input type="checkbox" name="probleme"> Interface peu claire
+                </td>
+            </tr>
+            <tr>
+                <td><label>Commentaire libre</label></td>
+                <td></td>
+                <td><textarea name="text" cols="40" rows="7" maxlength="256"></textarea></td>
+            <tr>
+                <td><button type="submit">Valider</button></td>
+            </tr>
+        </table>
+    </form>
+    <script>
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+        const output = slider.closest('tr').querySelector('output');
+        output.textContent = slider.value;
+        slider.addEventListener('input', () => {
+            output.textContent = slider.value;
+        });
+    });
+    </script>
+    {% endif %}
 {% endblock %}

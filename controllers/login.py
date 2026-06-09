@@ -1,14 +1,14 @@
 from flask import Blueprint, request, redirect, url_for, render_template, flash
-from flask_login import login_required, logout_user, login_user, current_user, login_manager
+from flask_login import login_required, logout_user, login_user
 from utils.user import User
 from models.db import Session
 from models.dimensions import UserTable
 from hashlib import sha3_256
 from datetime import datetime
 
-login_controller = Blueprint("login", __name__)
+bp_login = Blueprint("login", __name__)
 
-@login_controller.route("/login", methods=["GET", "POST"])
+@bp_login.route("/login", methods=["GET", "POST"])
 def login():
     """Route qui gère la connection d'un utilisateur"""
     if request.method == "POST":
@@ -30,14 +30,14 @@ def login():
     
     return render_template("login.html", option="login")
 
-@login_controller.route("/logout")
+@bp_login.route("/logout")
 @login_required
 def logout():
     """Route qui gère la déconnection de l'utilisateur"""
     logout_user()
     return redirect(url_for("accueil.index"))
 
-@login_controller.route("/createUser", methods=["GET", "POST"])
+@bp_login.route("/createUser", methods=["GET", "POST"])
 def createUser():
     """Route qui gère la création d'un utilisateur"""
     if request.method == "POST":

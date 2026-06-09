@@ -1,4 +1,4 @@
-# ===== SAE 2.01 - Ajouter la table user_table =====
+# ===== SAE 2.01 - Ajouter la table user_table et formulaire =====
 
 # Import des bibliothèques nécessaires
 from sqlalchemy import create_engine

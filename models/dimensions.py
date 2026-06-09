@@ -145,7 +145,28 @@ class UserTable(Base):
     date = Column(String(20), nullable=False)
     permissions = Column(String(16), default=None)
     
+    formulaires = relationship("Formulaire", backref="user_table")
+    
     def __repr__(self):
         return self.username
     
+class Formulaire(Base):
+    """Tables contenant les réponses au formulaires"""
+    __tablename__ = "formulaire"
     
+    index = Column(Integer, primary_key=True, autoincrement=True)
+    satisfaction_generale = Column(Integer, nullable=False)  
+    facilite_utilisation = Column(Integer, nullable=False)  
+    design_site = Column(Integer, nullable=False)  
+    rapidite_site = Column(Integer, nullable=False)  
+    utilite_fontionalite = Column(Integer, nullable=False) 
+    recommendation = Column(Integer, nullable=False)
+    utilisation_fontionalite = Column(String(32), nullable=False)
+    probleme = Column(String(64))
+    commentaire = Column(String(256))
+    
+    date = Column(String(20), nullable=False)
+    username = Column(String(32), ForeignKey("user_table.username"), nullable=False)
+    
+    def __repr__(self):
+        return self.index
