@@ -22,9 +22,27 @@ main {
     margin: auto;
 }
 
+.horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.horizontal p {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#logo-UPEC {
+    height: 100px;
+}
+
 footer {
     text-align: center;
     padding: 1rem;
     color: #777;
     border-top: 1px solid #ddd;
+}
+
+footer a {
+    color: #777;
 }

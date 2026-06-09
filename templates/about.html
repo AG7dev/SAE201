@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block titre  %}A propos{% endblock %}
+
+{% block contenu %}
+<!-- Affichage des informations "à propos" -->
+    <table id="aboutTable">
+        <tbody>
+            {% for item in data %}
+                <tr>
+                    <td><strong>{{ item[0] }}</strong></td>
+                    <td>
+                        {% if item[0] == "Lien(s) vers les données" %}
+                            <a href="https://data.ameli.fr/pages/home/" target="_blank">Accéder aux données</a>
+                        {% elif item[0] == "Auteur(s) du projet" %}
+                            {% for name in item[1] %}
+                                <ul>{{ name }}</ul>
+                            {% endfor %}
+                        {% elif item[0] == "Institution" %}
+                            <div class="horizontal">
+                                <p>IUT de Créteil-Vitry, département Informatique</p>
+                                <img src="{{ url_for('static', filename='images/upec-iutcv_info-color.png') }}" alt="Logo de l'IUT de Créteil-Vitry" id="logo-UPEC">
+                            </div>
+                        {% elif item[0] == "Technologies utilisées" %}
+                            {% for name, url in item[1] %}
+                                <a href="{{ url }}" target="_blank">{{ name }}</a>
+                            {% endfor %}
+                        {% else %}
+                            {{ item[1]|safe }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -3,8 +3,9 @@ from config import Config
 from controllers.accueil import bp_accueil
 from controllers.api import bp_api
 from controllers.effectifs import bp_effectifs
-from flask_login import LoginManager
 from controllers.login import login_controller
+from controllers.about import about
+from flask_login import LoginManager
 from utils.user import User
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ app.register_blueprint(bp_accueil)
 app.register_blueprint(bp_api)
 app.register_blueprint(bp_effectifs)
 app.register_blueprint(login_controller)
+app.register_blueprint(about)
 
 @app.errorhandler(404)
 def page_non_trouvee(e):

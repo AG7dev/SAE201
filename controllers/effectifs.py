@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement
 from services.ameli_api import AmeliAPI
-from controllers.download import exportToCsv 
+from models.data_utils import exportToCsv 
 
 bp_effectifs = Blueprint("effectifs", __name__)
 api = AmeliAPI()
