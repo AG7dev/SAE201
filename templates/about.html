@@ -45,34 +45,34 @@
             <tr>
                 <td><label>Satisfaction générale<strong>*</strong></label></td>
                 <td><output></output></td>
-                <td><input name="noteSatisfaction" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+                <td><input name="noteSatisfaction" class="range" type="range" min="0" max="5" step="1" value="5"></td>
             </tr>
             <tr>
                 <td><label>Facilité d'utilisation<strong>*</strong></label></td>
                 <td><output></output></td>
-                <td><input name="noteFacilite" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+                <td><input name="noteFacilite" class="range" type="range" min="0" max="5" step="1" value="5"></td>
             </tr>
             <tr>
                 <td><label>Design du site<strong>*</strong></label></td>
                 <td><output></output></td>
-                <td><input name="noteDesign" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+                <td><input name="noteDesign" class="range" type="range" min="0" max="5" step="1" value="5"></td>
             </tr>
             <tr>
                 <td><label>Rapidité du site<strong>*</strong></label></td>
                 <td><output></output></td>
-                <td><input name="noteRapidite" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+                <td><input name="noteRapidite" class="range" type="range" min="0" max="5" step="1" value="5"></td>
             </tr>
             <tr>
                 <td><label>Utilité des fonctionnalités<strong>*</strong></label></td>
                 <td><output></output></td>
-                <td><input name="noteFonctionelite" class="range" type="range" min="0" max="20" step="1" value="10"></td>
+                <td><input name="noteFonctionelite" class="range" type="range" min="0" max="5" step="1" value="5"></td>
             </tr>
             <tr>
-                <td><label required>Recommanderez-vous ce site ?<strong>*</strong></label></td>
+                <td><label>Recommanderez-vous ce site ?<strong>*</strong></label></td>
                 <td></td>
                 <td>
-                    <input type="radio" name="recommendation" value="oui"> Oui
-                    <input type="radio" name="recommendation" value="non"> Non
+                    <input type="radio" name="recommendation" value="oui" required> Oui
+                    <input type="radio" name="recommendation" value="non" required> Non
                 </td>
             </tr>
             <tr>
@@ -89,9 +89,9 @@
                 <td><label>Quels problèmes avez-vous rencontrés ?</label></td>
                 <td></td>
                 <td>
-                    <input type="checkbox" name="probleme"> Bugs
-                    <input type="checkbox" name="probleme"> Lenteurs
-                    <input type="checkbox" name="probleme"> Interface peu claire
+                    <input type="checkbox" name="problemeBugs" value="Bugs"> Bugs
+                    <input type="checkbox" name="problemeBugs" value="Lenteurs"> Lenteurs
+                    <input type="checkbox" name="problemeInterface" value="Interface peu claire"> Interface peu claire
                 </td>
             </tr>
             <tr>
@@ -103,6 +103,7 @@
             </tr>
         </table>
     </form>
+    {% endif %}
     <script>
     document.querySelectorAll('input[type="range"]').forEach(slider => {
         const output = slider.closest('tr').querySelector('output');
@@ -112,5 +113,16 @@
         });
     });
     </script>
-    {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <script>
+                Swal.fire({
+                    title: "Formulaire envoyé",
+                    text: "{{ message }}",
+                    icon: "success"
+                });
+            </script>
+        {% endfor %}
+    {% endwith %}
 {% endblock %}

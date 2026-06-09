@@ -51,7 +51,7 @@ def createUser():
                 session.add(UserTable(username=username, password=password, 
                                       date=datetime.today().strftime('%Y-%m-%d %H:%M:%S')))
                 session.commit()
-                flash("Utilisateur créé", "succes")
+                flash("Utilisateur créé", "success")
                 return render_template("login.html", option="login")
             else:
                 flash("Utilisateur déjà pris", "erreur")
