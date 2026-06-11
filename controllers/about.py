@@ -56,8 +56,6 @@ def adminPanel():
     view_type = request.args.get('view', 'form')
     
     data = None
-    nbrUser = None
-    nbrForm = None
     if view_type == "form":
         session = Session()
         try:
@@ -90,8 +88,6 @@ def adminPanel():
     if view_type == "stat":
         session = Session()
         try:
-            nbrUser = session.query(UserTable).count()
-            nbrForm = session.query(Formulaire).count()
             data = [{
                 "satisfaction_generale": f.satisfaction_generale,
                 "facilite_utilisation":f.facilite_utilisation,
@@ -107,4 +103,4 @@ def adminPanel():
     
     if current_user.permissions != "admin":
         return render_template("erreur.hmtl", message="Vous n'avez pas les permissions"), 403
-    return render_template("adminPanel.html", view=view_type, data=data, nbrUser=nbrUser, nbrForm=nbrForm)
+    return render_template("adminPanel.html", view=view_type, data=data)

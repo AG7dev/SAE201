@@ -75,7 +75,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if d.permissions == "admin" %}--
+                        {% if d.permissions == "admin" or d.username == current_user.id %}--
                         {% else %}<form method="post"><button name="deleteButton" value="{{ d.username }}" type="submit">Supprimer</button></form>
                         {% endif %}
                     </td>
@@ -86,14 +86,13 @@
     {% elif view == "stat" %}
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-        <div>
-            <p>Il y a {{ nbrUser }} utilisateurs</p>
-            <p>Il y a {{ nbrForm }} formulaire complétés</p>
-        </div>
-        <div class="divGraphique">
+        <div class="wrapper">
+        <div class="divGraphiqueNotes">
             <canvas id="graphiqueNotes"></canvas>
         </div>
         <script>
+            Chart.register(ChartDataLabels);
+
             const donnees = {{ data|tojson }};
 
             const couleurs = [
@@ -143,17 +142,20 @@
                     },
                     plugins: {
                         legend: {
-                            position: 'top',
+                            display: false,
                         },
                         title: {
                             display: true,
                             text: 'Moyenne des notes des utilisateurs par catégories'
                         },
+                        datalabels: {
+                            display: false
+                        }
                     }
                 }
             });
         </script>
-        <div class="divGraphique">
+        <div class="divGraphiqueRecommendation">
             <canvas id="graphiqueRecommendation"></canvas>
         </div>
         <script>
@@ -180,6 +182,10 @@
                             text: 'Recommendation des utilisateurs'
                         },
                         datalabels: {
+                            color: "#fff",
+                            font: {
+                                weight: "bold"
+                            },
                             formatter: (value, context) => {
                                 const total = context.chart.data.datasets[0].data
                                     .reduce((a, b) => a + b, 0);
@@ -193,7 +199,7 @@
                 },
             });
         </script>
-        <div class="divGraphique">
+        <div class="divGraphiqueFonctionnalites">
             <canvas id="graphiqueFonctionnalites"></canvas>
         </div>
         <script>
@@ -228,17 +234,20 @@
                     responsive: true,
                     plugins: {
                         legend: {
-                            position: 'top',
+                            display: false,
                         },
                         title: {
                             display: true,
                             text: 'Résultats du sondage de la fonction la plus utilisé'
+                        },
+                        datalabels: {
+                            display: false
                         }
                     }
                 }
             });
         </script>
-        <div class="divGraphique">
+        <div class="divGraphiqueProblemes">
             <canvas id="graphiqueProblemes"></canvas>
         </div>
         <script>
@@ -274,12 +283,24 @@
                         title: {
                             display: true,
                             text: 'Les problèmes les plus rencontrés'
+                        },
+                        datalabels: {
+                            color: "#fff",
+                            font: {
+                                weight: "bold"
+                            },
+                            formatter: (value, context) => {
+                                const data = context.chart.data.datasets[0].data;
+                                const total = data.reduce((a, b) => a + b, 0);
+                                const pourcentage = (value / total * 100).toFixed(1);
+                                return pourcentage + "%";
+                            }
                         }
                     }
                 }
             });
         </script>
-        <div class="divGraphique">
+        <div class="divGraphiqueProblemesUtilisateurs">
             <canvas id="graphiqueProblemesUtilisateurs"></canvas>
         </div>
         <script>
@@ -327,6 +348,9 @@
                         title: {
                             display: true,
                             text: "Nombre d'utilisateurs par nombre de problèmes"
+                        },
+                        datalabels: {
+                            display: false
                         }
                     },
                     scales: {
@@ -347,6 +371,7 @@
                 }
             });
         </script>
+        </div>
     {% endif %}
     
     <!-- Scripts pour l'utilisation de DataTables (code JavaScript) -->
