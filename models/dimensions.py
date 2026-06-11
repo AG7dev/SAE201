@@ -169,4 +169,4 @@ class Formulaire(Base):
     username = Column(String(32), ForeignKey("user_table.username"), nullable=False)
     
     def __repr__(self):
-        return self.index
+        return f"{self.index}"

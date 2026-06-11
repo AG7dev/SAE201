@@ -22,7 +22,7 @@
                     {% endif %}
                 </div>
                 {% if current_user.permissions == "admin" %}
-                    <a>Dev panel</a>
+                    <a href="{{ url_for('about.adminPanel') }}">Admin panel</a>
                 {% endif %}
             </nav>
         </header>
