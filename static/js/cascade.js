@@ -1,16 +1,24 @@
+/* 
+  ==================================================
+    SAÉ 2.01 - Développement d'une application WEB
+  ==================================================
+*/
+
+/* Fichier JavaScript principal pour l'application web de la SAE 2.01 */
+
 document.getElementById("region").addEventListener("change", async (e) => {
     const regionId = e.target.value;
     const selectDept = document.getElementById("departement");
 
-    // Vider la liste
+    // Réinitialisation de la liste des départements
     selectDept.innerHTML = '<option value="">-- Choisir --</option>';
     if (!regionId) return;
 
-    // Appel AJAX
+    // Requête AJAX vers l'API pour récupérer les départements de la région sélectionnée
     const response = await fetch(`/api/departements/${regionId}`);
     const depts = await response.json();
 
-    // Remplir la liste
+    // Injection des départements dans la liste déroulante
     for (const dept of depts) {
         const opt = document.createElement("option");
         opt.value = dept.id;
