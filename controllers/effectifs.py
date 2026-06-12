@@ -12,7 +12,7 @@ Ce module permet :
 - l'export des résultats en CSV
 """
 
-# Importations des modules nécessaires
+# Importation des modules nécessaires
 from flask import Blueprint, render_template, request
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement

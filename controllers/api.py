@@ -9,7 +9,7 @@ Ce module expose des routes au format JSON permettant
 l'accès aux données depuis le frontend (AJAX).
 """
 
-# Importations des modules nécessaires
+# Importation des modules nécessaires
 from flask import Blueprint, jsonify
 from models.db import Session
 from models.dimensions import Departement
