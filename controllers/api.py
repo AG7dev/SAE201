@@ -1,3 +1,15 @@
+# ==================================================
+#   SAÉ 2.01 - Développement d'une application WEB
+# ==================================================
+
+"""
+API de l'application.
+
+Ce module expose des routes au format JSON permettant
+l'accès aux données depuis le frontend (AJAX).
+"""
+
+# Importations des modules nécessaires
 from flask import Blueprint, jsonify
 from models.db import Session
 from models.dimensions import Departement
@@ -6,7 +18,22 @@ bp_api = Blueprint("api", __name__, url_prefix="/api")
 
 @bp_api.route("/departements/<int:region_id>")
 def departements(region_id):
-    """Retourne les départements d'une région au format JSON."""
+    """
+    Retourne la liste des départements d'une région.
+
+    Args:
+        region_id (int): Identifiant de la région.
+
+    Returns:
+        Response JSON contenant les départements :
+        [
+            {
+                "id": int,
+                "code": str,
+                "libelle": str
+            }
+        ]
+    """
     session = Session()
     try:
         depts = (session.query(Departement)
