@@ -71,3 +71,134 @@ class CachedAmeliAPI:
         l'API sous-jacente.
         """
         self._memoire.clear()
+    
+    def get_effectifs(self, profession, departement_code, annee):
+        """
+        Retourne les effectifs des professionnels de santé.
+
+        La méthode vérifie d'abord si les données demandées sont
+        présentes dans le cache. Si ce n'est pas le cas, elle
+        interroge l'API AMELI puis mémorise le résultat.
+
+        Args:
+            profession (str):
+                Libellé de la profession de santé.
+
+            departement_code (str):
+                Code du département concerné.
+
+            annee (int):
+                Année des données recherchées.
+
+        Returns:
+            list | dict:
+                Données d'effectifs retournées par l'API.
+        """
+        cle = ("effectifs", profession, departement_code, annee)
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_effectifs(
+                profession,
+                departement_code,
+                annee
+            )
+        )
+
+    def get_evolution_effectifs(self, profession, departement_code):
+        """
+        Retourne l'évolution des effectifs d'une profession.
+
+        Les données sont récupérées depuis le cache si elles sont
+        encore valides, sinon un appel à l'API est effectué.
+
+        Args:
+            profession (str):
+                Libellé de la profession de santé.
+
+            departement_code (str):
+                Code du département concerné.
+
+        Returns:
+            list | dict:
+                Historique ou évolution des effectifs.
+        """
+        cle = ("evolution_effectifs", profession, departement_code)
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_effectifs(
+                profession,
+                departement_code
+            )
+        )
+
+    def get_honoraires(self, profession, departement_code, annee):
+        """
+        Retourne les honoraires d'une profession pour une année donnée.
+
+        Utilise le cache afin d'éviter plusieurs appels identiques
+        à l'API AMELI.
+
+        Args:
+            profession (str):
+                Libellé de la profession de santé.
+
+            departement_code (str):
+                Code du département concerné.
+
+            annee (int):
+                Année des données recherchées.
+
+        Returns:
+            list | dict:
+                Données d'honoraires retournées par l'API.
+        """
+        cle = ("honoraires", profession, departement_code, annee)
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_honoraires(
+                profession,
+                departement_code,
+                annee
+            )
+        )
+
+    def _lire_ou_calculer(self, cle, produire):
+        """
+        Retourne une valeur depuis le cache ou la calcule si nécessaire.
+
+        Cette méthode centralise la logique de mise en cache :
+        - vérifie si une entrée existe ;
+        - contrôle qu'elle n'a pas expiré ;
+        - retourne la valeur en cache si elle est valide ;
+        - sinon exécute la fonction fournie et stocke le résultat.
+
+        Args:
+            cle (tuple):
+                Identifiant unique de la requête.
+
+            produire (callable):
+                Fonction permettant de produire la valeur
+                lorsqu'elle n'est pas présente dans le cache.
+
+        Returns:
+            Any:
+                Résultat récupéré depuis le cache ou calculé.
+        """
+        # Vérifie si la clé existe déjà dans le cache
+        if cle in self._memoire:
+            valeur, ts = self._memoire[cle]
+
+            # Vérifie que la durée de validité n'est pas dépassée
+            if time.time() - ts <= self._duree:
+                return valeur
+
+        # Calcul de la valeur si absente ou expirée
+        resultat = produire()
+
+        # Enregistrement du résultat avec son horodatage
+        self._memoire[cle] = (resultat, time.time())
+
+        return resultat
