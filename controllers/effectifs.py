@@ -13,14 +13,12 @@ Ce module permet :
 """
 
 # Importation des modules nécessaires
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, current_app
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement
-from services.ameli_api import AmeliAPI
 from models.data_utils import exportToCsv 
 
 bp_effectifs = Blueprint("effectifs", __name__)
-api = AmeliAPI()
 
 @bp_effectifs.route("/effectifs")
 def afficher():
@@ -54,8 +52,8 @@ def afficher():
         message="Paramètres manquants."), 400
         
         
-        resultats = api.get_effectifs(prof.libelle, dept.code, annee)
-        evolution = api.get_evolution_effectifs(prof.libelle, dept.code)
+        resultats = current_app.api_ameli.get_effectifs(prof.libelle, dept.code, annee)
+        evolution = current_app.api_ameli.get_evolution_effectifs(prof.libelle, dept.code)
         
         exportToCsv(resultats)
         

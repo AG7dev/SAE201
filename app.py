@@ -25,10 +25,18 @@ from controllers.about import bp_about
 from flask_login import LoginManager
 from utils.user import User
 
+# Importation des classes de l'API AMELI et du décorateur de cache
+from services.ameli_api import AmeliAPI
+from services.cached_ameli_api import CachedAmeliAPI
+
 # Création et configuration de l'application Flask
 app = Flask(__name__)
 app.config.from_object(Config)
 app.secret_key = Config.get_secret_key()
+
+# Initialisation de l'API AMELI avec cache
+api_brute = AmeliAPI()
+app.api_ameli = CachedAmeliAPI(api_brute, duree_vie_seconde=300)
 
 # Initialise le gestionnaire d'utilisateur
 login_manager = LoginManager()
