@@ -1,3 +1,18 @@
+# ==================================================
+#   SAÉ 2.01 - Développement d'une application WEB
+# ==================================================
+
+"""
+Contrôleur des effectifs de professionnels de santé.
+
+Ce module permet :
+- la récupération des paramètres utilisateur (profession, département, année)
+- l'appel à l'API AMELI
+- l'affichage des effectifs et de leur évolution
+- l'export des résultats en CSV
+"""
+
+# Importation des modules nécessaires
 from flask import Blueprint, render_template, request
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement
@@ -9,7 +24,23 @@ api = AmeliAPI()
 
 @bp_effectifs.route("/effectifs")
 def afficher():
-    """Affiche les effectifs pour la sélection de l'utilisateur."""
+    """
+    Affiche les effectifs des professionnels de santé.
+
+    Récupère les paramètres fournis par l'utilisateur :
+    - profession_id
+    - departement_id
+    - annee
+
+    Procède ensuite à :
+    - la récupération des objets en base
+    - l'appel à l'API AMELI pour les données d'effectifs
+    - la génération de l'évolution des effectifs
+    - l'export des résultats en CSV
+
+    Returns:
+        Page HTML avec les résultats ou page d'erreur si paramètres invalides.
+    """
     profession_id = request.args.get("profession_id", type=int)
     departement_id = request.args.get("departement_id", type=int)
     annee = request.args.get("annee", type=int)

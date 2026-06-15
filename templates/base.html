@@ -1,38 +1,93 @@
+<!-- 
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier base.html :
+   Template principal servant de structure commune à
+   toutes les pages du site. Il définit l’en-tête global,
+   la navigation, l’affichage utilisateur (connexion /
+   déconnexion), les droits d’accès (admin), ainsi que
+   les blocs dynamiques (titre et contenu) injectés par
+   les templates enfants.
+  =====================================================
+-->
+
 <!DOCTYPE html>
 <html lang="fr">
+
+    <!-- En-tête du document : métadonnées et ressources globales -->
     <head>
         <meta charset="UTF-8">
+
+        <!-- Titre dynamique injecté par les templates enfants -->
         <title>{% block titre %}Données de santé{% endblock %}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
-        }}">
+
+        <!-- Feuille de style principale du site -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
+
     <body>
+
+        <!-- ================= HEADER GLOBAL ================= -->
         <header>
+
+            <!-- Titre principal affiché sur toutes les pages -->
             <h1>Données de santé libérale</h1>
+
+            <!-- Navigation principale -->
             <nav>
+
+                <!-- Lien vers la page d'accueil -->
                 <a href="{{ url_for('accueil.index') }}">Accueil</a>
+
+                <!-- Bloc utilisateur (connexion / déconnexion) -->
                 <div id="user_login">
-                    <img src="{{ url_for('static', filename='images/login_user_icon.svg') }}" alt="icone d'utilisateur" 
-                    height="80" width="80">
-                    {% if  current_user.id %}
+
+                    <!-- Icône utilisateur -->
+                    <img src="{{ url_for('static', filename='images/login_user_icon.svg') }}"
+                         alt="icone d'utilisateur"
+                         height="80" width="80">
+
+                    <!-- Affichage conditionnel selon l'état de connexion -->
+                    {% if current_user.id %}
+
+                        <!-- Identité de l'utilisateur connecté -->
                         {{ current_user.id }}
-                        <a href="{{ url_for('login.logout') }}">Se deconnecte</a>
+
+                        <!-- Action de déconnexion -->
+                        <a href="{{ url_for('login.logout') }}">Se deconnecter</a>
+
                     {% else %}
+
+                        <!-- Lien de connexion si utilisateur non authentifié -->
                         <a href="{{ url_for('login.login') }}">Se connecter</a>
+
                     {% endif %}
                 </div>
+
+                <!-- Accès conditionnel au panneau administrateur -->
                 {% if current_user.permissions == "admin" %}
                     <a href="{{ url_for('about.adminPanel') }}">Admin panel</a>
                 {% endif %}
+
             </nav>
         </header>
-        
+
+        <!-- ================= CONTENU VARIABLE ================= -->
         <main>
             {% block contenu %}{% endblock %}
         </main>
 
+        <!-- ================= FOOTER GLOBAL ================= -->
         <footer>
-            <p>SAE2.01 · BUT Informatique · IUT Créteil-Vitry · <a href="{{ url_for('about.about') }}" >A propos de nous</a></p>
+
+            <!-- Informations de projet + lien "à propos" -->
+            <p>
+                SAE2.01 · BUT Informatique · IUT Créteil-Vitry ·
+                <a href="{{ url_for('about.about') }}">A propos de nous</a>
+            </p>
+
         </footer>
+
     </body>
 </html>

@@ -1,17 +1,41 @@
+# ==================================================
+#   SAÉ 2.01 - Développement d'une application WEB
+# ==================================================
+
+"""
+Utilitaires de gestion de données.
+
+Ce module fournit :
+- l'export des données API en CSV ;
+- les informations statiques affichées dans la page "about".
+"""
+
+# Import du module Pandas pour la manipulation de données et l'export CSV
 import pandas as pd
 
 def exportToCsv(data:list):
-    """Fonction qui reçoit la liste au retour d'une reqête api 
-    et le sauvegarde dans un fichier csv"""
+    """
+    Exporte une liste de données vers un fichier CSV.
+
+    Args:
+        data (list): liste de dictionnaires issue d'une requête API.
+
+    Returns:
+        None
+    """
     try:
         df = pd.DataFrame(data)
-        df.to_csv("static/csv/donnees.csv")
+        df.to_csv("static/csv/donnees.csv", index=False)
     except (TypeError) as e:
         print("[data_utils.py] Erreur dans la fonction exportToCsv()\n", e)
         
 def get_about_data():
-    """Informations sur le projet sous forme de liste de listes
-    Une liste interne par information (clé, valeur)"""
+    """
+    Retourne les informations statiques du projet.
+
+    Returns:
+        list: liste de paires [clé, valeur] décrivant le projet.
+    """
     about = [
         ["Projet", "Visualisation des données de data Ameli de 1950 à 2023"],
         ["Source(s) des données", "Base de données World Population Prospects 2024 de l'ONU"],
@@ -22,7 +46,16 @@ def get_about_data():
         ["Année", "2025 - 2026"],
         ["Description", "Cette application permet de visualiser les doonées de data Ameli, ARVIN tu finira"],
         ["Fonctionnalités", "Affichage des données sous forme de tableaux, graphiques interactifs, cartes et indicateurs clés."],
-        ["Technologies utilisées", [("Python", "https://www.python.org/"), ("Flask", "https://flask.palletsprojects.com/"), ("SQLite", "https://www.sqlite.org/index.html"), ("Plotly", "https://plotly.com/"), ("Pandas", "https://pandas.pydata.org/"), ("DataTables", "https://datatables.net/"), ("Folium", "https://python-visualization.github.io/folium/"), ("Bootstrap", "https://getbootstrap.com/docs/5.3/getting-started/introduction/")]],
+        ["Technologies utilisées", [
+            ("Python", "https://www.python.org/"), 
+            ("Flask", "https://flask.palletsprojects.com/"), 
+            ("SQLite", "https://www.sqlite.org/index.html"), 
+            ("Plotly", "https://plotly.com/"), 
+            ("Pandas", "https://pandas.pydata.org/"), 
+            ("DataTables", "https://datatables.net/"), 
+            ("Folium", "https://python-visualization.github.io/folium/"), 
+            ("Bootstrap", "https://getbootstrap.com/docs/5.3/getting-started/introduction/")
+        ]],
     ]
 
     # Renvoyer les informations

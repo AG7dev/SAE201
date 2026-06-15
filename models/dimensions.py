@@ -1,4 +1,17 @@
-# ===== SAE 2.04 - Explorer les données de l'Assurance Maladie =====
+# ==========================================================
+#   SAE 2.04 - Explorer les données de l'Assurance Maladie
+#    Données utilisées pour l'application de la SAE 2.01
+# ==========================================================
+
+"""
+Modèle de données SQLAlchemy.
+
+Ce module définit :
+- les dimensions géographiques (régions, départements) ;
+- les dimensions métier (professions, sexe, âge) ;
+- les dimensions d’activité et financières ;
+- les tables utilisateurs et formulaires.
+"""
 
 # Import des bibliothèques ORM SQLAlchemy
 from sqlalchemy.orm import declarative_base
@@ -13,7 +26,8 @@ Base = declarative_base()
 class Region(Base):
     """
     Représente une région administrative.
-    Contient plusieurs départements.
+
+    Une région contient plusieurs départements.
     """
     __tablename__ = "region"
 
@@ -135,7 +149,8 @@ class TypePrescription(Base):
 
     def __repr__(self):
         return self.libelle
-    
+
+# ── Utilisateurs et Formulaires ─────────────────────────────────────────
 class UserTable(Base):
     """Tables contenant les utilisateurs"""
     __tablename__ = "user_table"
@@ -151,7 +166,7 @@ class UserTable(Base):
         return self.username
     
 class Formulaire(Base):
-    """Tables contenant les réponses au formulaires"""
+    """Tables contenant les réponses au formulaire de satisfaction"""
     __tablename__ = "formulaire"
     
     index = Column(Integer, primary_key=True, autoincrement=True)
