@@ -25,7 +25,7 @@ def exportToCsv(data:list):
     """
     try:
         df = pd.DataFrame(data)
-        df.to_csv("static/csv/donnees.csv")
+        df.to_csv("static/csv/donnees.csv", index=False)
     except (TypeError) as e:
         print("[data_utils.py] Erreur dans la fonction exportToCsv()\n", e)
         
