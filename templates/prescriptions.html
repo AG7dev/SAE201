@@ -1,0 +1,100 @@
+<!-- 
+  ==========================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier prescriptions.html :
+   Page d’affichage des prescriptions par filière, département
+   et année. Présente les résultats sous forme de tableau
+   ainsi qu’un graphique d’évolution généré avec Chart.js.
+   Permet également le téléchargement des données en CSV
+   et l’export du graphique en image/PDF.
+  ==========================================================
+-->
+
+{% extends "base.html" %}
+
+{% block titre %}Prescriptions{% endblock %}
+
+{% block contenu %}
+    <!-- Titre dynamique affichant les filtres sélectionnés (prof, département, année) -->
+    <h2>{{ prof.libelle }} – {{ dept.code }} {{ dept.libelle }} – {{ annee }}</h2>
+
+    <!-- Vérifie si des résultats existent pour l'affichage du tableau -->
+    {% if resultats %}
+        
+        <!-- Tableau des effectifs et densités -->
+        <table>
+        
+            <!-- En-tête du tableau -->
+            <thead><tr><th>Année</th><th>Profession</th><th>Departement</th><th>Montant moyen</th><th>Montant total</th></tr></thead>
+        
+            <tbody>
+        
+            <!-- Boucle sur les résultats récupérés côté backend -->
+            {% for r in resultats %}
+                <tr>
+                    <!-- Année de référence -->
+                    <td>{{ r.annee }}</td>
+
+                    <!-- Nombre d'étudiants / effectif -->
+                    <td>{{ r.profession_sante }}</td>
+
+                    <!-- Densité calculée côté backend -->
+                    <td>{{ r.departement }}</td>
+
+                    <td>{{ r.montant_moyen_prescription_integer }}</td>
+
+                    <td>{{ r.montant_total_prescription_integer }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+        <!-- Lien de téléchargement du fichier CSV des données -->
+        <a href="{{ url_for('static', filename='csv/donnees.csv') }}" download>Télécharger les données</a>
+
+    {% else %}
+        <!-- Message affiché si aucune donnée n’est disponible -->
+        <p>Aucune donnée disponible pour cette sélection.</p>
+    
+        {% endif %}
+    
+        
+    <!-- ======================= GRAPHIQUE D'ÉVOLUTION ======================= -->
+    
+    <h3>Évolution sur plusieurs années</h3>
+
+    <!-- Conteneur du graphique Chart.js -->
+    <div id="div-graphique">
+        <canvas id="graphique"></canvas>
+    </div>
+
+    <!-- Bouton d’export du graphique -->
+    <button id="chartJsDownloadButton">Télécharger</button>
+
+    <!-- Librairies nécessaires au rendu et export du graphique -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Script local pour la gestion du téléchargement -->
+    <script src="{{ url_for('static', filename='js/download.js') }}"></script>
+    
+    <script>
+        const donnees = {{ evolution|tojson }};
+        new Chart(document.getElementById("graphique"), {
+        type: "line",
+        data: {
+        labels: donnees.map(d => d.annee),
+        datasets: [{
+        label: "Prescriptions",
+        data: donnees.map(d => d.montant_total_prescription_integer),
+        borderColor: "#2E74B5",
+        tension: 0.2,
+        }],
+        },
+        });
+    </script>
+    
+{% endblock %}
