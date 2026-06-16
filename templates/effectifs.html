@@ -19,6 +19,21 @@
     <!-- Titre dynamique affichant les filtres sélectionnés (prof, département, année) -->
     <h2>{{ prof.libelle }} – {{ dept.code }} {{ dept.libelle }} – {{ annee }}</h2>
 
+    <!-- Formulaire pour actualiser les données, en conservant les filtres sélectionnés -->
+    <div style="margin-bottom: 20px;">
+        <form action="{{ url_for(request.endpoint) }}" method="GET">
+            <input type="hidden" name="profession_id" value="{{ prof.id }}">
+            <input type="hidden" name="departement_id" value="{{ dept.id }}">
+            <input type="hidden" name="annee" value="{{ annee }}">
+            
+            <input type="hidden" name="force_refresh" value="1">
+            
+            <button type="submit" class="btn-refresh" style="cursor: pointer; padding: 5px 10px;">
+                🔄 Actualiser les données
+            </button>
+        </form>
+    </div>
+    
     <!-- Vérifie si des résultats existent pour l'affichage du tableau -->
     {% if resultats %}
         

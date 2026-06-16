@@ -72,7 +72,7 @@ class CachedAmeliAPI:
         """
         self._memoire.clear()
     
-    def get_effectifs(self, profession, departement_code, annee):
+    def get_effectifs(self, profession, departement_code, annee, rafraichir=False):
         """
         Retourne les effectifs des professionnels de santé.
 
@@ -90,6 +90,9 @@ class CachedAmeliAPI:
             annee (int):
                 Année des données recherchées.
 
+            rafraichir (bool, optional):
+                Indique s'il faut rafraîchir le cache.
+
         Returns:
             list | dict:
                 Données d'effectifs retournées par l'API.
@@ -102,10 +105,11 @@ class CachedAmeliAPI:
                 profession,
                 departement_code,
                 annee
-            )
+            ),
+            rafraichir=rafraichir
         )
 
-    def get_evolution_effectifs(self, profession, departement_code):
+    def get_evolution_effectifs(self, profession, departement_code, rafraichir=False):
         """
         Retourne l'évolution des effectifs d'une profession.
 
@@ -118,6 +122,9 @@ class CachedAmeliAPI:
 
             departement_code (str):
                 Code du département concerné.
+            
+            rafraichir (bool, optional):
+                Indique s'il faut rafraîchir le cache.
 
         Returns:
             list | dict:
@@ -130,10 +137,11 @@ class CachedAmeliAPI:
             lambda: self._api.get_evolution_effectifs(
                 profession,
                 departement_code
-            )
+            ),
+            rafraichir=rafraichir
         )
 
-    def get_honoraires(self, profession, departement_code, annee):
+    def get_honoraires(self, profession, departement_code, annee, rafraichir=False):
         """
         Retourne les honoraires d'une profession pour une année donnée.
 
@@ -150,6 +158,9 @@ class CachedAmeliAPI:
             annee (int):
                 Année des données recherchées.
 
+            rafraichir (bool, optional):
+                Indique s'il faut rafraîchir le cache.
+
         Returns:
             list | dict:
                 Données d'honoraires retournées par l'API.
@@ -162,10 +173,11 @@ class CachedAmeliAPI:
                 profession,
                 departement_code,
                 annee
-            )
+            ),
+            rafraichir=rafraichir
         )
 
-    def _lire_ou_calculer(self, cle, produire):
+    def _lire_ou_calculer(self, cle, produire, rafraichir=False):
         """
         Retourne une valeur depuis le cache ou la calcule si nécessaire.
 
@@ -183,12 +195,15 @@ class CachedAmeliAPI:
                 Fonction permettant de produire la valeur
                 lorsqu'elle n'est pas présente dans le cache.
 
+            rafraichir (bool, optional):
+                Indique s'il faut rafraîchir le cache.
+
         Returns:
             Any:
                 Résultat récupéré depuis le cache ou calculé.
         """
         # Vérifie si la clé existe déjà dans le cache
-        if cle in self._memoire:
+        if not rafraichir and cle in self._memoire:
             valeur, ts = self._memoire[cle]
 
             # Vérifie que la durée de validité n'est pas dépassée

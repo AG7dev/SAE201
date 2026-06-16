@@ -42,6 +42,10 @@ def afficher():
     profession_id = request.args.get("profession_id", type=int)
     departement_id = request.args.get("departement_id", type=int)
     annee = request.args.get("annee", type=int)
+
+    # Vérifie si l'utilisateur a demandé un rafraîchissement forcé du cache
+    rafraichir_force = (request.args.get("force_refresh") == "1")
+
     session = Session()
     try:
         prof = session.get(ProfessionSante, profession_id)
@@ -51,9 +55,8 @@ def afficher():
             return render_template("erreur.html",
         message="Paramètres manquants."), 400
         
-        
-        resultats = current_app.api_ameli.get_effectifs(prof.libelle, dept.code, annee)
-        evolution = current_app.api_ameli.get_evolution_effectifs(prof.libelle, dept.code)
+        resultats = current_app.api_ameli.get_effectifs(prof.libelle, dept.code, annee, rafraichir=rafraichir_force)
+        evolution = current_app.api_ameli.get_evolution_effectifs(prof.libelle, dept.code, rafraichir=rafraichir_force)
         
         exportToCsv(resultats)
         
@@ -62,3 +65,4 @@ def afficher():
         resultats=resultats, evolution=evolution)
     finally:
         session.close()
+    
