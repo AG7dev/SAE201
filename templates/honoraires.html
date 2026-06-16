@@ -1,0 +1,42 @@
+honoraires.html
+
+{% extends "base.html" %} 
+ 
+{% block titre %}Honoraires{% endblock %} 
+ 
+{% block contenu %} 
+  <h2>{{ prof.libelle }} – {{ dept.code }} {{ dept.libelle }} – {{ annee }}</h2> 
+ 
+  {% if resultats %} 
+    <table> 
+      <thead><tr><th>Catégorie honoraire</th><th>Montant total</th><th>Montant moyen</th></tr></thead> 
+      <tbody> 
+      {% for r in resultats %}
+        <tr>
+          <td>{{ r["annee"] }}</td> <td>{{ r["montant_honoraires"] }}</td>
+          <td>{{ r["montant_honoraires_moyens"] }}</td> 
+        </tr>
+      {% endfor %}
+      </tbody> 
+    </table> 
+  {% else %} 
+    <p>Aucune donnée disponible pour cette sélection.</p> 
+  {% endif %} 
+ 
+  <h3>Répartition des honoraires</h3>
+  <canvas id="graphique"></canvas> 
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script>
+      const donnees = {{ resultats|tojson }};
+      new Chart(document.getElementById("graphique"), {
+        type: "doughnut",
+        data: {
+          labels: donnees.map(d => d.annee), 
+          datasets: [{
+            label: "Montant total (€)",
+            data: donnees.map(d => d.montant_honoraires) 
+        }],
+      });
+</script>
+{% endblock %}
