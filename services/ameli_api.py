@@ -82,6 +82,23 @@ class AmeliAPI:
         "order_by": "annee", "limit": 100},
         )
             
+    
+
+    def get_honoraires(self, annee, profession, departement_code) :
+
+        where = (
+        f"profession_sante=\"{profession}\" AND "
+        f"departement=\"{departement_code}\" AND "
+        f"year(annee)={annee}"
+        )
+
+        return self._requete(
+        "honoraires-detailles",
+        {"select": "annee,montant_honoraires,montant_honoraires_moyens", "where": where, "limit": 100},
+
+    
+    )
+     
     def _requete(self, dataset, params):
         """
         Exécute une requête GET vers l'API Ameli.
