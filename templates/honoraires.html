@@ -1,40 +1,93 @@
 {% extends "base.html" %} 
- 
 {% block titre %}Honoraires{% endblock %} 
- 
+
 {% block contenu %} 
   <h2>{{ prof.libelle }} – {{ dept.code }} {{ dept.libelle }} – {{ annee }}</h2> 
- 
-  {% if resultats %} 
-    <table> 
-      <thead><tr><th>Catégorie honoraire</th><th>Montant total</th><th>Montant moyen</th></tr></thead> 
-      <tbody> 
-      {% for r in resultats %}
-        <tr>
-          <td>{{ r["annee"] }}</td> <td>{{ r["montant_honoraires"] }}</td>
-          <td>{{ r["montant_honoraires_moyens"] }}</td> 
-        </tr>
-      {% endfor %}
-      </tbody> 
-    </table> 
-  {% else %} 
-    <p>Aucune donnée disponible pour cette sélection.</p> 
-  {% endif %} 
- 
-  <h3>Répartition des honoraires</h3>
-  <canvas id="graphique"></canvas> 
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
-    <script>
-      const donnees = [[resultats|tojson ]];
-      new Chart(document.getElementById("graphique"), {
-        type: "doughnut",
-        data: {
+    <h2>Consulter les honoraires</h2>
+
+    <form action="{{ url_for('honoraires.afficher') }}" method="get">
+
+        <label for="profession">Spécialité</label>
+        <select name="profession_id" id="profession" required>
+            <option value="">-- Choisir --</option>
+            {% for p in professions %}
+                <option value="{{ p.id }}">{{ p.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="region">Région</label>
+        <select name="region_id" id="region" required>
+            <option value="">-- Choisir --</option>
+            {% for r in regions %}
+                <option value="{{ r.id }}">{{ r.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="departement">Département</label>
+        <select name="departement_id" id="departement" required>
+            <option value="">-- Choisir une région --</option>
+        </select>
+
+        <label for="annee">Année</label>
+        <select name="annee" id="annee" required>
+            {% for a in range(2023, 2014, -1) %}
+                <option value="{{ a }}">{{ a }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Afficher les honoraires</button>
+
+    </form>
+    
+    <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+    
+
+
+  <ul class="nav nav-tabs">
+    <li class="nav-item"><a class="nav-link active" href="#tableau" data-bs-toggle="tab">Tableau</a></li>
+    <li class="nav-item"><a class="nav-link" href="#graphique" data-bs-toggle="tab">Graphique</a></li>
+  </ul>
+
+
+  <div class="tab-content">
+    <div class="tab-pane active" id="tableau">
+        {% if resultats %} 
+            <table> 
+              <thead><tr><th>Année</th><th>Montant total</th><th>Montant moyen</th></tr></thead> 
+              <tbody> 
+              {% for r in resultats %}
+                <tr>
+                  <td>{{ r["annee"] }}</td> 
+                  <td>{{ r["montant_honoraires"] }}</td>
+                  <td>{{ r["montant_honoraires_moyens"] }}</td> 
+                </tr>
+              {% endfor %}
+              </tbody> 
+            </table> 
+        {% else %} 
+            <p>Aucune donnée disponible.</p> 
+        {% endif %}
+    </div>
+
+    <div class="tab-pane" id="graphique">
+        <h3>Répartition des honoraires</h3>
+        <canvas id="graphique_canvas"></canvas> 
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+  <script> 
+      const donnees =  {{resultats|tojson}} ;
+      new Chart(document.getElementById("graphique_canvas"), { 
+        type: "doughnut", 
+        data: { 
           labels: donnees.map(d => d.annee), 
-          datasets: [{
-            label: "Montant total (€)",
-            data: donnees.map(d => d.montant_honoraires) 
-        }],
-      }});
-</script>
+          datasets: [{ 
+            label: "Montant total (€)", 
+            data: donnees.map(d => d.montant_honoraires)
+          }], 
+        },
+      });
+  </script> 
 {% endblock %}

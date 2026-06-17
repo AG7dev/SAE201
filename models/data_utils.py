@@ -14,6 +14,7 @@ Ce module fournit :
 import pandas as pd
 
 def exportToCsv(data:list):
+    return None
     """
     Exporte une liste de données vers un fichier CSV.
 

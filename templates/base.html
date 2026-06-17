@@ -40,6 +40,8 @@
                 <!-- Lien vers la page d'accueil -->
                 <a href="{{ url_for('accueil.index') }}">Accueil</a>
 
+                <a href="{{ url_for('honoraires.afficher') }}">Honoraires</a>
+
                 <!-- Bloc utilisateur (connexion / déconnexion) -->
                 <div id="user_login">
 
@@ -69,6 +71,7 @@
                 {% if current_user.permissions == "admin" %}
                     <a href="{{ url_for('about.adminPanel') }}">Admin panel</a>
                 {% endif %}
+                
 
             </nav>
         </header>
