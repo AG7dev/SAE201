@@ -6,8 +6,8 @@ from services.ameli_api import AmeliAPI
 bp_honoraires = Blueprint("honoraires", __name__)
 api = AmeliAPI()
 
-@bp_honoraires.route('/honoraires', methods=['GET'])
-def afficher():
+@bp_honoraires.route('/honoraires/tableau', methods=['GET'])
+def afficher_tableau():
     annee = request.args.get("annee")
     dept_id = request.args.get("departement_id")
     prof_id = request.args.get("profession_id")
@@ -29,7 +29,38 @@ def afficher():
 
     session.close()
     
-    return render_template('honoraires.html', 
+    return render_template('tableau.html',
+                           resultats=resultats, 
+                           professions=prof_list,
+                           prof=prof_selectionnee,
+                           regions=regions,
+                           dept=dept,
+                           annee=annee)
+
+@bp_honoraires.route('/honoraires/graphique', methods=['GET'])
+def afficher_graphique():
+    annee = request.args.get("annee")
+    dept_id = request.args.get("departement_id")
+    prof_id = request.args.get("profession_id")
+    
+    session = Session()
+    prof_list = session.query(ProfessionSante).all()
+    regions = session.query(Region).all()
+
+    resultats = []
+    prof_selectionnee = None
+    dept = None
+
+    if prof_id and dept_id: 
+        prof_selectionnee = session.get(ProfessionSante, prof_id)
+        dept = session.get(Departement, dept_id)
+
+        if prof_selectionnee and dept : 
+            resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code)
+
+    session.close()
+    
+    return render_template('graphique.html',
                            resultats=resultats, 
                            professions=prof_list,
                            prof=prof_selectionnee,

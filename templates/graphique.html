@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block titre %}Graphique{% endblock %}
+
+{% block contenu %}
+    <nav>
+        <a href="{{ url_for('honoraires.afficher_tableau', annee=annee, departement_id=dept_id) }}">Voir en Tableau</a>
+        <a href="{{ url_for('honoraires.afficher_graphique', annee=annee, departement_id=dept_id) }}">Voir en Graphique</a>
+    </nav>
+
+    <form action="{{ url_for('honoraires.afficher_graphique') }}" method="get">
+
+        <label for="profession">Spécialité</label>
+        <select name="profession_id" id="profession" required>
+            <option value="">-- Choisir --</option>
+            {% for p in professions %}
+                <option value="{{ p.id }}">{{ p.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="region">Région</label>
+        <select name="region_id" id="region" required>
+            <option value="">-- Choisir --</option>
+            {% for r in regions %}
+                <option value="{{ r.id }}">{{ r.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="departement">Département</label>
+        <select name="departement_id" id="departement" required>
+            <option value="">-- Choisir une région --</option>
+        </select>
+
+        <label for="annee">Année</label>
+        <select name="annee" id="annee" required>
+            {% for a in range(2023, 2014, -1) %}
+                <option value="{{ a }}">{{ a }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Afficher les honoraires</button>
+
+    </form>
+
+    <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+
+    <h2>Graphique des honoraires</h2>
+    <canvas id="graphique_canvas"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const donnees = {{ resultats|tojson }};
+            new Chart(document.getElementById("graphique_canvas"), {
+                type: "bar",
+                data: {
+                    labels: ["Montant total", "Montant moyen"], 
+                    datasets: [{
+                        label: "Valeurs en €",
+                        data: [
+                            donnees[0].montant_honoraires, 
+                            donnees[0].montant_honoraires_moyens
+                        ],
+                        backgroundColor: ['#36A2EB', '#FF6384'] 
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false } 
+                    }
+                }
+            });
+        </script>
+{% endblock %}
+
