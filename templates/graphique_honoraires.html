@@ -3,8 +3,8 @@
 
 {% block contenu %}
     <nav>
-        <a href="{{ url_for('honoraires.afficher_tableau', annee=annee, departement_id=dept_id) }}">Voir en Tableau</a>
-        <a href="{{ url_for('honoraires.afficher_graphique', annee=annee, departement_id=dept_id) }}">Voir en Graphique</a>
+        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Voir en Tableau</a>
+        <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Voir en Graphique</a>
     </nav>
 
     <form action="{{ url_for('honoraires.afficher_graphique') }}" method="get">
