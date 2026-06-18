@@ -1,0 +1,137 @@
+# ==================================================
+#   SAÉ 2.01 - Développement d'une application WEB
+# ==================================================
+
+"""
+Tests de la classe CachedAmeliAPI.
+
+Ce module vérifie le bon fonctionnement du mécanisme de cache :
+- utilisation du cache entre deux appels identiques ;
+- expiration automatique des données après un délai défini ;
+- vidage manuel du cache.
+
+Les tests utilisent un objet simulé (Mock) afin d'éviter
+les appels réels à l'API AMELI.
+"""
+
+# Imports des modules nécessaires pour manipuler les chemins et le système
+import os
+import sys
+
+# Ajoute la racine du projet dans le PYTHONPATH afin de pouvoir
+# importer les modules de l'application depuis le dossier tests.
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
+
+# Imports des modules nécessaires pour les tests
+import unittest
+import time
+from unittest.mock import MagicMock
+
+# Imports des classes à tester
+from services.ameli_api import AmeliAPI
+from services.cached_ameli_api import CachedAmeliAPI
+
+class Test_CachedAmeliAPI(unittest.TestCase):
+    """
+    Ensemble des tests vérifiant le fonctionnement du cache.
+
+    Chaque test démarre avec une nouvelle instance de cache
+    afin de garantir son indépendance.
+    """
+
+    def setUp(self):
+        """
+        Prépare l'environnement avant chaque test.
+
+        Création :
+        - d'une API simulée ;
+        - d'un cache avec une durée de vie courte (2 secondes) ;
+        - d'un jeu de paramètres réutilisable.
+        """
+
+        # Création d'une fausse API AMELI
+        self.api_brute_mock = AmeliAPI()
+
+        # Remplacement de la méthode par un Mock retournant
+        # toujours le même résultat
+        self.api_brute_mock.get_effectifs = MagicMock(
+            return_value=[{"annee": 2023, "effectif": 42}]
+        )
+
+        # Création de l'API avec cache
+        self.api_avec_cache = CachedAmeliAPI(
+            self.api_brute_mock,
+            duree_vie_seconde=2
+        )
+
+        # Paramètres de test utilisés dans plusieurs méthodes
+        self.params = ("Médecin généraliste", "75", 2023)
+
+    def test_cache_evite_appel_reseau_consecutif(self):
+        """
+        Vérifie que deux appels identiques consécutifs
+        utilisent le cache.
+
+        Le résultat doit être identique et l'API sous-jacente
+        ne doit être appelée qu'une seule fois.
+        """
+
+        recup_1 = self.api_avec_cache.get_effectifs(*self.params)
+        recup_2 = self.api_avec_cache.get_effectifs(*self.params)
+
+        self.assertEqual(recup_1, recup_2)
+
+        # Vérifie que la méthode réelle n'a été exécutée qu'une fois
+        self.api_brute_mock.get_effectifs.assert_called_once_with(
+            *self.params
+        )
+
+    def test_expiration_cache(self):
+        """
+        Vérifie qu'une entrée expirée est recalculée.
+
+        Après expiration du délai de validité du cache,
+        un nouvel appel doit être effectué vers l'API.
+        """
+
+        self.api_avec_cache.get_effectifs(*self.params)
+
+        # Attente supérieure à la durée de vie du cache
+        time.sleep(2.1)
+
+        self.api_avec_cache.get_effectifs(*self.params)
+
+        # Deux appels réels doivent avoir été effectués
+        self.assertEqual(
+            self.api_brute_mock.get_effectifs.call_count,
+            2
+        )
+
+    def test_vider_cache(self):
+        """
+        Vérifie que le vidage manuel du cache fonctionne.
+
+        Après suppression du cache, un nouvel appel doit
+        forcer le recalcul des données.
+        """
+
+        self.api_avec_cache.get_effectifs(*self.params)
+
+        # Suppression de toutes les entrées du cache
+        self.api_avec_cache.vider_cache()
+
+        self.api_avec_cache.get_effectifs(*self.params)
+
+        # L'API doit avoir été appelée deux fois
+        self.assertEqual(
+            self.api_brute_mock.get_effectifs.call_count,
+            2
+        )
+
+
+# Point d'entrée permettant d'exécuter les tests directement
+if __name__ == "__main__":
+    unittest.main()
