@@ -29,7 +29,7 @@ def afficher_tableau():
 
     session.close()
     
-    return render_template('tableau.html',
+    return render_template('tableau_honoraires.html',
                            resultats=resultats, 
                            professions=prof_list,
                            prof=prof_selectionnee,
@@ -60,7 +60,7 @@ def afficher_graphique():
 
     session.close()
     
-    return render_template('graphique.html',
+    return render_template('graphique_honoraires.html',
                            resultats=resultats, 
                            professions=prof_list,
                            prof=prof_selectionnee,
