@@ -84,7 +84,7 @@ class AmeliAPI:
             
     
 
-    def get_honoraires(self, annee, profession, departement_code) :
+    def get_honoraires(self, annee, profession, departement_code, type_honoraire=None) :
 
         where = (
         f"profession_sante=\"{profession}\" AND "
@@ -92,9 +92,19 @@ class AmeliAPI:
         f"year(annee)={annee}"
         )
 
+        if type_honoraire:
+        
+            mapping = {
+                "Depassements": "Dépassements",
+                "Deplacement": "Indemnités de déplacement"
+            }
+            valeur_reelle = mapping.get(type_honoraire, type_honoraire)
+            where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
+
+        print(f"URL finale : {self.BASE_URL}/honoraires-detailles/records?select=...&where={where}")
         return self._requete(
         "honoraires-detailles",
-        {"select": "annee,montant_honoraires,montant_honoraires_moyens", "where": where, "limit": 100},
+        {"select": "annee,montant_honoraires,montant_honoraires_moyens, type_honoraires_niveau_1", "where": where, "limit": 100},
 
     
     )

@@ -11,6 +11,7 @@ def afficher_tableau():
     annee = request.args.get("annee")
     dept_id = request.args.get("departement_id")
     prof_id = request.args.get("profession_id")
+    type_honoraire = request.args.get("type_honoraire")
     
     session = Session()
     prof_list = session.query(ProfessionSante).all()
@@ -25,7 +26,7 @@ def afficher_tableau():
         dept = session.get(Departement, dept_id)
 
         if prof_selectionnee and dept : 
-            resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code)
+            resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code, type_honoraire)
 
     session.close()
     
@@ -42,7 +43,8 @@ def afficher_graphique():
     annee = request.args.get("annee")
     dept_id = request.args.get("departement_id")
     prof_id = request.args.get("profession_id")
-    
+    type_honoraire = request.args.get("type_honoraire")
+
     session = Session()
     prof_list = session.query(ProfessionSante).all()
     regions = session.query(Region).all()
@@ -56,7 +58,7 @@ def afficher_graphique():
         dept = session.get(Departement, dept_id)
 
         if prof_selectionnee and dept : 
-            resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code)
+            resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code, type_honoraire)
 
     session.close()
     

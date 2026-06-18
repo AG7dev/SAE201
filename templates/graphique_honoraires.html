@@ -37,6 +37,16 @@
             {% endfor %}
         </select>
 
+        <label for="type_honoraire">Type d'honoraire</label>
+        <select name="type_honoraire" id="type_honoraire">
+            <option value="">-- Tous les types --</option>
+            <option value="actes">Actes</option>
+            <option value="forfaitaire">Rémunérations forfaitaires</option>
+            <option value="deplacement">Indemnités de déplacement</option>
+            <option value="autres">Autres types</option>
+            <option value="depassements">Dépassements</option>
+        </select>
+
         <button type="submit">Afficher les honoraires</button>
 
     </form>
