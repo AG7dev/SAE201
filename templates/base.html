@@ -3,14 +3,14 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block titre %}Données de santé{% endblock %}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')
-        }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
     </head>
     <body>
         <header>
             <h1>Données de santé libérale</h1>
             <nav>
                 <a href="{{ url_for('accueil.index') }}">Accueil</a>
+                <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
                 <div id="user_login">
                     <img src="{{ url_for('static', filename='images/login_user_icon.svg') }}" alt="icone d'utilisateur" 
                     height="80" width="80">

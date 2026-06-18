@@ -5,6 +5,7 @@ from controllers.api import bp_api
 from controllers.effectifs import bp_effectifs
 from controllers.login import bp_login
 from controllers.about import bp_about
+from controllers.dashboard import bp_dashboard
 from flask_login import LoginManager
 from utils.user import User
 
@@ -22,6 +23,7 @@ app.register_blueprint(bp_api)
 app.register_blueprint(bp_effectifs)
 app.register_blueprint(bp_login)
 app.register_blueprint(bp_about)
+app.register_blueprint(bp_dashboard)
 
 @app.errorhandler(401)
 def acces_non_autorise(e):
@@ -37,8 +39,6 @@ def page_non_trouvee(e):
 def erreur_serveur(e):
     return render_template("erreur.html",
     message="Erreur interne. Réessayez plus tard."), 500
-
-
 
 @login_manager.user_loader
 def load_user(user_id):
