@@ -76,6 +76,6 @@ class RedisCachedAmeliAPI:
         valeur_json = json.dumps(resultat)
         
         # Stockage avec configuration native de la durée de vie (TTL)
-        self._redis.setex(cle, self._duree, valeur_json)
+        self._redis.set(cle, valeur_json, ex=self._duree)
 
         return resultat
