@@ -26,25 +26,24 @@
         <table>
         
             <!-- En-tête du tableau -->
-            <thead><tr><th>Année</th><th>Profession</th><th>Departement</th><th>Montant moyen</th><th>Montant total</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Année</th>
+                    <th>Montant moyen</th>
+                    <th>Montant total</th>
+                </tr>
+            </thead>
         
             <tbody>
         
             <!-- Boucle sur les résultats récupérés côté backend -->
             {% for r in resultats %}
                 <tr>
-                    <!-- Année de référence -->
-                    <td>{{ r.annee }}</td>
-
-                    <!-- Nombre d'étudiants / effectif -->
-                    <td>{{ r.profession_sante }}</td>
-
                     <!-- Densité calculée côté backend -->
                     <td>{{ r.departement }}</td>
 
-                    <td>{{ r.montant_moyen_prescription_integer }}</td>
-
-                    <td>{{ r.montant_total_prescription_integer }}</td>
+                    <td>{{ r.montant_moyen }}</td>
+                    <td>{{ r.montant_total }}</td>
                 </tr>
             {% endfor %}
 
@@ -83,13 +82,14 @@
     
     <script>
         const donnees = {{ evolution|tojson }};
+        
         new Chart(document.getElementById("graphique"), {
         type: "line",
         data: {
         labels: donnees.map(d => d.annee),
         datasets: [{
         label: "Prescriptions",
-        data: donnees.map(d => d.montant_total_prescription_integer),
+        data: donnees.map(d => d.montant_total),
         borderColor: "#2E74B5",
         tension: 0.2,
         }],
