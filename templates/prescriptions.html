@@ -29,8 +29,8 @@
             <thead>
                 <tr>
                     <th>Année</th>
-                    <th>Montant moyen</th>
                     <th>Montant total</th>
+                    <th>Montant moyen</th>
                 </tr>
             </thead>
         
@@ -40,10 +40,9 @@
             {% for r in resultats %}
                 <tr>
                     <!-- Densité calculée côté backend -->
-                    <td>{{ r.departement }}</td>
-
-                    <td>{{ r.montant_moyen }}</td>
-                    <td>{{ r.montant_total }}</td>
+                    <td>{{r.annee}}</td>
+                    <td>{{ r.montant_moyen | round(1) }}</td>
+                    <td>{{ r.montant_moyen | round(1) }}</td>
                 </tr>
             {% endfor %}
 
