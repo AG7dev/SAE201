@@ -22,6 +22,7 @@ from controllers.api import bp_api
 from controllers.effectifs import bp_effectifs
 from controllers.login import bp_login
 from controllers.about import bp_about
+from controllers.dashboard import bp_dashboard
 from flask_login import LoginManager
 from utils.user import User
 
@@ -54,6 +55,7 @@ app.register_blueprint(bp_api)
 app.register_blueprint(bp_effectifs)
 app.register_blueprint(bp_login)
 app.register_blueprint(bp_about)
+app.register_blueprint(bp_dashboard)
 
 # Gestion des erreurs personnalisées
 @app.errorhandler(401)
