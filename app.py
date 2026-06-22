@@ -23,13 +23,28 @@ from controllers.effectifs import bp_effectifs
 from controllers.prescriptions import bp_prescriptions
 from controllers.login import bp_login
 from controllers.about import bp_about
+from controllers.dashboard import bp_dashboard
 from flask_login import LoginManager
 from utils.user import User
+
+# Importation des classes de l'API AMELI et du décorateur de cache
+from services.ameli_api import AmeliAPI
+from services.cached_ameli_api import CachedAmeliAPI
+from services.redis_cached_ameli_api import RedisCachedAmeliAPI
 
 # Création et configuration de l'application Flask
 app = Flask(__name__)
 app.config.from_object(Config)
 app.secret_key = Config.get_secret_key()
+
+# Initialisation de l'API AMELI avec cache
+api_brute = AmeliAPI()
+
+# OPTION A : Cache local en mémoire (dictionnaire)
+# app.api_ameli = CachedAmeliAPI(api_brute, duree_vie_seconde=300)
+
+# OPTION B : Cache partagé Redis (à activer pour la mise en commun)
+app.api_ameli = RedisCachedAmeliAPI(api_brute, hote='localhost', port=6379, duree_vie_seconde=300)
 
 # Initialise le gestionnaire d'utilisateur
 login_manager = LoginManager()
@@ -42,6 +57,7 @@ app.register_blueprint(bp_effectifs)
 app.register_blueprint(bp_prescriptions)
 app.register_blueprint(bp_login)
 app.register_blueprint(bp_about)
+app.register_blueprint(bp_dashboard)
 
 # Gestion des erreurs personnalisées
 @app.errorhandler(401)
