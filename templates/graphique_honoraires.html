@@ -8,12 +8,11 @@
     </nav>
 
     <form action="{{ url_for('honoraires.afficher_graphique') }}" method="get">
-
         <label for="profession">Spécialité</label>
         <select name="profession_id" id="profession" required>
             <option value="">-- Choisir --</option>
             {% for p in professions %}
-                <option value="{{ p.id }}">{{ p.libelle }}</option>
+                <option value="{{ p.id }}" {% if request.args.get('profession_id') == p.id|string %}selected{% endif %}>{{ p.libelle }}</option>
             {% endfor %}
         </select>
 
@@ -21,7 +20,7 @@
         <select name="region_id" id="region" required>
             <option value="">-- Choisir --</option>
             {% for r in regions %}
-                <option value="{{ r.id }}">{{ r.libelle }}</option>
+                <option value="{{ r.id }}" {% if request.args.get('region_id') == r.id|string %}selected{% endif %}>{{ r.libelle }}</option>
             {% endfor %}
         </select>
 
@@ -33,29 +32,31 @@
         <label for="annee">Année</label>
         <select name="annee" id="annee" required>
             {% for a in range(2023, 2014, -1) %}
-                <option value="{{ a }}">{{ a }}</option>
+                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>{{ a }}</option>
             {% endfor %}
         </select>
 
         <label for="type_honoraire">Type d'honoraire</label>
         <select name="type_honoraire" id="type_honoraire">
             <option value="">-- Tous les types --</option>
-            <option value="actes">Actes</option>
-            <option value="forfaitaire">Rémunérations forfaitaires</option>
-            <option value="deplacement">Indemnités de déplacement</option>
-            <option value="autres">Autres types</option>
-            <option value="depassements">Dépassements</option>
+            <option value="Actes">Actes</option>
+            <option value="Forfaitaires">Rémunérations forfaitaires</option>
+            <option value="Deplacement">Indemnités de déplacement</option>
+            <option value="Depassements">Dépassements</option>
         </select>
 
         <button type="submit">Afficher les honoraires</button>
-
     </form>
 
     <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <h2>Graphique des honoraires</h2>
-    <canvas id="graphique_canvas"></canvas>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <hr>
+
+    {% if resultats and resultats|length > 0 %}
+        <h2>Répartition pour l'année {{ request.args.get('annee') }}</h2>
+        <canvas id="graphique_canvas"></canvas>
+
         <script>
             const donnees = {{ resultats|tojson }};
             new Chart(document.getElementById("graphique_canvas"), {
@@ -68,16 +69,64 @@
                             donnees[0].montant_honoraires, 
                             donnees[0].montant_honoraires_moyens
                         ],
-                        backgroundColor: ['#36A2EB', '#FF6384'] 
+                        backgroundColor: ['#3277B5', '#FF6384'] 
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        </script>
+    {% else %}
+        <p>Aucune donnée disponible pour l'année sélectionnée.</p>
+    {% endif %}
+
+    <hr>
+
+    {% if donnees_evolution and donnees_evolution|length > 0 %}
+        <h2>Évolution des honoraires dans le temps</h2>
+        <canvas id="evolution_canvas"></canvas>
+
+        <script>
+            
+            let evolution = {{ donnees_evolution|tojson }};
+            evolution.sort((a, b) => a.annee - b.annee);
+
+            new Chart(document.getElementById("evolution_canvas"), {
+                type: "line",
+                data: {
+                    labels: evolution.map(d => d.annee),
+                    datasets: [
+                        {
+                            label: "Montant Total (€)",
+                            data: evolution.map(d => d.montant_honoraires),
+                            borderColor: "#3277B5",
+                            backgroundColor: "rgba(50, 119, 181, 0.2)",
+                            fill: true,
+                            tension: 0.3 // Rend la courbe un peu plus lisse
+                        },
+                        {
+                            label: "Montant Moyen (€)",
+                            data: evolution.map(d => d.montant_honoraires_moyens),
+                            borderColor: "#FF6384",
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
                     plugins: {
-                        legend: { display: false } 
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
                     }
                 }
             });
         </script>
-{% endblock %}
+    {% endif %}
 
+{% endblock %}

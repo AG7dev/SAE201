@@ -50,6 +50,7 @@ def afficher_graphique():
     regions = session.query(Region).all()
 
     resultats = []
+    donnees_evolution = []
     prof_selectionnee = None
     dept = None
 
@@ -59,11 +60,13 @@ def afficher_graphique():
 
         if prof_selectionnee and dept : 
             resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code, type_honoraire)
+            donnees_evolution = api.get_honoraires(prof_selectionnee.libelle, dept.code, type_honoraire)
 
     session.close()
     
     return render_template('graphique_honoraires.html',
                            resultats=resultats, 
+                           donnees_evolution=donnees_evolution,
                            professions=prof_list,
                            prof=prof_selectionnee,
                            regions=regions,

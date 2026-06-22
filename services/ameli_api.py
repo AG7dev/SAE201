@@ -5,7 +5,7 @@
 """
 Service d'accès à l'API externe data.ameli.fr.
 
-Ce module encapsule les appels HTTP vers l'API Ameli afin de :
+Ce module encapsule les appels HTTP vers l'API Ameli afin de :b
 - récupérer les effectifs de professionnels de santé ;
 - obtenir l'évolution des effectifs dans le temps ;
 - centraliser la logique de requêtage et la gestion des erreurs.
@@ -107,6 +107,34 @@ class AmeliAPI:
         {"select": "annee,montant_honoraires,montant_honoraires_moyens, type_honoraires_niveau_1", "where": where, "limit": 100},
 
     
+    )
+
+    def get_evolution_honoraires(self, profession, departement_code, type_honoraire=None):
+            """
+            Récupère l'évolution des honoraires sur plusieurs années.
+            (Pas de paramètre 'annee' ici !)
+            """
+            where = (
+                f"profession_sante=\"{profession}\" AND "
+                f"departement=\"{departement_code}\""
+            ) 
+
+            if type_honoraire:
+                mapping = {
+                    "Depassements": "Dépassements",
+                    "Deplacement": "Indemnités de déplacement"
+                }
+                valeur_reelle = mapping.get(type_honoraire, type_honoraire)
+                where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
+
+            return self._requete(
+                "honoraires-detailles",
+                {
+                    "select": "annee,montant_honoraires,montant_honoraires_moyens,type_honoraires_niveau_1",
+                    "where": where, 
+                    "order_by": "annee", 
+                    "limit": 100
+                }
     )
      
     def _requete(self, dataset, params):
