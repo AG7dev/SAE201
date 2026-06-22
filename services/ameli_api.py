@@ -87,21 +87,13 @@ class AmeliAPI:
         # Les variables du filtre correspondent maintenant exactement aux arguments de la méthode
         where = (
             f"profession_sante=\"{profession}\" AND "
-            f"departement=\"{departement_code}\"" #AND 
-            # f"year(annee)=\"{annee}\"" 
-        )
-
-        group_by = (
-            f"annee"
-        )
-
-        order_by = (
-            f"annee"
+            f"departement=\"{departement_code}\" AND "
+            f"annee=\"{annee}\""
         )
         
         return self._requete(
             "prescriptions",
-            {"select": "year(annee) as annee, AVG(montant_total_prescription_integer) as montant_total, AVG(montant_moyen_prescription_integer) as montant_moyen", "where": where, "group_by": group_by, "order_by": order_by, "limit": 1},
+            {"select": "year(annee) as annee, AVG(montant_total_prescription_integer) as montant_total, AVG(montant_moyen_prescription_integer) as montant_moyen", "where": where, "limit" : 1},
         )
     
     def get_evolution_prescriptions(self, profession, departement_code):

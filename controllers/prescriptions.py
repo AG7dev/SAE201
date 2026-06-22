@@ -32,8 +32,6 @@ def afficher():
         session.close()
 
 
-def trouver_erreur(l):
-    for i in l:
-        if i == "FRANCE":
-            l.remove(i)
+
+
 
