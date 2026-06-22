@@ -30,7 +30,6 @@
                 <tr>
                     <th>Année</th>
                     <th>Montant total</th>
-                    <th>Montant moyen</th>
                 </tr>
             </thead>
         
@@ -41,8 +40,7 @@
                 <tr>
                     <!-- Densité calculée côté backend -->
                     <td>{{r.annee}}</td>
-                    <td>{{ r.montant_moyen | round(1) }}</td>
-                    <td>{{ r.montant_moyen | round(1) }}</td>
+                    <td>{{ r.montant_total | round(1) }}</td>
                 </tr>
             {% endfor %}
 
