@@ -126,9 +126,60 @@ def afficher():
                 professions=professions,
                 departements=departements,
 
-                datasets=DATASETS_COMPARAISON
-            )
+                datasets=DATASETS_COMPARAISON,
 
+                # Conservation des choix
+                dataset_selectionne=dataset,
+
+                profession1_id=profession1_id,
+                profession2_id=profession2_id,
+
+                departement1_id=departement1_id,
+                departement2_id=departement2_id,
+
+                annee_debut=annee_debut,
+                annee_fin=annee_fin,
+
+                resultat=None,
+
+                # Message affiché dans le template
+                erreur=(
+                    "Veuillez renseigner tous les champs. "
+                    "Utilisez la même année de début et de fin "
+                    "pour afficher les informations sur une seule année."
+                )
+            )
+        
+        # Vérification cohérence des années
+        if annee_debut > annee_fin:
+
+            return render_template(
+                "comparaison.html",
+
+                professions=professions,
+                departements=departements,
+
+                datasets=DATASETS_COMPARAISON,
+
+                dataset_selectionne=dataset,
+
+                profession1_id=profession1_id,
+                profession2_id=profession2_id,
+
+                departement1_id=departement1_id,
+                departement2_id=departement2_id,
+
+                annee_debut=annee_debut,
+                annee_fin=annee_fin,
+
+                resultat=None,
+
+                erreur=(
+                    "L'année de début doit être inférieure ou égale "
+                    "à l'année de fin."
+                )
+            )
+        
         # ==========================
         # CAS B : comparaison demandée
         # ==========================
@@ -205,7 +256,6 @@ def afficher():
 
         # Retour vers le template
         return render_template(
-
             "comparaison.html",
 
             professions=professions,
@@ -215,26 +265,25 @@ def afficher():
             datasets=DATASETS_COMPARAISON,
 
 
-            # Données sélectionnées
-            profession1=prof1,
-            profession2=prof2,
+            # Valeurs conservées dans le formulaire
+            dataset_selectionne=dataset,
 
-            departement1=dept1,
-            departement2=dept2,
+            profession1_id=profession1_id,
+            profession2_id=profession2_id,
 
-            annee_debut=annee_debut,
-            annee_fin=annee_fin,
-
+            departement1_id=departement1_id,
+            departement2_id=departement2_id,
 
             # Données graphiques
             resultat=resultat
         )
 
-    except Exception:
+    except Exception as e:
+        print(e)
 
         return render_template(
             "erreur.html",
-            message="Une erreur est survenue lors de la comparaison."
+            message=str(e)
         ), 500
 
     finally:

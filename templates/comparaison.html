@@ -1,0 +1,300 @@
+<!-- 
+  ==========================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier comparaison.html :
+   Page de comparaison des données de santé.
+   Permet de sélectionner un dataset, deux professions,
+   deux départements ainsi qu’une période d’analyse.
+   Affiche ensuite les résultats sous forme de graphique
+   généré avec Chart.js selon le type de données fourni.
+  ==========================================================
+-->
+
+{% extends "base.html" %}
+
+{% block titre %}
+Comparaison
+{% endblock %}
+
+{% block contenu %}
+
+<!-- Titre de la page -->
+<h2>Comparaison des données de santé</h2>
+
+<!-- Message d'erreur lors d'un formulaire incomplet -->
+{% if erreur %}
+
+<div class="message-erreur">
+
+    {{ erreur }}
+
+</div>
+
+{% endif %}
+
+<!-- Formulaire de comparaison -->
+<form method="get" action="{{ url_for('comparaison.afficher') }}">
+
+    <!-- Choix du dataset -->
+    <div>
+        <label for="dataset">Dataset :</label>
+        <select id="dataset" name="dataset">
+
+            {% for ds in datasets %}
+                <option
+                    value="{{ ds }}"
+                    {% if ds == dataset_selectionne %}selected{% endif %}
+                >
+                    {{ ds }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+
+    <!-- Profession 1 -->
+    <div>
+        <label for="profession1_id">Profession 1 :</label>
+
+        <select id="profession1_id" name="profession1_id">
+
+            {% for profession in professions %}
+                <option
+                    value="{{ profession.id }}"
+                    {% if profession1_id == profession.id %}selected{% endif %}
+                >
+                    {{ profession.libelle }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+
+    <!-- Département 1 -->
+    <div>
+        <label for="departement1_id">Département 1 :</label>
+
+        <select id="departement1_id" name="departement1_id">
+
+            {% for departement in departements %}
+                <option
+                    value="{{ departement.id }}"
+                    {% if departement1_id == departement.id %}selected{% endif %}
+                >
+                    {{ departement.libelle }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+
+    <!-- Profession 2 -->
+    <div>
+        <label for="profession2_id">Profession 2 :</label>
+
+        <select id="profession2_id" name="profession2_id">
+
+            {% for profession in professions %}
+                <option
+                    value="{{ profession.id }}"
+                    {% if profession2_id == profession.id %}selected{% endif %}
+                >
+                    {{ profession.libelle }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+
+    <!-- Département 2 -->
+    <div>
+        <label for="departement2_id">Département 2 :</label>
+
+        <select id="departement2_id" name="departement2_id">
+
+            {% for departement in departements %}
+                <option
+                    value="{{ departement.id }}"
+                    {% if departement2_id == departement.id %}selected{% endif %}
+                >
+                    {{ departement.libelle }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+
+    <!-- Années -->
+    <!-- Année de début -->
+    <div>
+
+        <label for="annee_debut">
+            Année début :
+        </label>
+
+        <input
+            type="number"
+            id="annee_debut"
+            name="annee_debut"
+            value="{{ annee_debut or '' }}"
+            required
+        >
+
+    </div>
+
+
+    <!-- Option année unique -->
+    <div>
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="annee_unique"
+                name="annee_unique"
+            >
+
+            Comparer une seule année
+
+        </label>
+
+    </div>
+
+
+    <!-- Année de fin -->
+    <div id="bloc_annee_fin">
+
+        <label for="annee_fin">
+            Année fin :
+        </label>
+
+        <input
+            type="number"
+            id="annee_fin"
+            name="annee_fin"
+            value="{{ annee_fin or '' }}"
+        >
+
+    </div>
+
+
+    <!-- Validation -->
+    <button type="submit">
+        Comparer
+    </button>
+
+</form>
+
+
+<!-- Affichage du graphique après comparaison -->
+{% if resultat %}
+
+<hr>
+
+<canvas id="comparaisonChart"></canvas>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    // Récupération du canvas
+    const ctx = document.getElementById(
+        "comparaisonChart"
+    );
+
+
+    // Création du graphique
+    new Chart(ctx, {
+
+        type: {{ resultat.type_graphique | tojson }},
+
+        data: {
+
+            labels: {{ resultat.labels | tojson }},
+
+            datasets: [
+
+                {
+                    label: {{ resultat.legendes[0] | tojson }},
+                    data: {{ resultat.serie1 | tojson }}
+                },
+
+                {
+                    label: {{ resultat.legendes[1] | tojson }},
+                    data: {{ resultat.serie2 | tojson }}
+                }
+
+            ]
+
+        },
+
+        options: {
+            responsive: true
+        }
+
+    });
+
+// Fin du script
+</script>
+
+<script>
+const checkbox = document.getElementById("annee_unique");
+
+const anneeDebut = document.getElementById("annee_debut");
+
+const blocFin = document.getElementById("bloc_annee_fin");
+
+const anneeFin = document.getElementById("annee_fin");
+
+
+checkbox.addEventListener(
+    "change",
+    function() {
+
+        if (this.checked) {
+
+            blocFin.style.display = "none";
+
+            anneeFin.value =
+                anneeDebut.value;
+
+            anneeFin.required = false;
+
+        } else {
+
+            blocFin.style.display = "block";
+
+            anneeFin.required = true;
+
+        }
+
+    }
+);
+
+
+anneeDebut.addEventListener(
+    "input",
+    function() {
+
+        if (checkbox.checked) {
+
+            anneeFin.value =
+                this.value;
+
+        }
+
+    }
+);
+
+</script>
+
+{% endif %}
+{% endblock %}
