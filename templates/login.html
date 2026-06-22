@@ -1,44 +1,108 @@
+<!-- 
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier login.html :
+   Page d’authentification et de création de compte.
+   Permet à l’utilisateur de se connecter ou de créer un
+   nouveau compte selon le mode sélectionné côté backend.
+   Affiche également des notifications dynamiques via
+   SweetAlert2 (succès / erreur).
+  =====================================================
+-->
+
 {% extends "base.html" %}
 
 {% block titre %}Login{% endblock %}
 
 {% block contenu %}
+
+    <!-- ======================= MODE CONNEXION ======================= -->
     {% if option == "login" %}
+
+        <!-- Formulaire de connexion utilisateur -->
         <form method="post">
-            <input name="username" placeholder="Nom d'utilisateur" autocomplete="off" required>
-            <input name="password" type="password" placeholder="Mot de passe" required>
+
+            <!-- Champ identifiant -->
+            <input name="username"
+                   placeholder="Nom d'utilisateur"
+                   autocomplete="off"
+                   required>
+
+            <!-- Champ mot de passe -->
+            <input name="password"
+                   type="password"
+                   placeholder="Mot de passe"
+                   required>
+
+            <!-- Soumission du formulaire -->
             <button type="submit">Connexion</button>
         </form>
-        <a href="{{ url_for('login.createUser') }}">Pas de Compte ? Créer en un</a>
+
+        <!-- Lien vers la création de compte -->
+        <a href="{{ url_for('login.createUser') }}">
+            Pas de Compte ? Créer en un
+        </a>
+
+    <!-- ======================= MODE CRÉATION COMPTE ======================= -->
     {% elif option == "createUser" %}
+
+        <!-- Formulaire de création d’utilisateur -->
         <form method="post">
-            <input name="username" placeholder="Nom d'utilisateur" autocomplete="off" required>
-            <input name="password" type="password" placeholder="Mot de passe" required>
+
+            <!-- Nom d'utilisateur -->
+            <input name="username"
+                   placeholder="Nom d'utilisateur"
+                   autocomplete="off"
+                   required>
+
+            <!-- Mot de passe -->
+            <input name="password"
+                   type="password"
+                   placeholder="Mot de passe"
+                   required>
+
+            <!-- Soumission création compte -->
             <button type="submit">Créer un compte</button>
         </form>
-        <a href="{{ url_for('login.login') }}"> Vous avez un compte ? Connecter vous</a>
+
+        <!-- Lien retour vers connexion -->
+        <a href="{{ url_for('login.login') }}">
+            Vous avez un compte ? Connectez-vous
+        </a>
+
     {% endif %}
-    
+
+    <!-- ======================= NOTIFICATIONS ======================= -->
+
+    <!-- Librairie SweetAlert2 pour popups stylisées -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Gestion des messages flash côté Flask -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
+
+            <!-- Message d’erreur -->
             {% if category == "erreur" %}
-            <script>
-                Swal.fire({
-                    title: "Erreur",
-                    text: "{{ message }}",
-                    icon: "error"
-                });
-            </script>
+                <script>
+                    Swal.fire({
+                        title: "Erreur",
+                        text: "{{ message }}",
+                        icon: "error"
+                    });
+                </script>
+
+            <!-- Message de succès -->
             {% elif category == "succes" %}
-            <script>
-                Swal.fire({
-                    title: "Succés",
-                    text: "{{ message }}",
-                    icon: "success"
-                });
-            </script>
+                <script>
+                    Swal.fire({
+                        title: "Succés",
+                        text: "{{ message }}",
+                        icon: "success"
+                    });
+                </script>
             {% endif %}
+
         {% endfor %}
     {% endwith %}
 

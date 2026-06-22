@@ -1,17 +1,52 @@
+# ==================================================
+#   SAÉ 2.01 - Développement d'une application WEB
+# ==================================================
+
+"""
+Service d'accès à l'API externe data.ameli.fr.
+
+Ce module encapsule les appels HTTP vers l'API Ameli afin de :
+- récupérer les effectifs de professionnels de santé ;
+- obtenir l'évolution des effectifs dans le temps ;
+- centraliser la logique de requêtage et la gestion des erreurs.
+"""
+
+# Import des requests pour les appels à l'API ameli
 import requests
 
 class AmeliAPI:
-    """Service d'accès à l'API data.ameli.fr."""
+    """
+    Client d'accès à l'API data.ameli.fr.
+
+    Cette classe gère les requêtes HTTP et fournit des méthodes
+    spécialisées pour récupérer les données métier liées aux
+    professionnels de santé.
+    """
     
+    # URL de base de l'API Ameli
     BASE_URL = "https://data.ameli.fr/api/explore/v2.1/catalog/datasets"
     
     def __init__(self, timeout=10):
+        """
+        Initialise le client API.
+
+        Args:
+            timeout (int): délai maximal d'attente des requêtes HTTP.
+        """
         self._timeout = timeout
         self._session = requests.Session()
     
     def get_effectifs(self, profession, departement_code, annee):
-        """Effectifs pour une profession, un département et une année.
-        Retourne une liste de dictionnaires {annee, effectif, densite}.
+        """
+        Récupère les effectifs pour une profession, un département et une année.
+
+        Args:
+            profession (str): libellé de la profession.
+            departement_code (str): code du département.
+            annee (int): année de référence.
+
+        Returns:
+            list: liste de dictionnaires contenant année, effectif et densité.
         """
         where = (
         f"profession_sante=\"{profession}\" AND "
@@ -26,7 +61,16 @@ class AmeliAPI:
         )
     
     def get_evolution_effectifs(self, profession, departement_code):
-        """Effectifs sur toutes les années disponibles (pour un graphique)."""
+        """
+        Récupère l'évolution des effectifs sur plusieurs années.
+
+        Args:
+            profession (str): libellé de la profession.
+            departement_code (str): code du département.
+
+        Returns:
+            list: données triées par année.
+        """
         where = (f"profession_sante=\"{profession}\" AND "
         f"departement=\"{departement_code}\" AND "
         f"libelle_classe_age=\"Tout âge\" AND "
@@ -139,7 +183,21 @@ class AmeliAPI:
             where:where, "group_by":"annee"})
     
     def _requete(self, dataset, params):
-        """Méthode privée : effectue une requête GET et gère les erreurs."""
+        """
+        Exécute une requête GET vers l'API Ameli.
+
+        Méthode interne centralisant :
+        - l'appel HTTP
+        - la gestion des erreurs
+        - l'extraction des résultats
+
+        Args:
+            dataset (str): nom du dataset interrogé.
+            params (dict): paramètres de requête API.
+
+        Returns:
+            list: résultats JSON ou liste vide en cas d'erreur.
+        """
         url = f"{self.BASE_URL}/{dataset}/records"
         try:
             resp = self._session.get(url, params=params, timeout=self._timeout)

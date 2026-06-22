@@ -1,9 +1,30 @@
+<!-- 
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier erreur.html :
+   Page d’affichage des erreurs de l’application.
+   Utilisée pour informer l’utilisateur lorsqu’une requête
+   échoue ou qu’un accès est invalide, avec retour possible
+   à la page d’accueil.
+  =====================================================
+-->
+
 {% extends "base.html" %}
 
 {% block titre %}Erreur{% endblock %}
 
 {% block contenu %}
+
+    <!-- Titre simple indiquant qu'une erreur est survenue -->
     <h2>Oups…</h2>
+
+    <!-- Message d’erreur dynamique envoyé par le backend -->
     <p>{{ message }}</p>
-    <p><a href="{{ url_for('accueil.index') }}">Retour à l'accueil</a></p>
+
+    <!-- Lien de retour vers la page d’accueil -->
+    <p>
+        <a href="{{ url_for('accueil.index') }}">Retour à l'accueil</a>
+    </p>
+
 {% endblock %}
