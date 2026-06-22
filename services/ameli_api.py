@@ -82,6 +82,40 @@ class AmeliAPI:
         "order_by": "annee", "limit": 100},
         )
     
+    def get_prescriptions(self, profession, departement_code, annee):
+        """Récupère les données de prescriptions médicales selon les critères."""
+        # Les variables du filtre correspondent maintenant exactement aux arguments de la méthode
+        where = (
+            f"profession_sante=\"{profession}\" AND "
+            f"departement=\"{departement_code}\" AND "
+            f"annee=\"{annee}\""
+        )
+        
+        return self._requete(
+            "prescriptions",
+            {"select": "year(annee) as annee, AVG(montant_total_prescription_integer) as montant_total, AVG(montant_moyen_prescription_integer) as montant_moyen", "where": where, "limit" : 1},
+        )
+    
+    def get_evolution_prescriptions(self, profession, departement_code):
+        """Prescriptions sur toutes les années disponibles (pour un graphique)."""
+        where = (
+            f"profession_sante=\"{profession}\" AND "
+            f"departement=\"{departement_code}\""
+        )
+
+        group_by = (
+            f"annee"
+        )
+
+        order_by = (
+            f"annee"
+        )
+
+        return self._requete(
+            "prescriptions",
+            {"select": "year(annee) as annee, AVG(montant_total_prescription_integer) as montant_total", "where": where, "group_by": group_by, "order_by" : order_by, "limit": 100},
+        )
+
     def get_indicateur_cle(self):
         """Ensemble des indicateurs clé de la page dashboard"""
         indicateur_cle = []
