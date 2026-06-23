@@ -18,6 +18,7 @@ def afficher_tableau():
     regions = session.query(Region).all()
 
     resultats = []
+    donnees_groupees = {} 
     prof_selectionnee = None
     dept = None
 
@@ -25,18 +26,30 @@ def afficher_tableau():
         prof_selectionnee = session.get(ProfessionSante, prof_id)
         dept = session.get(Departement, dept_id)
 
-        if prof_selectionnee and dept : 
+        if prof_selectionnee and dept: 
+            donnees_brutes = api.get_evolution_honoraires(prof_selectionnee.libelle, dept.code, type_honoraire)
+            
+            for d in donnees_brutes:
+                an = d.get('annee')
+                if an not in donnees_groupees:
+                    donnees_groupees[an] = {'total': 0, 'moyen': 0}
+                
+                donnees_groupees[an]['total'] += float(d.get('montant_honoraires') or 0)
+                donnees_groupees[an]['moyen'] += float(d.get('montant_honoraires_moyens') or 0)
+
             resultats = api.get_honoraires(annee, prof_selectionnee.libelle, dept.code, type_honoraire)
 
     session.close()
     
     return render_template('tableau_honoraires.html',
                            resultats=resultats, 
+                           donnees_groupees=donnees_groupees, 
                            professions=prof_list,
                            prof=prof_selectionnee,
                            regions=regions,
                            dept=dept,
                            annee=annee)
+
 
 @bp_honoraires.route('/honoraires/graphique', methods=['GET'])
 def afficher_graphique():

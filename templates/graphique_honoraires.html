@@ -2,23 +2,19 @@
 {% block titre %}Graphique des honoraires{% endblock %}
 
 {% block contenu %}
-    <div style="background-color: #e8f4fd; border: 1px solid #b6d4fe; color: #084298; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 0.95em; line-height: 1.5;">
+    <div class="info-bulle">
         <strong>À propos des honoraires :</strong>
-        <p style="margin-top: 8px; margin-bottom: 8px;">
+        <p>
             Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.
         </p>
         Pour une profession donnée :
-        <ul style="margin-top: 5px; margin-bottom: 0;">
+        <ul>
             <li>le <strong>« montant total »</strong> correspond aux honoraires perçus par l'ensemble des professionnels de santé libéraux ;</li>
             <li>le <strong>« montant moyen »</strong> correspond aux honoraires perçus en moyenne par un professionnel de santé libéral.</li>
         </ul>
     </div>
 
-    <nav>
-        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Voir en Tableau</a>
-        <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Voir en Graphique</a>
-    </nav>
-
+     <h2>Evolution du montant des honoraires sur plusieurs années (Graphique)</h2>
 
     <form action="{{ url_for('honoraires.afficher_graphique') }}" method="get">
 
@@ -47,17 +43,6 @@
             <option value="">-- Choisir une région --</option>
         </select>
 
-        <label for="annee" style="color: #6c757d;">Année</label>
-        <select name="annee" id="annee" 
-                style="pointer-events: none; background-color: #e9ecef; color: #6c757d;" 
-                title="L'année n'est pas modifiable pour le graphique d'évolution">
-            {% for a in range(2025, 2009, -1) %}
-                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>
-                    {{ a }}
-                </option>
-            {% endfor %}
-        </select>
-
         <label for="type_honoraire">Type d'honoraire</label>
         <select name="type_honoraire" id="type_honoraire">
             <option value="">-- Tous les types --</option>
@@ -73,24 +58,28 @@
 
     <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const regionId = urlParams.get('region_id');
-                const deptId = urlParams.get('departement_id');
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const regionId = urlParams.get('region_id');
+            const deptId = urlParams.get('departement_id');
 
-                if (regionId && typeof chargerDepartements === "function") {
-                    chargerDepartements(regionId, deptId);
-                }
-            });
+            if (regionId && typeof chargerDepartements === "function") {
+                chargerDepartements(regionId, deptId);
+            }
+        });
     </script>
 
     <hr>
 
-    {% if donnees_evolution and donnees_evolution|length > 0 %}
-        <h3>Évolution sur plusieurs années</h3>
+    <nav>
+        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Tableau</a>
+        <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Graphique</a>
+    </nav>
 
-        <div id="div-graphique" style="max-width: 800px; margin: 20px auto;">
+    {% if donnees_evolution and donnees_evolution|length > 0 %}
+
+        <div id="div-graphique">
             <canvas id="graphique"></canvas>
         </div>
 

@@ -1,3 +1,25 @@
+/* Bulle d'information */
+.info-bulle {
+    background-color: #e8f4fd;
+    border: 1px solid #b6d4fe;
+    color: #084298;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.info-bulle p {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.info-bulle ul {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
 /* Espacement global du formulaire */
 form {
     background-color: #f8f9fa;
@@ -56,4 +78,10 @@ nav a {
     text-decoration: none;
     color: #3277B5;
     font-weight: bold;
+}
+
+/* Conteneur du graphique Chart.js */
+#div-graphique {
+    max-width: 800px;
+    margin: 20px auto;
 }
