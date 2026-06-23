@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement, Region
 from services.ameli_api import AmeliAPI
+import requests
+
 
 bp_honoraires = Blueprint("honoraires", __name__)
 api = AmeliAPI()
@@ -87,3 +89,64 @@ def afficher_graphique():
                             regions=regions,
                             dept=dept,
                             annee=annee)
+
+@bp_honoraires.route('/honoraires/specialites', methods=['GET'])
+def afficher_specialites():
+        region_id = request.args.get('region_id')
+        departement_id = request.args.get('departement_id')
+        annee = request.args.get('annee')
+        type_honoraire = request.args.get('type_honoraire')
+
+        session = Session()
+        regions = session.query(Region).all()
+        
+        dept = None
+        if departement_id:
+            dept = session.get(Departement, departement_id)
+            
+        session.close()
+
+        donnees_specialites = []
+
+        if annee and (region_id or departement_id):
+            territoire = dept.code if dept else region_id
+            try:
+                donnees_specialites = api.get_specialites(annee, territoire, type_honoraire)
+            except Exception as e:
+                print(f"Erreur API : {e}")
+                donnees_specialites = []
+
+        return render_template('specialites_honoraires.html', 
+                            regions=regions, 
+                            donnees_specialites=donnees_specialites)
+
+
+@bp_honoraires.route('/honoraires/specialites/graphique', methods=['GET'])
+def afficher_specialites_graphique():
+        region_id = request.args.get('region_id')
+        departement_id = request.args.get('departement_id')
+        annee = request.args.get('annee')
+        type_honoraire = request.args.get('type_honoraire')
+
+        session = Session()
+        regions = session.query(Region).all()
+        
+        dept = None
+        if departement_id:
+            dept = session.get(Departement, departement_id)
+            
+        session.close()
+
+        donnees_specialites = []
+
+        if annee and (region_id or departement_id):
+            territoire = dept.code if dept else region_id
+            try:
+                donnees_specialites = api.get_specialites(annee, territoire, type_honoraire)
+            except Exception as e:
+                print(f"Erreur API : {e}")
+                donnees_specialites = []
+
+        return render_template('specialites_graphique.html', 
+                            regions=regions, 
+                            donnees_specialites=donnees_specialites)

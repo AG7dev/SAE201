@@ -136,7 +136,7 @@ class AmeliAPI:
                     "offset": offset  # On ajoute le décalage ici
                 }
                 
-                # On utilise ta fonction _requete intacte
+                # On utilise la fonction _requete intacte
                 donnees = self._requete("honoraires-detailles", params)
                 
                 # Si on ne reçoit rien, on arrête
@@ -153,6 +153,46 @@ class AmeliAPI:
                 offset += 100
                 
             return resultats_totaux
+    
+    def get_specialites(self, annee, territorio, type_honoraire=None):
+        where = f"departement=\"{territorio}\" AND year(annee)={annee}"
+
+        if type_honoraire:
+            mapping = {
+                "Depassements": "Dépassements",
+                "Deplacement": "Indemnités de déplacement"
+            }
+            valeur_reelle = mapping.get(type_honoraire, type_honoraire)
+            where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
+
+        params = {
+            "select": "profession_sante,montant_honoraires,montant_honoraires_moyens",
+            "where": where,
+            "limit": 100
+        }
+
+        donnees_brutes = self._requete("honoraires-detailles", params)
+        donnees_groupees = {}
+        
+        for d in donnees_brutes:
+            spe = d.get("profession_sante")
+            if spe:
+                total = float(d.get("montant_honoraires") or 0)
+                moyen = float(d.get("montant_honoraires_moyens") or 0)
+                
+                if spe in donnees_groupees:
+                    donnees_groupees[spe]["total"] += total
+                    donnees_groupees[spe]["moyen"] += moyen
+                else:
+                    donnees_groupees[spe] = {
+                        "specialite": spe,
+                        "total": total,
+                        "moyen": moyen
+                    }
+        
+        resultats = list(donnees_groupees.values())
+        resultats.sort(key=lambda x: x["total"], reverse=True)
+        return resultats
      
     def _requete(self, dataset, params):
         """

@@ -1,21 +1,26 @@
 {% extends "base.html" %}
-{% block titre %}Montant par spécialité{% endblock %}
+{% block titre %}Montant par spécialité - Tableau{% endblock %}
 {% block contenu %}
-
-    <nav class="onglets-principaux">
-        <a href="{{ url_for('honoraires.afficher_tableau') }}">Évolution sur plusieurs années</a>
-        <a href="{{ url_for('honoraires.afficher_specialites') }}" class="actif">Montant par spécialité</a>
-    </nav>
 
     <div class="info-bulle">
         <strong>À propos des honoraires :</strong>
         <p>Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.</p>
+        Pour une profession donnée :
+        <ul>
+            <li>le <strong>« montant total »</strong> correspond aux honoraires perçus par l'ensemble des professionnels de santé libéraux ;</li>
+            <li>le <strong>« montant moyen »</strong> correspond aux honoraires perçus en moyenne par un professionnel de santé libéral.</li>
+        </ul>
     </div>
 
-    <h2>Montant des honoraires pour chaque spécialité</h2>
+    <nav class="onglets-principaux">
+        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Évolution sur plusieurs années</a>
+        <a href="{{ url_for('honoraires.afficher_specialites', **request.args) }}" class="actif">Montant par spécialité</a>
+    </nav>
+
+
+    <h2>Montant des honoraires pour chaque spécialité (Tableau)</h2>
 
     <form action="{{ url_for('honoraires.afficher_specialites') }}" method="get">
-        
         <label for="annee">Année</label>
         <select name="annee" id="annee" required>
             <option value="">-- Choisir --</option>
@@ -68,27 +73,123 @@
         });
     </script>
 
+    <nav class="onglets-honoraires">
+        <a href="{{ url_for('honoraires.afficher_specialites', **request.args) }}" class="actif">Tableau</a>
+        <a href="{{ url_for('honoraires.afficher_specialites_graphique', **request.args) }}">Graphique</a>
+    </nav>
+
     {% if donnees_specialites %}
+        <div class="controles-tableau">
+            <div class="groupe-controle">
+                <label for="choix_affichage_spe">Donnée à afficher :</label>
+                <select id="choix_affichage_spe">
+                    <option value="les_deux">Montant Total et Moyen</option>
+                    <option value="total">Montant Total uniquement</option>
+                    <option value="moyen">Montant Moyen uniquement</option>
+                </select>
+            </div>
+
+            <div class="groupe-controle">
+                <label for="choix_tri_spe">Trier par :</label>
+                <select id="choix_tri_spe">
+                    <option value="total-desc">Montant Total (Décroissant)</option>
+                    <option value="total-asc">Montant Total (Croissant)</option>
+                    <option value="moyen-desc">Montant Moyen (Décroissant)</option>
+                    <option value="moyen-asc">Montant Moyen (Croissant)</option>
+                    <option value="spe-asc">Spécialité (A ➔ Z)</option>
+                    <option value="spe-desc">Spécialité (Z ➔ A)</option>
+                </select>
+            </div>
+        </div>
+
         <table id="tableau-specialites">
             <thead>
                 <tr>
-                    <th>Spécialité</th>
-                    <th>Montant total (€)</th>
-                    <th>Montant moyen (€)</th>
+                    <th class="col-spe">Spécialité</th>
+                    <th class="col-total">Montant total (€)</th>
+                    <th class="col-moyen">Montant moyen (€)</th>
                 </tr>
             </thead>
             <tbody>
             {% for ligne in donnees_specialites %}
                 <tr>
-                    <td>{{ ligne.specialite }}</td>
-                    <td>{{ ligne.total | round(2) }}</td>
-                    <td>{{ ligne.moyen | round(2) }}</td>
+                    <td class="col-spe">{{ ligne.specialite }}</td>
+                    <td class="col-total">{{ ligne.total | round(2) }}</td>
+                    <td class="col-moyen">{{ ligne.moyen | round(2) }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const selectAffichage = document.getElementById("choix_affichage_spe");
+                const selectTri = document.getElementById("choix_tri_spe");
+                const tableau = document.getElementById("tableau-specialites");
+                const tbody = tableau.querySelector("tbody");
+
+                const memoireAffichage = sessionStorage.getItem("affichage_spe");
+                if (memoireAffichage) { selectAffichage.value = memoireAffichage; }
+                
+                const memoireTri = sessionStorage.getItem("tri_spe");
+                if (memoireTri) { selectTri.value = memoireTri; }
+
+                function appliquerAffichage() {
+                    sessionStorage.setItem("affichage_spe", selectAffichage.value);
+                    tableau.classList.remove("masquer-total", "masquer-moyen");
+
+                    const optsTotal = Array.from(selectTri.options).filter(o => o.value.startsWith("total"));
+                    const optsMoyen = Array.from(selectTri.options).filter(o => o.value.startsWith("moyen"));
+
+                    optsTotal.forEach(o => { o.disabled = false; o.hidden = false; });
+                    optsMoyen.forEach(o => { o.disabled = false; o.hidden = false; });
+
+                    if (selectAffichage.value === "total") {
+                        tableau.classList.add("masquer-moyen");
+                        optsMoyen.forEach(o => { o.disabled = true; o.hidden = true; });
+                        if (selectTri.value.startsWith("moyen")) {
+                            selectTri.value = "total-desc";
+                            appliquerTri();
+                        }
+                    } else if (selectAffichage.value === "moyen") {
+                        tableau.classList.add("masquer-total");
+                        optsTotal.forEach(o => { o.disabled = true; o.hidden = true; });
+                        if (selectTri.value.startsWith("total")) {
+                            selectTri.value = "moyen-desc";
+                            appliquerTri();
+                        }
+                    }
+                }
+
+                function appliquerTri() {
+                    sessionStorage.setItem("tri_spe", selectTri.value);
+                    const [critere, ordre] = selectTri.value.split("-");
+                    const lignes = Array.from(tbody.querySelectorAll("tr"));
+
+                    lignes.sort((ligneA, ligneB) => {
+                        if (critere === "spe") {
+                            const valA = ligneA.querySelector(".col-spe").textContent.trim().toLowerCase();
+                            const valB = ligneB.querySelector(".col-spe").textContent.trim().toLowerCase();
+                            return ordre === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                        } else {
+                            const cls = critere === "total" ? ".col-total" : ".col-moyen";
+                            const valA = parseFloat(ligneA.querySelector(cls).textContent) || 0;
+                            const valB = parseFloat(ligneB.querySelector(cls).textContent) || 0;
+                            return ordre === "asc" ? valA - valB : valB - valA;
+                        }
+                    });
+
+                    lignes.forEach(ligne => tbody.appendChild(ligne));
+                }
+
+                selectAffichage.addEventListener("change", appliquerAffichage);
+                selectTri.addEventListener("change", appliquerTri);
+
+                appliquerAffichage();
+                appliquerTri();
+            });
+        </script>
     {% else %}
         <p style="margin-top: 20px;">Aucune donnée disponible. Veuillez sélectionner une année et un territoire.</p>
     {% endif %}
-
 {% endblock %}

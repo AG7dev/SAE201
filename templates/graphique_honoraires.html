@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% block titre %}Graphique des honoraires{% endblock %}
 {% block contenu %}
-
-    <nav class="onglets-principaux">
-        <a href="{{ url_for('honoraires.afficher_tableau') }}" class="actif">Évolution sur plusieurs années</a>
-        <a href="{{ url_for('honoraires.afficher_specialites') }}">Montant par spécialité</a>
-    </nav>
     
     <div class="info-bulle">
         <strong>À propos des honoraires :</strong>
@@ -16,6 +11,11 @@
             <li>le <strong>« montant moyen »</strong> correspond aux honoraires perçus en moyenne par un professionnel de santé libéral.</li>
         </ul>
     </div>
+    
+    <nav class="onglets-principaux">
+        <a href="{{ url_for('honoraires.afficher_tableau') }}" class="actif">Évolution sur plusieurs années</a>
+        <a href="{{ url_for('honoraires.afficher_specialites') }}">Montant par spécialité</a>
+    </nav>
 
     <h2>Evolution du montant des honoraires sur plusieurs années (Graphique)</h2>
 

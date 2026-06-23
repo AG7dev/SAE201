@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block titre %}Montant par spécialité - Graphique{% endblock %}
+{% block contenu %}
+
+
+    <div class="info-bulle">
+        <strong>À propos des honoraires :</strong>
+        <p>Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.</p>
+        Pour une profession donnée :
+        <ul>
+            <li>le <strong>« montant total »</strong> correspond aux honoraires perçus par l'ensemble des professionnels de santé libéraux ;</li>
+            <li>le <strong>« montant moyen »</strong> correspond aux honoraires perçus en moyenne par un professionnel de santé libéral.</li>
+        </ul>
+    </div>
+
+    <nav class="onglets-principaux">
+        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Évolution sur plusieurs années</a>
+        <a href="{{ url_for('honoraires.afficher_specialites', **request.args) }}" class="actif">Montant par spécialité</a>
+    </nav>
+
+
+    <h2>Montant des honoraires pour chaque spécialité (Graphique)</h2>
+
+    <form action="{{ url_for('honoraires.afficher_specialites_graphique') }}" method="get">
+        <label for="annee">Année</label>
+        <select name="annee" id="annee" required>
+            <option value="">-- Choisir --</option>
+            {% for a in range(2024, 2009, -1) %} 
+                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>{{ a }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="region">Région</label>
+        <select name="region_id" id="region" required>
+            <option value="">-- Choisir --</option>
+            {% for r in regions %}
+                <option value="{{ r.id }}" {% if request.args.get('region_id') == r.id|string %}selected{% endif %}>{{ r.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="departement">Département</label>
+        <select name="departement_id" id="departement">
+            <option value="">-- Tous les départements --</option>
+        </select>
+
+        <label for="type_honoraire">Type d'honoraire</label>
+        <select name="type_honoraire" id="type_honoraire">
+            <option value="">-- Tous les types --</option>
+            <option value="Actes" {% if request.args.get('type_honoraire') == 'Actes' %}selected{% endif %}>Actes</option>
+            <option value="Rémunérations forfaitaires" {% if request.args.get('type_honoraire') == 'Rémunérations forfaitaires' %}selected{% endif %}>Rémunérations forfaitaires</option>
+            <option value="Indemnités de déplacement" {% if request.args.get('type_honoraire') == 'Indemnités de déplacement' %}selected{% endif %}>Indemnités de déplacement</option>
+            <option value="Dépassements" {% if request.args.get('type_honoraire') == 'Dépassements' %}selected{% endif %}>Dépassements</option>
+        </select>
+
+        <button type="submit">Afficher les données</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const regionId = urlParams.get('region_id');
+            const deptId = urlParams.get('departement_id');
+
+            if (regionId && typeof chargerDepartements === "function") {
+                chargerDepartements(regionId, deptId);
+                setTimeout(() => {
+                    const selectDept = document.getElementById('departement');
+                    if(deptId && selectDept) {
+                        selectDept.value = deptId;
+                    }
+                }, 500); 
+            }
+        });
+    </script>
+
+    <nav class="onglets-honoraires">
+        <a href="{{ url_for('honoraires.afficher_specialites', **request.args) }}">Tableau</a>
+        <a href="{{ url_for('honoraires.afficher_specialites_graphique', **request.args) }}" class="actif">Graphique</a>
+    </nav>
+
+    {% if donnees_specialites %}
+        <div class="controles-tableau">
+            <div class="groupe-controle">
+                <label for="choix_donnee_graph">Donnée :</label>
+                <select id="choix_donnee_graph">
+                    <option value="total">Montant Total</option>
+                    <option value="moyen">Montant Moyen</option>
+                </select>
+            </div>
+
+            <div class="groupe-controle">
+                <label for="choix_type_graph">Affichage :</label>
+                <select id="choix_type_graph">
+                    <option value="vertical">Diagramme en bâtons (Vertical)</option>
+                    <option value="horizontal">Diagramme horizontal</option>
+                </select>
+            </div>
+
+            <div class="groupe-controle">
+                <label for="choix_tri_graph">Ordre :</label>
+                <select id="choix_tri_graph">
+                    <option value="desc">Décroissant</option>
+                    <option value="asc">Croissant</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="div-graphique" style="position: relative; height:600px; width:100%">
+            <canvas id="graphique-specialites"></canvas>
+        </div>
+
+        <button id="chartJsDownloadButton">Télécharger</button>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="{{ url_for('static', filename='js/download.js') }}"></script>
+
+        <script>
+            const donneesBrutes = {{ donnees_specialites|tojson }};
+            let monGraphique = null;
+
+            const selectDonnee = document.getElementById("choix_donnee_graph");
+            const selectType = document.getElementById("choix_type_graph");
+            const selectTri = document.getElementById("choix_tri_graph");
+
+            const memoireDonnee = sessionStorage.getItem("affichage_spe");
+            if (memoireDonnee === "moyen" || memoireDonnee === "total") {
+                selectDonnee.value = memoireDonnee;
+            }
+
+            function rendreGraphique() {
+                const donneeCible = selectDonnee.value;
+                const typeGraph = selectType.value;
+                const ordreTri = selectTri.value;
+
+                sessionStorage.setItem("affichage_spe", donneeCible);
+
+                let donneesTriees = [...donneesBrutes];
+                donneesTriees.sort((a, b) => {
+                    let valA = donneeCible === "total" ? a.total : a.moyen;
+                    let valB = donneeCible === "total" ? b.total : b.moyen;
+                    return ordreTri === "desc" ? valB - valA : valA - valB;
+                });
+
+                const labels = donneesTriees.map(d => d.specialite);
+                const valeurs = donneesTriees.map(d => donneeCible === "total" ? d.total : d.moyen);
+
+                const labelTitre = donneeCible === "total" ? "Montant Total (€)" : "Montant Moyen (€)";
+                const couleurFond = donneeCible === "total" ? "rgba(50, 119, 181, 0.6)" : "rgba(255, 153, 0, 0.6)";
+                const couleurBordure = donneeCible === "total" ? "#3277B5" : "#ff9900";
+
+                if (monGraphique) {
+                    monGraphique.destroy();
+                }
+
+                const ctx = document.getElementById("graphique-specialites").getContext("2d");
+                monGraphique = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: labelTitre,
+                            data: valeurs,
+                            backgroundColor: couleurFond,
+                            borderColor: couleurBordure,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: typeGraph === "horizontal" ? 'y' : 'x',
+                        scales: {
+                            x: { beginAtZero: true },
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            selectDonnee.addEventListener("change", rendreGraphique);
+            selectType.addEventListener("change", rendreGraphique);
+            selectTri.addEventListener("change", rendreGraphique);
+
+            rendreGraphique();
+        </script>
+    {% else %}
+        <p style="margin-top: 20px;">Aucune donnée disponible. Veuillez sélectionner une année et un territoire.</p>
+    {% endif %}
+{% endblock %}
