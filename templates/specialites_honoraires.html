@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block titre %}Montant par spécialité{% endblock %}
+{% block contenu %}
+
+    <nav class="onglets-principaux">
+        <a href="{{ url_for('honoraires.afficher_tableau') }}">Évolution sur plusieurs années</a>
+        <a href="{{ url_for('honoraires.afficher_specialites') }}" class="actif">Montant par spécialité</a>
+    </nav>
+
+    <div class="info-bulle">
+        <strong>À propos des honoraires :</strong>
+        <p>Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.</p>
+    </div>
+
+    <h2>Montant des honoraires pour chaque spécialité</h2>
+
+    <form action="{{ url_for('honoraires.afficher_specialites') }}" method="get">
+        
+        <label for="annee">Année</label>
+        <select name="annee" id="annee" required>
+            <option value="">-- Choisir --</option>
+            {% for a in range(2024, 2009, -1) %} 
+                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>{{ a }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="region">Région</label>
+        <select name="region_id" id="region" required>
+            <option value="">-- Choisir --</option>
+            {% for r in regions %}
+                <option value="{{ r.id }}" {% if request.args.get('region_id') == r.id|string %}selected{% endif %}>{{ r.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="departement">Département</label>
+        <select name="departement_id" id="departement">
+            <option value="">-- Tous les départements --</option>
+        </select>
+
+        <label for="type_honoraire">Type d'honoraire</label>
+        <select name="type_honoraire" id="type_honoraire">
+            <option value="">-- Tous les types --</option>
+            <option value="Actes" {% if request.args.get('type_honoraire') == 'Actes' %}selected{% endif %}>Actes</option>
+            <option value="Rémunérations forfaitaires" {% if request.args.get('type_honoraire') == 'Rémunérations forfaitaires' %}selected{% endif %}>Rémunérations forfaitaires</option>
+            <option value="Indemnités de déplacement" {% if request.args.get('type_honoraire') == 'Indemnités de déplacement' %}selected{% endif %}>Indemnités de déplacement</option>
+            <option value="Dépassements" {% if request.args.get('type_honoraire') == 'Dépassements' %}selected{% endif %}>Dépassements</option>
+        </select>
+
+        <button type="submit">Afficher les données</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const regionId = urlParams.get('region_id');
+            const deptId = urlParams.get('departement_id');
+
+            if (regionId && typeof chargerDepartements === "function") {
+                chargerDepartements(regionId, deptId);
+                setTimeout(() => {
+                    const selectDept = document.getElementById('departement');
+                    if(deptId && selectDept) {
+                        selectDept.value = deptId;
+                    }
+                }, 500); 
+            }
+        });
+    </script>
+
+    {% if donnees_specialites %}
+        <table id="tableau-specialites">
+            <thead>
+                <tr>
+                    <th>Spécialité</th>
+                    <th>Montant total (€)</th>
+                    <th>Montant moyen (€)</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for ligne in donnees_specialites %}
+                <tr>
+                    <td>{{ ligne.specialite }}</td>
+                    <td>{{ ligne.total | round(2) }}</td>
+                    <td>{{ ligne.moyen | round(2) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 20px;">Aucune donnée disponible. Veuillez sélectionner une année et un territoire.</p>
+    {% endif %}
+
+{% endblock %}

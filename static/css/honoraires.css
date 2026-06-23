@@ -48,10 +48,43 @@ form select {
     border-radius: 4px;
 }
 
+/* =========================================
+   3.1 NAVIGATION PRINCIPALE (NIVEAU 1)
+========================================= */
+.onglets-principaux {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #084298; 
+    padding-bottom: 0;
+}
 
+.onglets-principaux a {
+    text-decoration: none;
+    color: #495057;
+    font-size: 1.1em; 
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 8px 8px 0 0;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    transition: all 0.2s;
+}
+
+.onglets-principaux a:hover {
+    background-color: #e8f4fd;
+    color: #084298;
+}
+
+.onglets-principaux a.actif {
+    background-color: #084298;
+    color: white;
+    border-color: #084298;
+}
 
 /* =========================================
-   3. ONGLETS DE NAVIGATION
+   3.2 ONGLETS DE NAVIGATION
 ========================================= */
 .onglets-honoraires {
     margin-bottom: 20px;

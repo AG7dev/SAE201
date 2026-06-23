@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block titre %}Graphique des honoraires{% endblock %}
 {% block contenu %}
+
+    <nav class="onglets-principaux">
+        <a href="{{ url_for('honoraires.afficher_tableau') }}" class="actif">Évolution sur plusieurs années</a>
+        <a href="{{ url_for('honoraires.afficher_specialites') }}">Montant par spécialité</a>
+    </nav>
+    
     <div class="info-bulle">
         <strong>À propos des honoraires :</strong>
         <p>Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.</p>
