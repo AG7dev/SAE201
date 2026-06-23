@@ -1,4 +1,6 @@
-/* Bulle d'information */
+/* =========================================
+   1. BULLE D'INFORMATION
+========================================= */
 .info-bulle {
     background-color: #e8f4fd;
     border: 1px solid #b6d4fe;
@@ -20,7 +22,9 @@
     margin-bottom: 0;
 }
 
-/* Espacement global du formulaire */
+/* =========================================
+   2. FORMULAIRE DE RECHERCHE
+========================================= */
 form {
     background-color: #f8f9fa;
     padding: 20px;
@@ -33,7 +37,6 @@ form {
     border: 1px solid #dee2e6;
 }
 
-/* Style des labels et select */
 form label {
     font-weight: bold;
     margin-right: 5px;
@@ -45,33 +48,14 @@ form select {
     border-radius: 4px;
 }
 
-/* Style du tableau */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
 
-table th, table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
 
-table th {
-    background-color: #3277B5;
-    color: white;
-}
-
-table tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Navigation en onglets */
+/* =========================================
+   3. ONGLETS DE NAVIGATION
+========================================= */
 .onglets-honoraires {
     margin-bottom: 20px;
-    border-bottom: 2px solid #dee2e6; 
+    border-bottom: 2px solid #dee2e6; /* Ligne grise */
     padding-bottom: 0;
 }
 
@@ -100,14 +84,75 @@ table tr:hover {
     border-color: #3277B5;
 }
 
-
-nav a.actif {
-    background-color: #3277B5; 
-    color: white;
-    border-color: #3277B5;
+/* =========================================
+   4. BARRE DE CONTRÔLE (AFFICHAGE ET TRI)
+========================================= */
+.controles-tableau {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
 }
 
-/* Conteneur du graphique Chart.js */
+.groupe-controle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.groupe-controle label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.groupe-controle select {
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+}
+
+/* =========================================
+   5. TABLEAU DES DONNÉES
+========================================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #3277B5;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Classes gérées par le JavaScript pour masquer les colonnes */
+table.masquer-total .col-total {
+    display: none;
+}
+
+table.masquer-moyen .col-moyen {
+    display: none;
+}
+
+/* =========================================
+   6. GRAPHIQUE
+========================================= */
 #div-graphique {
     max-width: 800px;
     margin: 20px auto;
