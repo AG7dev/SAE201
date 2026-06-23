@@ -72,11 +72,11 @@
 
     <hr>
 
-    <nav>
+    <nav class="onglets-honoraires">
         <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Tableau</a>
-        <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Graphique</a>
+        <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}" class="actif">Graphique</a>
     </nav>
-
+    
     {% if donnees_evolution and donnees_evolution|length > 0 %}
 
         <div id="div-graphique">

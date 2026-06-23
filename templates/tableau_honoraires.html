@@ -77,12 +77,10 @@
         });
     </script>
 
-    <nav>
-        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Tableau</a>
+    <nav class="onglets-honoraires">
+        <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}" class="actif">Tableau</a>
         <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Graphique</a>
     </nav>
-
-    <hr>
 
     {% if donnees_groupees %}
         <table>

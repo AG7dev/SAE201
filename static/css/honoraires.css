@@ -68,16 +68,43 @@ table tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Navigation */
-nav {
+/* Navigation en onglets */
+.onglets-honoraires {
     margin-bottom: 20px;
+    border-bottom: 2px solid #dee2e6; 
+    padding-bottom: 0;
 }
 
-nav a {
-    margin-right: 15px;
+.onglets-honoraires a {
+    margin-right: 5px;
     text-decoration: none;
-    color: #3277B5;
+    color: #6c757d;
     font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0;
+    display: inline-block;
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    transition: background-color 0.2s;
+}
+
+.onglets-honoraires a:hover {
+    background-color: #dee2e6;
+    color: #084298;
+}
+
+.onglets-honoraires a.actif {
+    background-color: #3277B5;
+    color: white;
+    border-color: #3277B5;
+}
+
+
+nav a.actif {
+    background-color: #3277B5; 
+    color: white;
+    border-color: #3277B5;
 }
 
 /* Conteneur du graphique Chart.js */
