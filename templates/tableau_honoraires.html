@@ -50,14 +50,14 @@
         </select>
         #}
 
-        <label for="type_honoraire">Type d'honoraire</label>
-        <select name="type_honoraire" id="type_honoraire">
-            <option value="">-- Tous les types --</option>
-            <option value="Actes" {% if request.args.get('type_honoraire') == 'Actes' %}selected{% endif %}>Actes</option>
-            <option value="Rémunérations forfaitaires" {% if request.args.get('type_honoraire') == 'Rémunérations forfaitaires' %}selected{% endif %}>Rémunérations forfaitaires</option>
-            <option value="Indemnités de déplacement" {% if request.args.get('type_honoraire') == 'Indemnités de déplacement' %}selected{% endif %}>Indemnités de déplacement</option>
-            <option value="Dépassements" {% if request.args.get('type_honoraire') == 'Dépassements' %}selected{% endif %}>Dépassements</option>
-        </select>
+    <label for="type_honoraire">Type d'honoraire</label>
+    <select name="type_honoraire" id="type_honoraire">
+        <option value="">-- Tous les types --</option>
+        <option value="Actes" {% if request.args.get('type_honoraire') == 'Actes' %}selected{% endif %}>Actes</option>
+        <option value="Forfaitaires" {% if request.args.get('type_honoraire') == 'Forfaitaires' %}selected{% endif %}>Rémunérations forfaitaires</option>
+        <option value="Deplacement" {% if request.args.get('type_honoraire') == 'Deplacement' %}selected{% endif %}>Indemnités de déplacement</option>
+        <option value="Depassements" {% if request.args.get('type_honoraire') == 'Depassements' %}selected{% endif %}>Dépassements</option>
+    </select>
 
         <button type="submit">Afficher les honoraires</button>
 
