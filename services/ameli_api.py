@@ -110,14 +110,10 @@ class AmeliAPI:
     )
 
     def get_evolution_honoraires(self, profession, departement_code, type_honoraire=None):
-            """
-            Récupère l'évolution des honoraires sur plusieurs années.
-            (Pas de paramètre 'annee' ici !)
-            """
             where = (
                 f"profession_sante=\"{profession}\" AND "
                 f"departement=\"{departement_code}\""
-            ) 
+            )
 
             if type_honoraire:
                 mapping = {
@@ -127,15 +123,36 @@ class AmeliAPI:
                 valeur_reelle = mapping.get(type_honoraire, type_honoraire)
                 where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
 
-            return self._requete(
-                "honoraires-detailles",
-                {
-                    "select": "annee,montant_honoraires,montant_honoraires_moyens,type_honoraires_niveau_1",
+            resultats_totaux = []
+            offset = 0
+
+            # On fait la boucle ici au lieu de la faire dans _requete
+            while True:
+                params = {
+                    "select": "annee,montant_honoraires,montant_honoraires_moyens,type_honoraires_niveau_1", 
                     "where": where, 
                     "order_by": "annee", 
-                    "limit": 100
+                    "limit": 100,
+                    "offset": offset  # On ajoute le décalage ici
                 }
-    )
+                
+                # On utilise ta fonction _requete intacte
+                donnees = self._requete("honoraires-detailles", params)
+                
+                # Si on ne reçoit rien, on arrête
+                if not donnees:
+                    break
+                    
+                resultats_totaux.extend(donnees)
+                
+                # Si on reçoit moins de 100 lignes, c'est qu'on a atteint la fin
+                if len(donnees) < 100:
+                    break
+                    
+                # Sinon, on décale de 100 pour chercher la suite
+                offset += 100
+                
+            return resultats_totaux
      
     def _requete(self, dataset, params):
         """

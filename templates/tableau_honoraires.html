@@ -1,10 +1,23 @@
 {% extends "base.html" %}
 {% block titre %}Tableau{% endblock %}
 {% block contenu %}
+    <div style="background-color: #e8f4fd; border: 1px solid #b6d4fe; color: #084298; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 0.95em; line-height: 1.5;">
+        <strong>À propos des honoraires :</strong>
+        <p style="margin-top: 8px; margin-bottom: 8px;">
+            Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.
+        </p>
+        Pour une profession donnée :
+        <ul style="margin-top: 5px; margin-bottom: 0;">
+            <li>le <strong>« montant total »</strong> correspond aux honoraires perçus par l'ensemble des professionnels de santé libéraux ;</li>
+            <li>le <strong>« montant moyen »</strong> correspond aux honoraires perçus en moyenne par un professionnel de santé libéral.</li>
+        </ul>
+    </div>
+
     <nav>
         <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Voir en Tableau</a>
         <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Voir en Graphique</a>
     </nav>
+
 
     <form action="{{ url_for('honoraires.afficher_tableau') }}" method="get">
 
@@ -31,8 +44,10 @@
 
         <label for="annee">Année</label>
         <select name="annee" id="annee" required>
-            {% for a in range(2023, 2014, -1) %}
-                <option value="{{ a }}">{{ a }}</option>
+            {% for a in range(2023, 2009, -1) %} 
+                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>
+                    {{ a }}
+                </option>
             {% endfor %}
         </select>
 

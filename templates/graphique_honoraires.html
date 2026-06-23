@@ -1,18 +1,34 @@
 {% extends "base.html" %}
-{% block titre %}Graphique{% endblock %}
+{% block titre %}Graphique des honoraires{% endblock %}
 
 {% block contenu %}
+    <div style="background-color: #e8f4fd; border: 1px solid #b6d4fe; color: #084298; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 0.95em; line-height: 1.5;">
+        <strong>À propos des honoraires :</strong>
+        <p style="margin-top: 8px; margin-bottom: 8px;">
+            Le montant des honoraires correspond à la somme des rémunérations perçues (incluant éventuellement des dépassements). Les honoraires sont à différencier des revenus, qui sont obtenus après déduction des charges.
+        </p>
+        Pour une profession donnée :
+        <ul style="margin-top: 5px; margin-bottom: 0;">
+            <li>le <strong>« montant total »</strong> correspond aux honoraires perçus par l'ensemble des professionnels de santé libéraux ;</li>
+            <li>le <strong>« montant moyen »</strong> correspond aux honoraires perçus en moyenne par un professionnel de santé libéral.</li>
+        </ul>
+    </div>
+
     <nav>
         <a href="{{ url_for('honoraires.afficher_tableau', **request.args) }}">Voir en Tableau</a>
         <a href="{{ url_for('honoraires.afficher_graphique', **request.args) }}">Voir en Graphique</a>
     </nav>
 
+
     <form action="{{ url_for('honoraires.afficher_graphique') }}" method="get">
+
         <label for="profession">Spécialité</label>
         <select name="profession_id" id="profession" required>
             <option value="">-- Choisir --</option>
             {% for p in professions %}
-                <option value="{{ p.id }}" {% if request.args.get('profession_id') == p.id|string %}selected{% endif %}>{{ p.libelle }}</option>
+                <option value="{{ p.id }}" {% if request.args.get('profession_id') == p.id|string %}selected{% endif %}>
+                    {{ p.libelle }}
+                </option>
             {% endfor %}
         </select>
 
@@ -20,7 +36,9 @@
         <select name="region_id" id="region" required>
             <option value="">-- Choisir --</option>
             {% for r in regions %}
-                <option value="{{ r.id }}" {% if request.args.get('region_id') == r.id|string %}selected{% endif %}>{{ r.libelle }}</option>
+                <option value="{{ r.id }}" {% if request.args.get('region_id') == r.id|string %}selected{% endif %}>
+                    {{ r.libelle }}
+                </option>
             {% endfor %}
         </select>
 
@@ -29,104 +47,109 @@
             <option value="">-- Choisir une région --</option>
         </select>
 
-        <label for="annee">Année</label>
-        <select name="annee" id="annee" required>
-            {% for a in range(2023, 2014, -1) %}
-                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>{{ a }}</option>
+        <label for="annee" style="color: #6c757d;">Année</label>
+        <select name="annee" id="annee" 
+                style="pointer-events: none; background-color: #e9ecef; color: #6c757d;" 
+                title="L'année n'est pas modifiable pour le graphique d'évolution">
+            {% for a in range(2025, 2009, -1) %}
+                <option value="{{ a }}" {% if request.args.get('annee') == a|string %}selected{% endif %}>
+                    {{ a }}
+                </option>
             {% endfor %}
         </select>
 
         <label for="type_honoraire">Type d'honoraire</label>
         <select name="type_honoraire" id="type_honoraire">
             <option value="">-- Tous les types --</option>
-            <option value="Actes">Actes</option>
-            <option value="Forfaitaires">Rémunérations forfaitaires</option>
-            <option value="Deplacement">Indemnités de déplacement</option>
-            <option value="Depassements">Dépassements</option>
+            <option value="Actes" {% if request.args.get('type_honoraire') == 'Actes' %}selected{% endif %}>Actes</option>
+            <option value="Forfaitaires" {% if request.args.get('type_honoraire') == 'Forfaitaires' %}selected{% endif %}>Rémunérations forfaitaires</option>
+            <option value="Deplacement" {% if request.args.get('type_honoraire') == 'Deplacement' %}selected{% endif %}>Indemnités de déplacement</option>
+            <option value="Depassements" {% if request.args.get('type_honoraire') == 'Depassements' %}selected{% endif %}>Dépassements</option>
         </select>
 
         <button type="submit">Afficher les honoraires</button>
+
     </form>
 
     <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <hr>
-
-    {% if resultats and resultats|length > 0 %}
-        <h2>Répartition pour l'année {{ request.args.get('annee') }}</h2>
-        <canvas id="graphique_canvas"></canvas>
 
         <script>
-            const donnees = {{ resultats|tojson }};
-            new Chart(document.getElementById("graphique_canvas"), {
-                type: "bar",
-                data: {
-                    labels: ["Montant total", "Montant moyen"], 
-                    datasets: [{
-                        label: "Valeurs en €",
-                        data: [
-                            donnees[0].montant_honoraires, 
-                            donnees[0].montant_honoraires_moyens
-                        ],
-                        backgroundColor: ['#3277B5', '#FF6384'] 
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } }
+            document.addEventListener("DOMContentLoaded", function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const regionId = urlParams.get('region_id');
+                const deptId = urlParams.get('departement_id');
+
+                if (regionId && typeof chargerDepartements === "function") {
+                    chargerDepartements(regionId, deptId);
                 }
             });
-        </script>
-    {% else %}
-        <p>Aucune donnée disponible pour l'année sélectionnée.</p>
-    {% endif %}
+    </script>
 
     <hr>
 
     {% if donnees_evolution and donnees_evolution|length > 0 %}
-        <h2>Évolution des honoraires dans le temps</h2>
-        <canvas id="evolution_canvas"></canvas>
+        <h3>Évolution sur plusieurs années</h3>
 
+        <div id="div-graphique" style="max-width: 800px; margin: 20px auto;">
+            <canvas id="graphique"></canvas>
+        </div>
+
+        <button id="chartJsDownloadButton">Télécharger</button>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+        <script src="{{ url_for('static', filename='js/download.js') }}"></script>
+        
         <script>
+            const donneesBrutes = {{ donnees_evolution|tojson }};
             
-            let evolution = {{ donnees_evolution|tojson }};
-            evolution.sort((a, b) => a.annee - b.annee);
+            const donneesGroupees = {};
+            
+            donneesBrutes.forEach(d => {
+                const annee = d.annee;
+                const montant = parseFloat(d.montant_honoraires) || 0; 
+                
+                if (!donneesGroupees[annee]) {
+                    donneesGroupees[annee] = 0;
+                }
+                donneesGroupees[annee] += montant;
+            });
 
-            new Chart(document.getElementById("evolution_canvas"), {
+            const labelsAnnees = Object.keys(donneesGroupees).sort();
+            
+            const dataMontants = labelsAnnees.map(annee => donneesGroupees[annee]);
+
+            new Chart(document.getElementById("graphique"), {
                 type: "line",
                 data: {
-                    labels: evolution.map(d => d.annee),
-                    datasets: [
-                        {
-                            label: "Montant Total (€)",
-                            data: evolution.map(d => d.montant_honoraires),
-                            borderColor: "#3277B5",
-                            backgroundColor: "rgba(50, 119, 181, 0.2)",
-                            fill: true,
-                            tension: 0.3 // Rend la courbe un peu plus lisse
-                        },
-                        {
-                            label: "Montant Moyen (€)",
-                            data: evolution.map(d => d.montant_honoraires_moyens),
-                            borderColor: "#FF6384",
-                            backgroundColor: "rgba(255, 99, 132, 0.2)",
-                            fill: true,
-                            tension: 0.3
-                        }
-                    ]
+                    labels: labelsAnnees, 
+                    datasets: [{
+                        label: "Montant Total des Honoraires (€)",
+                        data: dataMontants, 
+                        borderColor: "#3277B5",
+                        backgroundColor: "rgba(50, 119, 181, 0.2)",
+                        fill: true,
+                        tension: 0.3,
+                    }],
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: { position: 'top' }
-                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: { 
+                            beginAtZero: true 
+                        }
                     }
                 }
             });
         </script>
+    {% else %}
+        {% if request.args.get('profession_id') %}
+            <p>Aucune donnée d'évolution disponible pour les critères sélectionnés.</p>
+        {% else %}
+            <p>Veuillez sélectionner une spécialité et un territoire pour afficher le graphique.</p>
+        {% endif %}
     {% endif %}
 
 {% endblock %}
