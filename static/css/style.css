@@ -476,50 +476,52 @@ footer {
     opacity: 0.8;
 }
 
-/* ==========================
-   MENU ANALYSE
-========================== */
+/* ==========================================
+   PAGE ANALYSE
+========================================== */
 
 .menu-analyse {
-    display:flex;
-    gap:15px;
-    margin:25px 0;
+    display: flex;
+    gap: 15px;
+    margin: 30px 0;
 }
-
 
 .menu-analyse button {
-
-    padding:10px 20px;
-    border:none;
-    background:#2E74B5;
-    color:white;
-    border-radius:5px;
-    cursor:pointer;
-
+    background: white;
+    border: 2px solid #2E74B5;
+    color: #2E74B5;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
 }
-
 
 .menu-analyse button:hover {
-
-    opacity:0.8;
-
+    background: #e8f1fb;
 }
 
+.menu-analyse button.onglet-actif {
+    background: #2E74B5;
+    color: white;
+}
 
 .bloc-analyse {
-
-    background-color:rgba(116,175,234,0.25);
-    border:2px solid rgb(98,88,233);
-    border-radius:10px;
-    padding:20px;
-
+    background: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-
 .cache {
+    display: none;
+}
 
-    display:none;
-
+.bloc-analyse h2 {
+    margin-top: 0;
+    color: #2E74B5;
 }
 
 /* ================= DASHBOARD ================= */
