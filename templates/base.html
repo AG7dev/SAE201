@@ -14,83 +14,125 @@
 
 <!DOCTYPE html>
 <html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block titre %}
+        Données de santé
+        {% endblock %}
+    </title>
 
-    <!-- En-tête du document : métadonnées et ressources globales -->
-    <head>
-        <meta charset="UTF-8">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 
-        <!-- Titre dynamique injecté par les templates enfants -->
-        <title>{% block titre %}Données de santé{% endblock %}</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/honoraires.css') }}">
+</head>
+<body>
+    <header class="header">
 
-        <!-- Feuille de style principale du site -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/honoraires.css') }}">
-    </head>
 
-    <body>
+        <!-- LOGO MAISON -->
+        <div class="logo-site">
 
-        <!-- ================= HEADER GLOBAL ================= -->
-        <header>
+            <a href="{{ url_for('accueil.index') }}">
+                <img 
+                    src="{{ url_for('static', filename='images/home.svg') }}"
+                alt="Accueil">
+            </a>
 
-            <!-- Titre principal affiché sur toutes les pages -->
-            <h1>Données de santé libérale</h1>
+        </div>
 
-            <!-- Navigation principale -->
-            <nav>
 
-                <!-- Lien vers la page d'accueil -->
-                <a href="{{ url_for('accueil.index') }}">Accueil</a>
-                <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
 
-                <!-- Bloc utilisateur (connexion / déconnexion) -->
-                <div id="user_login">
+        <!-- NAVIGATION -->
+        <nav class="navigation">
 
-                    <!-- Icône utilisateur -->
-                    <img src="{{ url_for('static', filename='images/login_user_icon.svg') }}"
-                         alt="icone d'utilisateur"
-                         height="80" width="80">
+            <a href="{{ url_for('accueil.index') }}">
+                Accueil
+            </a>
 
-                    <!-- Affichage conditionnel selon l'état de connexion -->
-                    {% if current_user.id %}
+            <a href="{{ url_for('analyse.index') }}">
+                Analyse
+            </a>
 
-                        <!-- Identité de l'utilisateur connecté -->
-                        {{ current_user.id }}
+            <a href="{{ url_for('dashboard.dashboard') }}">
+                Dashboard
+            </a>
 
-                        <!-- Action de déconnexion -->
-                        <a href="{{ url_for('login.logout') }}">Se deconnecter</a>
+            <a href="{{ url_for('comparaison.afficher') }}">
+                Comparaison
+            </a>
 
-                    {% else %}
+        </nav>
 
-                        <!-- Lien de connexion si utilisateur non authentifié -->
-                        <a href="{{ url_for('login.login') }}">Se connecter</a>
 
-                    {% endif %}
-                </div>
 
-                <!-- Accès conditionnel au panneau administrateur -->
-                {% if current_user.permissions == "admin" %}
-                    <a href="{{ url_for('about.adminPanel') }}">Admin panel</a>
-                {% endif %}
-                
+        <!-- UTILISATEUR -->
+        <div class="user-zone">
 
-            </nav>
-        </header>
+            <img 
+                src="{{ url_for('static', filename='images/login_user_icon.svg') }}"
+                alt="Utilisateur"
+            height="45">
 
-        <!-- ================= CONTENU VARIABLE ================= -->
-        <main>
-            {% block contenu %}{% endblock %}
-        </main>
 
-        <!-- ================= FOOTER GLOBAL ================= -->
-        <footer>
+            {% if current_user.id %}
 
-            <!-- Informations de projet + lien "à propos" -->
-            <p>
-                SAE2.01 · BUT Informatique · IUT Créteil-Vitry ·
-                <a href="{{ url_for('about.about') }}">A propos de nous</a>
-            </p>
+                <span>
+                    {{ current_user.id }}
+                </span>
 
-        </footer>
+                <a href="{{ url_for('login.logout') }}">
+                    Déconnexion
+                </a>
 
-    </body>
+
+            {% else %}
+
+                <a href="{{ url_for('login.login') }}">
+                    Connexion
+                </a>
+
+                <a href="{{ url_for('login.createUser') }}">
+                    Créer un compte
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </header>
+
+    <main>
+
+    {% block contenu %}
+
+    {% endblock %}
+
+    </main>
+
+    <footer>
+        <img 
+            class="footer-logo"
+            src="{{ url_for('static', filename='images/ameliAPI.png') }}"
+            alt="ameli API">
+
+        <div class="footer-separator"></div>
+
+        <nav class="footer-links">
+            <a href="{{ url_for('about.about') }}">
+                À propos
+            </a>
+
+            <a href="#">
+                Mentions légales
+            </a>
+
+            <a href="#">
+                Contact
+            </a>
+        </nav>
+    </footer>
+</body>
 </html>

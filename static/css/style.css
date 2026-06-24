@@ -360,3 +360,105 @@ footer a {
     color: #333;
 
 }
+
+/* ==========================================
+   NOUVEAU HEADER / FOOTER
+========================================== */
+
+.header {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #2E74B5;
+    padding: 15px 30px;
+
+    color: white;
+}
+
+
+.logo-site img {
+
+    height: 45px;
+
+}
+
+
+.navigation {
+
+    display: flex;
+    gap: 25px;
+
+}
+
+
+.navigation a {
+
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+
+}
+
+
+.navigation a:hover {
+
+    text-decoration: underline;
+
+}
+
+
+
+.user-zone {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+
+
+.user-zone a {
+
+    color:white;
+    text-decoration:none;
+
+}
+
+
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+
+footer {
+    display: flex;
+    align-items: center;
+    padding: 30px 50px;
+    background-color: #005aaa; /* mets ici la couleur exacte de ton header */
+}
+
+.footer-logo {
+    width: 180px;
+    height: auto;
+}
+
+.footer-separator {
+    height: 70px;
+    width: 2px;
+    background-color: white;
+    margin: 0 30px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+    margin-left: auto; /* pousse les liens à droite */
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: white;
+}
