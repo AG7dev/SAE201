@@ -15,20 +15,20 @@ import pandas as pd
 from flask import url_for
 import os
 
-def exportToCsv(data:list):
-    return None
+def exportToCsv(data: list, filename: str = "donnees.csv"):
     """
     Exporte une liste de données vers un fichier CSV.
 
     Args:
         data (list): liste de dictionnaires issue d'une requête API.
+        filename (str): nom du fichier CSV généré dans static/csv/.
 
     Returns:
         None
     """
     try:
         df = pd.DataFrame(data)
-        df.to_csv(os.path.join("static", "csv", "donnees.csv"), index=False)
+        df.to_csv(os.path.join("static", "csv", filename), index=False)
     except (TypeError, OSError) as e:
         print("[data_utils.py] Erreur dans la fonction exportToCsv()\n", e)
         
