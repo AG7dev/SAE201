@@ -19,7 +19,11 @@ from flask import Blueprint, render_template, request, current_app
 from models.db import Session
 from models.dimensions import ProfessionSante, Region, Departement
 
-from services.comparaison_service import comparer_effectifs
+from services.comparaison_service import (
+    comparer_effectifs,
+    comparer_honoraires,
+    comparer_prescriptions
+)
 
 from utils.constants import DATASETS_COMPARAISON
 
@@ -353,7 +357,6 @@ def afficher():
 
         if dataset == "effectifs":
 
-
             resultat = comparer_effectifs(
                 current_app.api_ameli,
 
@@ -366,11 +369,53 @@ def afficher():
                 annee_debut,
                 annee_fin,
 
+                f"{region1.libelle} - {dept1.libelle} - {prof1.libelle}",
+
+                f"{region2.libelle} - {dept2.libelle} - {prof2.libelle}",
+
+                rafraichir=rafraichir_force
+            )
+
+
+        elif dataset == "honoraires":
+
+            resultat = comparer_honoraires(
+                current_app.api_ameli,
+
+                prof1,
+                dept1,
+
+                prof2,
+                dept2,
+
+                annee_debut,
+                annee_fin,
 
                 f"{region1.libelle} - {dept1.libelle} - {prof1.libelle}",
 
                 f"{region2.libelle} - {dept2.libelle} - {prof2.libelle}",
 
+                rafraichir=rafraichir_force
+            )
+
+
+        elif dataset == "prescriptions":
+
+            resultat = comparer_prescriptions(
+                current_app.api_ameli,
+
+                prof1,
+                dept1,
+
+                prof2,
+                dept2,
+
+                annee_debut,
+                annee_fin,
+
+                f"{region1.libelle} - {dept1.libelle} - {prof1.libelle}",
+
+                f"{region2.libelle} - {dept2.libelle} - {prof2.libelle}",
 
                 rafraichir=rafraichir_force
             )
@@ -378,12 +423,10 @@ def afficher():
 
         else:
 
-
             return render_template(
                 "erreur.html",
                 message="Dataset non disponible."
             ), 400
-
 
 
         # ==========================

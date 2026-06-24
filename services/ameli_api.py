@@ -82,43 +82,6 @@ class AmeliAPI:
         "order_by": "annee", "limit": 100},
         )
             
-    
-
-    def get_honoraires(self, annee, profession, departement_code, type_honoraire=None) :
-        """
-        Récupère les honoraires pour une profession, un département et une année.
-
-        Args:
-            annee (int): année de référence.
-            profession (str): libellé de la profession.
-            departement_code (str): code du département.
-            type_honoraire (str, optional): type d'honoraire spécifique.
-
-        Returns:
-            list: liste de dictionnaires contenant les détails des honoraires.
-        """
-        where = (
-        f"profession_sante=\"{profession}\" AND "
-        f"departement=\"{departement_code}\" AND "
-        f"year(annee)={annee}"
-        )
-
-        if type_honoraire:
-        
-            mapping = {
-                "Depassements": "Dépassements",
-                "Deplacement": "Indemnités de déplacement"
-            }
-            valeur_reelle = mapping.get(type_honoraire, type_honoraire)
-            where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
-
-        print(f"URL finale : {self.BASE_URL}/honoraires-detailles/records?select=...&where={where}")
-        return self._requete(
-        "honoraires-detailles",
-        {"select": "annee,montant_honoraires,montant_honoraires_moyens, type_honoraires_niveau_1", "where": where, "limit": 100},
-
-    
-    )
 
     def get_evolution_honoraires(self, profession, departement_code, type_honoraire=None):
             """

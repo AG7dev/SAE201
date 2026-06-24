@@ -278,10 +278,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <hr>
 
-<canvas id="comparaisonChart"></canvas>
+<div id="div-graphique">
+    <canvas id="comparaisonChart"></canvas>
+</div>
 
+<button id="chartJsDownloadButton">Télécharger</button>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Script local pour la gestion du téléchargement -->
+<script src="{{ url_for('static', filename='js/download.js') }}"></script>
 
 <script>
 
