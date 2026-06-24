@@ -17,7 +17,7 @@ Ce module gère :
 from flask import Blueprint, render_template, request, current_app
 
 from models.db import Session
-from models.dimensions import ProfessionSante, Departement
+from models.dimensions import ProfessionSante, Region, Departement
 
 from services.comparaison_service import comparer_effectifs
 
@@ -33,6 +33,7 @@ bp_comparaison = Blueprint(
 
 @bp_comparaison.route("/comparaison")
 def afficher():
+
     """
     Affiche la page de comparaison.
 
@@ -40,16 +41,24 @@ def afficher():
 
     Cas A :
         Aucun formulaire soumis.
-        -> affichage des listes professions/départements/datasets.
+        -> affichage des listes professions/régions/datasets.
+        -> les départements sont chargés dynamiquement par JavaScript.
 
     Cas B :
         Formulaire soumis.
         -> récupération des données et génération du graphique.
     """
-    # Récupération des paramètres envoyés dans l'URL
+
+
+    # ==========================
+    # Récupération des paramètres
+    # ==========================
+
+
     dataset = request.args.get(
         "dataset"
     )
+
 
     profession1_id = request.args.get(
         "profession1_id",
@@ -61,6 +70,18 @@ def afficher():
         type=int
     )
 
+
+    region1_id = request.args.get(
+        "region1_id",
+        type=int
+    )
+
+    region2_id = request.args.get(
+        "region2_id",
+        type=int
+    )
+
+
     departement1_id = request.args.get(
         "departement1_id",
         type=int
@@ -70,6 +91,7 @@ def afficher():
         "departement2_id",
         type=int
     )
+
 
     annee_debut = request.args.get(
         "annee_debut",
@@ -81,15 +103,23 @@ def afficher():
         type=int
     )
 
+
     rafraichir_force = (
         request.args.get("force_refresh") == "1"
     )
 
+
     session = Session()
+
 
     try:
 
-        # Chargement des données nécessaires au formulaire
+
+        # ==========================
+        # Données du formulaire
+        # ==========================
+
+
         professions = (
             session.query(ProfessionSante)
             .order_by(
@@ -98,90 +128,132 @@ def afficher():
             .all()
         )
 
-        departements = (
-            session.query(Departement)
+
+        regions = (
+            session.query(Region)
             .order_by(
-                Departement.libelle
+                Region.libelle
             )
             .all()
         )
 
+
         # ==========================
-        # CAS A : premier affichage
+        # Année unique
         # ==========================
+
+        if annee_debut and annee_fin is None:
+
+            annee_fin = annee_debut
+
+
+
+        # ==========================
+        # CAS A :
+        # formulaire incomplet
+        # ==========================
+
 
         if not all([
             dataset,
             profession1_id,
             profession2_id,
+            region1_id,
+            region2_id,
             departement1_id,
             departement2_id,
-            annee_debut,
-            annee_fin
+            annee_debut
         ]):
 
+
             return render_template(
                 "comparaison.html",
 
                 professions=professions,
-                departements=departements,
+                regions=regions,
 
                 datasets=DATASETS_COMPARAISON,
 
-                # Conservation des choix
+
                 dataset_selectionne=dataset,
+
 
                 profession1_id=profession1_id,
                 profession2_id=profession2_id,
 
+
+                region1_id=region1_id,
+                region2_id=region2_id,
+
+
                 departement1_id=departement1_id,
                 departement2_id=departement2_id,
+
 
                 annee_debut=annee_debut,
                 annee_fin=annee_fin,
 
+
                 resultat=None,
 
-                # Message affiché dans le template
+
                 erreur=(
-                    "Veuillez renseigner tous les champs. "
-                    "Utilisez la même année de début et de fin "
-                    "pour afficher les informations sur une seule année."
+                    "Veuillez renseigner tous les champs."
                 )
             )
-        
-        # Vérification cohérence des années
+
+
+
+        # ==========================
+        # Vérification années
+        # ==========================
+
+
         if annee_debut > annee_fin:
 
+
             return render_template(
                 "comparaison.html",
 
                 professions=professions,
-                departements=departements,
+                regions=regions,
 
                 datasets=DATASETS_COMPARAISON,
 
+
                 dataset_selectionne=dataset,
+
 
                 profession1_id=profession1_id,
                 profession2_id=profession2_id,
 
+
+                region1_id=region1_id,
+                region2_id=region2_id,
+
+
                 departement1_id=departement1_id,
                 departement2_id=departement2_id,
+
 
                 annee_debut=annee_debut,
                 annee_fin=annee_fin,
 
+
                 resultat=None,
 
+
                 erreur=(
-                    "L'année de début doit être inférieure ou égale "
-                    "à l'année de fin."
+                    "L'année de début doit être inférieure "
+                    "ou égale à l'année de fin."
                 )
             )
-        
+
+
+
         # ==========================
-        # CAS B : comparaison demandée
+        # CAS B :
+        # comparaison
         # ==========================
 
 
@@ -190,9 +262,22 @@ def afficher():
             profession1_id
         )
 
+
         prof2 = session.get(
             ProfessionSante,
             profession2_id
+        )
+
+
+        region1 = session.get(
+            Region,
+            region1_id
+        )
+
+
+        region2 = session.get(
+            Region,
+            region2_id
         )
 
 
@@ -201,10 +286,17 @@ def afficher():
             departement1_id
         )
 
+
         dept2 = session.get(
             Departement,
             departement2_id
         )
+
+
+
+        # ==========================
+        # Vérification objets
+        # ==========================
 
 
         if not prof1 or not prof2:
@@ -215,6 +307,16 @@ def afficher():
             ), 404
 
 
+
+        if not region1 or not region2:
+
+            return render_template(
+                "erreur.html",
+                message="Région inconnue."
+            ), 404
+
+
+
         if not dept1 or not dept2:
 
             return render_template(
@@ -222,12 +324,17 @@ def afficher():
                 message="Département inconnu."
             ), 404
 
-        # Sélection du service selon le dataset
+
+
+        # ==========================
+        # Service comparaison
+        # ==========================
+
+
         if dataset == "effectifs":
 
 
             resultat = comparer_effectifs(
-
                 current_app.api_ameli,
 
                 prof1,
@@ -239,52 +346,76 @@ def afficher():
                 annee_debut,
                 annee_fin,
 
-                # Légendes du graphique
-                f"{dept1.libelle} - {prof1.libelle}",
 
-                f"{dept2.libelle} - {prof2.libelle}",
+                f"{region1.libelle} - {dept1.libelle} - {prof1.libelle}",
+
+                f"{region2.libelle} - {dept2.libelle} - {prof2.libelle}",
+
 
                 rafraichir=rafraichir_force
             )
 
+
         else:
+
 
             return render_template(
                 "erreur.html",
                 message="Dataset non disponible."
             ), 400
 
-        # Retour vers le template
+
+
+        # ==========================
+        # Retour graphique
+        # ==========================
+
+
         return render_template(
+
             "comparaison.html",
+
 
             professions=professions,
 
-            departements=departements,
+            regions=regions,
+
 
             datasets=DATASETS_COMPARAISON,
 
 
-            # Valeurs conservées dans le formulaire
             dataset_selectionne=dataset,
+
 
             profession1_id=profession1_id,
             profession2_id=profession2_id,
 
+
+            region1_id=region1_id,
+            region2_id=region2_id,
+
+
             departement1_id=departement1_id,
             departement2_id=departement2_id,
 
-            # Données graphiques
+
             resultat=resultat
         )
 
+
+
     except Exception as e:
+
+
         print(e)
+
 
         return render_template(
             "erreur.html",
             message=str(e)
         ), 500
+
+
 
     finally:
 
