@@ -27,17 +27,19 @@ L'application permet d'exploiter des données de l'Assurance Maladie à travers 
 
 ## Technologies utilisées
 
-- Python 3
-- Flask 3
-- SQLAlchemy
-- Jinja2
-- HTML5
-- CSS3
-- JavaScript
-- AJAX / Fetch API
-- Chart.js
-- MySQL
-- Alwaysdata
+|Nom|Fonction|
+|:-:|:-:|
+|Python 3||
+|Flask 3||
+|SQLAlchemy||
+|Jinja2||
+|HTML5||
+|CSS3||
+|JavaScript||
+|AJAX / Fetch API||
+|Chart.js||
+|MySQL||
+|Alwaysdata||
 
 ---
 
@@ -45,55 +47,92 @@ L'application permet d'exploiter des données de l'Assurance Maladie à travers 
 
 ## Architecture de l'application
 
+---
+
 ```mermaid
-flowchart LR
-
-    U[Utilisateur]
-
-    subgraph Frontend
-        V[Templates Jinja2]
-        CJS[Chart.js]
-        AJAX[AJAX / Fetch API]
+---
+config:
+  layout: elk
+---
+graph TB
+    subgraph Configuration["Configuration"]
+        App["app.py<br/>Application Flask principale"]
+        Config["config.py<br/>Paramètres et constantes"]
+        WSGI["wsgi.py<br/>Interface WSGI (déploiement)"]
+        Req["requirements.txt<br/>Dépendances Python"]
     end
 
-    subgraph Flask
-        APP[app.py]
-
-        subgraph Controllers
-            ACC[accueil.py]
-            EFF[effectifs.py]
-            API[api.py]
-        end
-
-        subgraph Services
-            AMELI[ameli_api.py]
-        end
-
-        subgraph Models
-            DB[db.py]
-            DIM[dimensions.py]
-        end
+    subgraph Modèle["Couche Modèle"]
+        DB["models/db.py<br/>Connexion et gestion de la base de données"]
+        Dimensions["models/dimensions.py<br/>Classes des tables correspondantes a celle de la base de données (dimensions)"]
     end
 
-    MYSQL[(Base MySQL SAE 2.04)]
+    subgraph Service["Couche Services"]
+        AmeliAPI["services/ameli_api.py<br/>Client API externe (Ameli)"]
+    end
 
-    U --> V
+    subgraph Contrôleur["Couche Contrôleurs"]
+        AccueilCtrl["controllers/accueil.py<br/>Routes : Accueil"]
+        EffectifsCtrl["controllers/effectifs.py<br/>Routes : Effectifs"]
+        APICtrl["controllers/api.py<br/>Endpoints API"]
+    end
 
-    V --> ACC
-    V --> EFF
+    subgraph Vue["Couche Vues"]
+        BaseHTML["templates/base.html<br/>Template principal"]
+        AccueilHTML["templates/accueil.html<br/>Page d’accueil"]
+        EffectifsHTML["templates/effectifs.html<br/>Page des effectifs"]
+        ComparaisonHTML["templates/comparaison.html<br/>Page de comparaison"]
+    end
 
-    AJAX --> API
+    subgraph Statique["Fichiers statiques"]
+        CSS["static/css/<br/>Feuilles de style"]
+        JS["static/js/<br/>Scripts JavaScript"]
+        Images["static/images/<br/>Images"]
+    end
 
-    ACC --> DIM
-    EFF --> DIM
-    API --> DIM
+    %% Liaisons entre couches
+    App -->|initialise| Contrôleur
+    App -->|charge| Vue
+    Config -->|configure| App
+    WSGI -->|sert| App
+    Req -->|liste| Config
 
-    DIM --> DB
-    DB --> MYSQL
+    AccueilCtrl -->|interroge| Modèle
+    EffectifsCtrl -->|interroge| Modèle
+    APICtrl -->|interroge| Modèle
 
-    API --> CJS
+    AccueilCtrl -->|appelle| AmeliAPI
+    EffectifsCtrl -->|appelle| AmeliAPI
 
-    AMELI --> API
+    DB -->|gère| Dimensions
+    AmeliAPI -->|alimente| Modèle
+
+    AccueilCtrl -->|rend| AccueilHTML
+    EffectifsCtrl -->|rend| EffectifsHTML
+    EffectifsCtrl -->|rend| ComparaisonHTML
+    AccueilHTML -->|hérite| BaseHTML
+    EffectifsHTML -->|hérite| BaseHTML
+    ComparaisonHTML -->|hérite| BaseHTML
+
+    Vue -->|utilise| Statique
+    BaseHTML -->|importe| CSS
+    BaseHTML -->|importe| JS
+    BaseHTML -->|affiche| Images
+
+    %% Styles de groupe
+    classDef configStyle stroke:#38bdf8,fill:#f0f9ff
+    classDef modelStyle stroke:#818cf8,fill:#eef2ff
+    classDef serviceStyle stroke:#4ade80,fill:#f0fdf4
+    classDef controllerStyle stroke:#fb923c,fill:#fff7ed
+    classDef viewStyle stroke:#a78bfa,fill:#f5f3ff
+    classDef staticStyle stroke:#facc15,fill:#fefce8
+
+    class App,Config,WSGI,Req configStyle
+    class DB,Dimensions modelStyle
+    class AmeliAPI serviceStyle
+    class AccueilCtrl,EffectifsCtrl,APICtrl controllerStyle
+    class BaseHTML,AccueilHTML,EffectifsHTML,ComparaisonHTML viewStyle
+    class CSS,JS,Images staticStyle
 ```
 
 ---
@@ -102,11 +141,13 @@ flowchart LR
 
 ### Consultation des données
 
-- Sélection d'une région
-- Sélection d'un département
-- Affichage des effectifs
-- Affichage des honoraires
-- Consultation des indicateurs disponibles
+Consultation sur les jeux de données suivants:
+
+- Effectifs par spécialité, département et année
+- Montant des prescription par spécialité, département et année
+- Effectifs par spécialité, département et année
+- Un dashboard qui affiche un ensemble d'information
+- Une page permettent la comparaison entre deux jeux de données
 
 ### Cascade AJAX
 
@@ -123,12 +164,12 @@ Lorsqu'une région est sélectionnée :
 - Évolution des effectifs dans le temps
 - Affichage dynamique des données
 
-#### Diagramme circulaire
+#### Diagramme en bar
 
-- Répartition des honoraires
-- Analyse des catégories
+- Comparaison entre deux jeux de données
+- Affichage
 
-#### Comparaison multi-séries
+#### Carte choroplèthe
 
 - Comparaison entre deux territoires
 - Affichage simultané sur un même graphique
@@ -158,6 +199,14 @@ Annee,Effectif
 
 ---
 
+### Export PDF
+
+La majorité des graphes peuvent être exporté au format pdf
+
+### Création d'utilisateur
+
+L'utilisateur peut créer un compte sur le site, ainsi il peut remplir un formulaire de satisfaction sur le site, les administrateurs peuvent alors consulter ces formulaires et gérer les utilisateurs
+
 ## Installation
 
 ### Cloner le projet
@@ -165,22 +214,6 @@ Annee,Effectif
 ```bash
 git clone <url-du-projet>
 cd SAE201-code
-```
-
-### Créer un environnement virtuel
-
-Linux / MacOS :
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-Windows :
-
-```bash
-python -m venv venv
-venv\Scripts\activate
 ```
 
 ### Installer les dépendances
@@ -220,51 +253,7 @@ L'application sera accessible à l'adresse :
 http://localhost:5000
 ```
 
----
-
-## Déploiement Alwaysdata
-
-### Préparation
-
-- Créer un environnement virtuel
-- Installer les dépendances
-- Configurer les variables d'environnement
-- Ajouter le fichier WSGI
-
-### Exemple de fichier wsgi.py
-
-```python
-from app import app
-
-application = app
-```
-
-### Configuration du site
-
-- Répertoire de l'application : `/www/sae201_xx`
-- Interpréteur Python : `venv/bin/python`
-- Fichier WSGI : `wsgi.py`
-
----
-
-## Difficultés rencontrées
-
-- Mise en place de l'architecture MVC
-- Gestion des routes JSON
-- Communication AJAX
-- Création des graphiques Chart.js
-- Déploiement sur Alwaysdata
-
----
-
-## Améliorations possibles
-
-- Authentification utilisateur
-- Export PDF
-- Tableau de bord avancé
-- Filtres supplémentaires
-- Responsive Design complet
-- Mise en cache des données
+> Egalement l'application sera en production pour un temps limité a cette adresse
 
 ---
 
@@ -302,13 +291,14 @@ application = app
 
 Projet réalisé dans le cadre de la SAE 2.01 du BUT Informatique.
 
+- BODILIS Macéo
+- GOBALASAMY Arvin
+- GONET--PETIT Clément
+- SETTOURAMAN Arthy
+
 Année universitaire : 2025-2026
 
 IUT de Créteil-Vitry
 Département Informatique
 
 ---
-
-## Licence
-
-Projet pédagogique réalisé dans le cadre de la formation BUT Informatique.
