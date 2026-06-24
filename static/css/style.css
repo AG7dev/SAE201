@@ -4,7 +4,6 @@
   ==================================================
 */
 
-/* Fichier CSS principal pour l'application web de la SAE 2.01 */
 
 body {
     font-family: "Segoe UI", sans-serif;
@@ -38,8 +37,7 @@ main {
 }
 
 .horizontal p {
-    margin-top: auto;
-    margin-bottom: auto;
+    margin: auto 0;
 }
 
 #logo-UPEC {
@@ -51,14 +49,6 @@ main {
     height: 335px; 
     width: 475px;
     margin:auto;
-}
-
-.wrapper > div {
-  border: 2px solid rgb(98, 88, 233);
-  border-radius: 5px;
-  background-color: rgba(116, 175, 234, 0.5);
-  padding: 1em;
-  color: rgb(98, 88, 233);
 }
 
 .wrapper {
@@ -161,8 +151,6 @@ canvas {
 /* Gestion des mots longs */
 textarea,
 table,
-td,
-th,
 code,
 pre,
 samp {
@@ -208,18 +196,6 @@ thead {
 
 tbody tr:nth-child(even) {
     background-color: #f2f2f2;
-}
-
-/* Pied de page */
-footer {
-    text-align: center;
-    padding: 1rem;
-    color: #777;
-    border-top: 1px solid #ddd;
-}
-
-footer a {
-    color: #777;
 }
 
 /* CSS lié au slider année pour la page de comparaison */
@@ -575,4 +551,42 @@ footer {
 .btn-primary:hover,
 .btn-refresh:hover {
     opacity:0.85;
+}
+
+/* Page de contact */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+.contact-form label {
+    font-weight: bold;
+}
+
+.contact-form .btn-primary {
+    width: fit-content;
+    margin-top: 10px;
+}
+
+/* Page À propos */
+#aboutTable td:first-child {
+    min-width: 220px;
+    white-space: nowrap;
+    hyphens: none;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
 }

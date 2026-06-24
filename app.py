@@ -25,6 +25,7 @@ from controllers.comparaison import bp_comparaison
 from controllers.prescriptions import bp_prescriptions
 from controllers.login import bp_login
 from controllers.about import bp_about
+from controllers.footer import bp_footer
 from controllers.honoraires import bp_honoraires
 from controllers.dashboard import bp_dashboard
 from flask_login import LoginManager
@@ -61,6 +62,7 @@ app.register_blueprint(bp_effectifs)
 app.register_blueprint(bp_prescriptions)
 app.register_blueprint(bp_login)
 app.register_blueprint(bp_about)
+app.register_blueprint(bp_footer)
 app.register_blueprint(bp_honoraires)
 app.register_blueprint(bp_comparaison)
 app.register_blueprint(bp_dashboard)

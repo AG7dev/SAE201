@@ -10,10 +10,9 @@
 
 {% extends "base.html" %}
 
-{% block titre  %}A propos{% endblock %}
+{% block titre  %}À propos{% endblock %}
 
 {% block contenu %}
-
     {% if option == "about" %}
     <!-- Affichage des informations "à propos" -->
     <table id="aboutTable">
@@ -54,7 +53,7 @@
                     {% if current_user.id %}
                         <a href="{{ url_for('about.form') }}">Remplir un formulaire</a>
                     {% else %}
-                        <p>Vous devez être connecté !</p>
+                        <p>Référez vous à la page de contact</p>
                     {% endif %}
                 </td>
             </tr>
@@ -62,7 +61,7 @@
     </table>
 
     {% elif option == "form" %}
-    <h2>Formulaire de contact</h2>
+    <h2>Formulaire de satisfaction</h2>
 
     <form method="POST">
         <table>
@@ -168,5 +167,4 @@
             </script>
         {% endfor %}
     {% endwith %}
-
 {% endblock %}

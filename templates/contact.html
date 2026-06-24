@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block titre %}Contact{% endblock %}
+
+{% block contenu %}
+
+<div class="info-bulle">
+
+    <h2>Contact</h2>
+
+    <p>
+        Une question, une remarque ou un retour concernant l'application ?
+        Vous pouvez nous contacter via ce formulaire.
+    </p>
+
+    <form method="post" class="contact-form">
+
+        <label for="nom">
+            Nom
+        </label>
+
+        <input 
+            type="text"
+            id="nom"
+            name="nom"
+            placeholder="Votre nom"
+            required
+        >
+
+
+        <label for="email">
+            Email
+        </label>
+
+        <input 
+            type="email"
+            id="email"
+            name="email"
+            placeholder="exemple@email.com"
+            required
+        >
+
+
+        <label for="message">
+            Message
+        </label>
+
+        <textarea
+            id="message"
+            name="message"
+            rows="6"
+            placeholder="Votre message..."
+            required></textarea>
+
+
+        <button type="submit" class="btn-primary">
+            Envoyer
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
