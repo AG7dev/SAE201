@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block titre %}Tableau de bord Honoraires{% endblock %}
+{% block titre %}Honoraires{% endblock %}
 {% block contenu %}
     <!-- Formulaire pour actualiser les données, en conservant les filtres sélectionnés -->
     <div style="margin-bottom: 20px;">
@@ -29,7 +29,7 @@
             <div class="groupe-controle">
                 <label for="choix_affichage_evo">Affichage :</label>
                 <select id="choix_affichage_evo">
-                    <option value="les_deux">Montant Total et Moyen (Tableau)</option>
+                    <option value="les_deux">Montant Total et Moyen</option>
                     <option value="total">Montant Total uniquement</option>
                     <option value="moyen">Montant Moyen uniquement</option>
                 </select>
@@ -83,11 +83,42 @@
                     data: {
                         labels: labelsEvo, 
                         datasets: [
-                            { label: "Montant Total (€)", data: labelsEvo.map(a => donneesEvo[a].total), borderColor: "#3277B5", backgroundColor: "rgba(50, 119, 181, 0.2)", fill: true, tension: 0.3 },
-                            { label: "Montant Moyen (€)", data: labelsEvo.map(a => donneesEvo[a].moyen), borderColor: "#ff9900", backgroundColor: "rgba(255, 153, 0, 0.2)", fill: true, tension: 0.3 }
+                            {
+                                label: "Montant Total (€)",
+                                data: labelsEvo.map(a => donneesEvo[a].total),
+                                yAxisID: 'yTotal', 
+                                borderColor: "#3277B5",
+                                backgroundColor: "rgba(50, 119, 181, 0.2)",
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: "Montant Moyen (€)",
+                                data: labelsEvo.map(a => donneesEvo[a].moyen),
+                                yAxisID: 'yMoyen', 
+                                borderColor: "#ff9900",
+                                backgroundColor: "rgba(255, 153, 0, 0.2)",
+                                fill: true,
+                                tension: 0.3
+                            }
                         ]
                     },
-                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                    options: {
+                        responsive: true,
+                        scales: {
+                            yTotal: {
+                                type: 'linear',
+                                position: 'left',
+                                title: { display: true, text: 'Montant Total (€)' }
+                            },
+                            yMoyen: {
+                                type: 'linear',
+                                position: 'right', 
+                                grid: { drawOnChartArea: false }, 
+                                title: { display: true, text: 'Montant Moyen (€)' }
+                            }
+                        }
+                    }
                 });
 
                 const selectAffichageEvo = document.getElementById("choix_affichage_evo");
@@ -100,13 +131,11 @@
                     if (choix === "total") tableauEvo.classList.add("masquer-moyen");
                     if (choix === "moyen") tableauEvo.classList.add("masquer-total");
 
-                    if (choix === "les_deux" || choix === "total") {
-                        graphEvo.setDatasetVisibility(0, true);
-                        graphEvo.setDatasetVisibility(1, false);
-                    } else if (choix === "moyen") {
-                        graphEvo.setDatasetVisibility(0, false);
-                        graphEvo.setDatasetVisibility(1, true);
-                    }
+                    graphEvo.setDatasetVisibility(0, (choix === "total" || choix === "les_deux"));
+                    graphEvo.setDatasetVisibility(1, (choix === "moyen" || choix === "les_deux"));
+                    
+                    graphEvo.options.scales.yTotal.display = (choix === "total" || choix === "les_deux");
+                    graphEvo.options.scales.yMoyen.display = (choix === "moyen" || choix === "les_deux");
                     graphEvo.update();
                 });
 
@@ -140,7 +169,7 @@
                 <select id="choix_donnee_spe">
                     <option value="total">Montant Total uniquement</option>
                     <option value="moyen">Montant Moyen uniquement</option>
-                    <option value="les_deux">Montant Total et Moyen (Tableau)</option>
+                    <option value="les_deux">Montant Total et Moyen (Tableau uniquement)</option>
                 </select>
             </div>
             <div class="groupe-controle">
