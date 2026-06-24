@@ -81,8 +81,20 @@ class AmeliAPI:
         {"select": "annee,effectif,densite", "where": where,
         "order_by": "annee", "limit": 100},
         )
+            
 
     def get_evolution_honoraires(self, profession, departement_code, type_honoraire=None):
+            """
+            Récupère l'évolution des honoraires sur plusieurs années pour une profession et un département.
+
+            Args:
+                profession (str): libellé de la profession.
+                departement_code (str): code du département.
+                type_honoraire (str, optional): type d'honoraire spécifique.
+
+            Returns:
+                list: données d'évolution triées par année.
+            """
             where = (
                 f"profession_sante=\"{profession}\" AND "
                 f"departement=\"{departement_code}\""
@@ -99,35 +111,41 @@ class AmeliAPI:
             resultats_totaux = []
             offset = 0
 
-            # On fait la boucle ici au lieu de la faire dans _requete
             while True:
                 params = {
                     "select": "annee,montant_honoraires,montant_honoraires_moyens,type_honoraires_niveau_1", 
                     "where": where, 
                     "order_by": "annee", 
                     "limit": 100,
-                    "offset": offset  # On ajoute le décalage ici
+                    "offset": offset  
                 }
                 
-                # On utilise la fonction _requete intacte
                 donnees = self._requete("honoraires-detailles", params)
                 
-                # Si on ne reçoit rien, on arrête
                 if not donnees:
                     break
                     
                 resultats_totaux.extend(donnees)
                 
-                # Si on reçoit moins de 100 lignes, c'est qu'on a atteint la fin
                 if len(donnees) < 100:
                     break
-                    
-                # Sinon, on décale de 100 pour chercher la suite
+               
                 offset += 100
                 
             return resultats_totaux
     
     def get_specialites(self, annee, territorio, type_honoraire=None):
+        """
+        Récupère et regroupe les honoraires par spécialité pour un territoire et une année donnés.
+
+        Args:
+            annee (int): année de référence.
+            territorio (str): code du département ou identifiant du territoire.
+            type_honoraire (str, optional): type d'honoraire spécifique.
+
+        Returns:
+            list: liste de dictionnaires regroupés par spécialité, triée par montant total décroissant.
+        """
         where = f"departement=\"{territorio}\" AND year(annee)={annee}"
 
         if type_honoraire:

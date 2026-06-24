@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, current_app
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement, Region
 
-
+# Initialisation du Blueprint et du service API
 bp_honoraires = Blueprint("honoraires", __name__)
 
 @bp_honoraires.route('/honoraires/dashboard', methods=['GET'])
