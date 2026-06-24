@@ -3,11 +3,11 @@
    SAE 2.01 - Développement d'une application WEB
 
    Fichier effectifs.html :
-   Page d’affichage des effectifs par filière, département
+   Page d'affichage des effectifs par profession, département
    et année. Présente les résultats sous forme de tableau
-   ainsi qu’un graphique d’évolution généré avec Chart.js.
+   ainsi qu'un graphique d'évolution généré avec Chart.js.
    Permet également le téléchargement des données en CSV
-   et l’export du graphique en image/PDF.
+   et l'export du graphique en image/PDF.
   ==========================================================
 -->
 
@@ -16,85 +16,111 @@
 {% block titre %}Effectifs{% endblock %}
 
 {% block contenu %}
-    <!-- Titre dynamique affichant les filtres sélectionnés (prof, département, année) -->
-    <h2>{{ prof.libelle }} – {{ dept.code }} {{ dept.libelle }} – {{ annee }}</h2>
 
-    <!-- Formulaire pour actualiser les données, en conservant les filtres sélectionnés -->
-    <div class="actions-page">
-        <form action="{{ url_for(request.endpoint) }}" method="get">
+    <!-- En-tête de page : titre + bouton d'actualisation -->
+    <div class="entete-page">
 
-            <input type="hidden"
-                name="profession_id"
-                value="{{ prof.id }}">
+        <h2>Effectifs des professionnels de santé</h2>
 
-            <input type="hidden"
-                name="departement_id"
-                value="{{ dept.id }}">
+        <div class="actions-page">
+            <form action="{{ url_for(request.endpoint) }}" method="get">
 
-            <input type="hidden"
-                name="annee"
-                value="{{ annee }}">
+                <input type="hidden"
+                    name="profession_id"
+                    value="{{ prof.id }}">
 
-            <input type="hidden"
-                name="force_refresh"
-                value="1">
+                <input type="hidden"
+                    name="departement_id"
+                    value="{{ dept.id }}">
 
-            <button type="submit" class="btn-primary">
-                Actualiser les données
-            </button>
+                <input type="hidden"
+                    name="annee"
+                    value="{{ annee }}">
 
-        </form>
+                <input type="hidden"
+                    name="force_refresh"
+                    value="1">
+
+                <button type="submit" class="btn-refresh">
+                    Actualiser les données
+                </button>
+
+            </form>
+        </div>
+
     </div>
-    
-    <!-- Vérifie si des résultats existent pour l'affichage du tableau -->
+
+    <!-- Carte résumé des filtres sélectionnés -->
+    <div class="carte-resume">
+
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Profession</span>
+            <span class="carte-resume__valeur">{{ prof.libelle }}</span>
+        </div>
+
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Territoire</span>
+            <span class="carte-resume__valeur">{{ dept.code }} {{ dept.libelle }}</span>
+        </div>
+
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Année</span>
+            <span class="carte-resume__valeur">{{ annee }}</span>
+        </div>
+
+    </div>
+
+    <!-- Tableau des effectifs et densités -->
     {% if resultats %}
-        
-        <!-- Tableau des effectifs et densités -->
-        <table>
-        
-            <!-- En-tête du tableau -->
-            <thead><tr><th>Année</th><th>Effectif</th><th>Densité</th></tr></thead>
-        
-            <tbody>
-        
-            <!-- Boucle sur les résultats récupérés côté backend -->
-            {% for r in resultats %}
-                <tr>
-                    <!-- Année de référence -->
-                    <td>{{ r.annee }}</td>
 
-                    <!-- Nombre d'étudiants / effectif -->
-                    <td>{{ r.effectif }}</td>
-
-                    <!-- Densité calculée côté backend -->
-                    <td>{{ r.densite }}</td>
-                </tr>
-            {% endfor %}
-
-            </tbody>
-        </table>
-
-        <!-- Lien de téléchargement du fichier CSV des données -->
-        <a href="{{ url_for('static', filename='csv/donnees.csv') }}" download>Télécharger les données</a>
+        <div class="tableau-conteneur">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Année</th>
+                        <th>Effectif</th>
+                        <th>Densité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in resultats %}
+                        <tr>
+                            <td>{{ r.annee }}</td>
+                            <td>{{ r.effectif }}</td>
+                            <td>{{ r.densite }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
     {% else %}
-        <!-- Message affiché si aucune donnée n’est disponible -->
         <p>Aucune donnée disponible pour cette sélection.</p>
-    
-        {% endif %}
-    
-        
-    <!-- ======================= GRAPHIQUE D'ÉVOLUTION ======================= -->
-    
-    <h3>Évolution sur plusieurs années</h3>
+    {% endif %}
 
-    <!-- Conteneur du graphique Chart.js -->
-    <div id="div-graphique">
-        <canvas id="graphique"></canvas>
+    <!-- Carte graphique d'évolution -->
+    <div class="bloc-analyse">
+
+        <h3>Évolution sur plusieurs années</h3>
+
+        <div id="div-graphique">
+            <canvas id="graphique"></canvas>
+        </div>
+
     </div>
 
-    <!-- Bouton d’export du graphique -->
-    <button id="chartJsDownloadButton">Télécharger</button>
+    <!-- Export des résultats -->
+    <div class="export-actions">
+
+        <a href="{{ url_for('static', filename='csv/donnees.csv') }}" download class="btn-secondary">
+            Télécharger les données (CSV)
+        </a>
+
+        <button id="chartJsDownloadButton" class="btn-secondary">
+            Télécharger le graphique
+        </button>
+
+    </div>
 
     <!-- Librairies nécessaires au rendu et export du graphique -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -103,21 +129,21 @@
 
     <!-- Script local pour la gestion du téléchargement -->
     <script src="{{ url_for('static', filename='js/download.js') }}"></script>
-    
+
     <script>
         const donnees = {{ evolution|tojson }};
         new Chart(document.getElementById("graphique"), {
-        type: "line",
-        data: {
-        labels: donnees.map(d => d.annee),
-        datasets: [{
-        label: "Effectif",
-        data: donnees.map(d => d.effectif),
-        borderColor: "#2E74B5",
-        tension: 0.2,
-        }],
-        },
+            type: "line",
+            data: {
+                labels: donnees.map(d => d.annee),
+                datasets: [{
+                    label: "Effectif",
+                    data: donnees.map(d => d.effectif),
+                    borderColor: "#2E74B5",
+                    tension: 0.2,
+                }],
+            },
         });
     </script>
-    
+
 {% endblock %}

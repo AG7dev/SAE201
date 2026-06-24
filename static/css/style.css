@@ -136,9 +136,10 @@ footer {
     margin-bottom:25px;
 }
 
-.bloc-accueil h1,
+css.bloc-accueil h1,
 .bloc-accueil h2,
-.bloc-analyse h2 {
+.bloc-analyse h2,
+.bloc-analyse h3 {
     color:var(--bleu-principal);
 }
 
@@ -276,7 +277,11 @@ table td {
     border-bottom:1px solid #ddd;
 }
 
-table tr:hover {
+table tbody tr:nth-child(even) {
+    background-color:var(--gris-fond);
+}
+
+table tbody tr:hover {
     background-color:#f5f5f5;
 }
 
@@ -512,4 +517,80 @@ canvas {
     border:none;
     padding:0;
     margin:0;
+}
+
+.entete-page {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.entete-page .actions-page {
+    margin-bottom:0;
+}
+
+.carte-resume {
+    display:flex;
+    flex-wrap:wrap;
+    gap:35px;
+    background:var(--bleu-clair);
+    border:2px solid var(--violet-bordure);
+    border-radius:10px;
+    padding:20px 25px;
+    margin-bottom:25px;
+}
+
+.carte-resume__item {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.carte-resume__label {
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--violet-bordure);
+    font-weight:bold;
+}
+
+.carte-resume__valeur {
+    font-size:1.15rem;
+    font-weight:bold;
+    color:#333;
+}
+
+.tableau-conteneur {
+    overflow-x:auto;
+}
+
+.export-actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:20px;
+}
+
+.btn-secondary {
+    display:inline-block;
+    background:white;
+    color:var(--bleu-principal);
+    border:2px solid var(--bleu-principal);
+    padding:9px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    font-family:inherit;
+    font-size:1rem;
+    line-height:normal;
+    text-decoration:none;
+    appearance:none;
+    -webkit-appearance:none;
+}
+
+.btn-secondary:hover {
+    background:var(--bleu-clair);
 }
