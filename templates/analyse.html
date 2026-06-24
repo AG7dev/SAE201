@@ -6,7 +6,7 @@ Analyse
 
 {% block contenu %}
 
-<section class="bloc-accueil">
+<section class="info-bulle">
     <h1>Analyses des données de santé</h1>
 
     <p>
@@ -22,20 +22,20 @@ Analyse
 
 <div class="menu-analyse">
 
-    <button onclick="afficherAnalyse('effectifs')">
+    <button class="onglet-actif"
+            onclick="afficherAnalyse('effectifs', this)">
         Effectifs
     </button>
 
-    <button onclick="afficherAnalyse('honoraires')">
+    <button onclick="afficherAnalyse('honoraires', this)">
         Honoraires
     </button>
 
-    <button onclick="afficherAnalyse('prescriptions')">
+    <button onclick="afficherAnalyse('prescriptions', this)">
         Prescriptions
     </button>
 
 </div>
-
 
 
 <section id="effectifs" class="bloc-analyse">
