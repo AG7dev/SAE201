@@ -50,74 +50,78 @@ L'application permet d'exploiter des données de l'Assurance Maladie à travers 
 ```mermaid
 graph TB
 
-    subgraph CONFIG["Configuration"]
-        APP_APP["app.py"]
-        CONFIG_FILE["config.py"]
-        ENV_FILE[".env"]
-    end
+subgraph CONFIG["Config"]
+    APP["app.py"]
+    CFG["config.py"]
+    ENV[".env"]
+end
 
-    subgraph FLASK["Application Flask (Blueprints)"]
-        ROUTES["Controllers Flask<br/>accueil, dashboard, effectifs,<br/>honoraires, prescriptions,<br/>comparaison, about, login, api"]
-    end
+subgraph FLASK["Flask (Controllers)"]
+    CTX["accueil / dashboard / effectifs / honoraires / prescriptions / comparaison / about / login / api"]
+end
 
-    subgraph SERVICES["Services"]
-        AMELI_SVC["ameli_api.py"]
-        CACHE_SVC["cached_ameli_api.py"]
-        REDIS_SVC["redis_cached_ameli_api.py"]
-        COMP_SVC["comparaison_service.py"]
-    end
+subgraph SRV["Services"]
+    AME["ameli_api"]
+    CAC["cache_api"]
+    RED["redis_cache"]
+    COM["comparaison_srv"]
+end
 
-    subgraph MODEL["Modèle / Données"]
-        DB_MODEL["db.py"]
-        DIM_MODEL["dimensions.py"]
-        DATA_UTILS["data_utils.py"]
-    end
+subgraph MOD["Model"]
+    DB["db"]
+    DIM["dimensions"]
+    DAT["data_utils"]
+end
 
-    subgraph UTILS["Utilitaires"]
-        USER_UTIL["user.py"]
-        CONST_UTIL["constants.py"]
-    end
+subgraph UTL["Utils"]
+    USR["user"]
+    CST["constants"]
+end
 
-    subgraph VIEWS["Vues Jinja2"]
-        TEMPLATES["Templates HTML (base + pages)"]
-    end
+subgraph VWS["Views"]
+    TPL["Jinja templates"]
+end
 
-    subgraph STATIC["Fichiers statiques"]
-        CSS_DIR["css/"]
-        JS_DIR["js/"]
-        IMG_DIR["images/"]
-        GEO_DIR["geojson/"]
-        CSV_DIR["csv/"]
-    end
+subgraph STC["Static"]
+    CSS["css"]
+    JS["js"]
+    IMG["img"]
+    GEO["geojson"]
+    CSV["csv"]
+end
 
-    subgraph TESTS["Tests"]
-        TEST_CACHE["test_cached_ameli_api"]
-        TEST_REDIS["test_redis_cached_ameli_api"]
-    end
+subgraph TST["Tests"]
+    TC["cache tests"]
+    TR["redis tests"]
+end
 
-    %% Relations principales
-    APP_APP --> ROUTES
-    APP_APP --> CONFIG_FILE
+%% Flow
+APP --> CTX
+APP --> CFG
+CFG --> APP
 
-    ROUTES --> SERVICES
-    ROUTES --> MODEL
-    ROUTES --> VIEWS
-    ROUTES --> UTILS
+CTX --> SRV
+CTX --> MOD
+CTX --> VWS
+CTX --> UTL
 
-    SERVICES --> MODEL
-    CACHE_SVC --> AMELI_SVC
-    REDIS_SVC --> AMELI_SVC
-    COMP_SVC --> MODEL
+SRV --> MOD
+CAC --> AME
+RED --> AME
+COM --> MOD
 
-    MODEL --> DB_MODEL
-    MODEL --> DIM_MODEL
+MOD --> DB
+MOD --> DIM
 
-    VIEWS --> STATIC
+VWS --> STC
 
-    TEST_CACHE --> CACHE_SVC
-    TEST_REDIS --> REDIS_SVC
+TC --> CAC
+TR --> RED
 
-    CONFIG_FILE --> APP_APP
+%% Compact styling
+classDef box fill:#f8fafc,stroke:#64748b,stroke-width:1px;
+
+class APP,CFG,ENV,CTX,AME,CAC,RED,COM,DB,DIM,DAT,USR,CST,TPL,CSS,JS,IMG,GEO,CSV,TC,TR box;
 ```
 
 ---
