@@ -240,6 +240,39 @@ css.bloc-accueil h1,
     color:var(--bleu-principal);
 }
 
+/* Regroupement visuel Comparaison 1 / Comparaison 2 */
+.comparaison-colonnes {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    box-sizing:border-box;
+}
+
+.comparaison-colonne {
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    background:white;
+    border:1px solid var(--gris-bordure);
+    border-radius:6px;
+    padding:15px;
+    box-sizing:border-box;
+    min-width:0;
+}
+
+.comparaison-colonne__titre {
+    margin:0;
+    color:var(--bleu-principal);
+    border-bottom:2px solid var(--bleu-principal);
+    padding-bottom:8px;
+}
+
+@media (max-width:700px) {
+    .comparaison-colonnes {
+        grid-template-columns:1fr;
+    }
+}
+
 form select,
 form input,
 form textarea {
@@ -395,8 +428,35 @@ canvas {
 
 .annee-slider__controls {
     position:relative;
-    height:3rem;
-    z-index:1;
+    height:2rem;
+    display:flex;
+    align-items:center;
+}
+
+/* Rail de fond, fixe */
+.annee-slider__rail {
+    position:absolute;
+    top:50%;
+    left:0;
+    right:0;
+    height:0.3rem;
+    transform:translateY(-50%);
+    background:#ccc;
+    border-radius:0.3rem;
+    pointer-events:none;
+}
+
+/* Barre de progression colorée entre les deux poignées */
+.annee-slider__progression {
+    position:absolute;
+    top:50%;
+    height:0.3rem;
+    transform:translateY(-50%);
+    background:var(--bleu-principal);
+    border-radius:0.3rem;
+    pointer-events:none;
+    left:0%;
+    width:0%;
 }
 
 .annee-slider__controls input[type="range"] {
@@ -404,53 +464,78 @@ canvas {
     top:0;
     left:0;
     width:100%;
+    height:2rem;
     margin:0;
     padding:0;
+    border:none;
+    border-radius:0;
     background:transparent;
     appearance:none;
     -webkit-appearance:none;
-    z-index:2;
+    /* Correctif ergonomie double-slider :
+       l'input lui-meme ne capte plus les clics sur toute sa largeur,
+       seule la poignee (::thumb) redevient cliquable ci-dessous.
+       Sans ca, le second input (au-dessus en z-index) "vole" tous
+       les clics sur la barre, peu importe la poignee visee. */
+    pointer-events:none;
 }
 
-/* Les deux curseurs passent devant la barre */
-#annee_debut,
-#annee_fin {
-    z-index:2;
+.annee-slider__controls input[type="range"]:focus {
+    outline:none;
 }
 
-/* Chrome / Edge / Safari */
+/* Poignees en triangle pointant vers le bas, apex centre sur le rail.
+   Le triangle occupe la moitie superieure de sa boite (apex a 50%),
+   pour que sa pointe touche exactement la barre, peu importe la
+   hauteur de la boite de la poignee. */
 .annee-slider__controls input[type="range"]::-webkit-slider-thumb {
     appearance:none;
     -webkit-appearance:none;
-    width:1.2rem;
-    height:1.8rem;
-    border-radius:0.4rem;
-    background:var(--bleu-principal);
-    cursor:pointer;
-}
 
-/* Firefox */
-.annee-slider__controls input[type="range"]::-moz-range-thumb {
-    width:1.2rem;
-    height:1.8rem;
-    border-radius:0.4rem;
-    background:var(--bleu-principal);
+    width:2rem;
+    height:2rem;
+
+    background:#cdcbca;
+    clip-path:polygon(50% 0%, 0% 50%, 100% 50%);
+
     border:none;
     cursor:pointer;
+    pointer-events:auto;
+
+    filter:
+        drop-shadow(1px 0 0 white)
+        drop-shadow(-1px 0 0 white)
+        drop-shadow(0 1px 0 white)
+        drop-shadow(0 -1px 0 white);
 }
 
+.annee-slider__controls input[type="range"]::-moz-range-thumb {
+    width:2rem;
+    height:2rem;
 
-/* Barre */
+    background:#cdcbca;
+    clip-path:polygon(50% 0%, 0% 50%, 100% 50%);
+
+    border:none;
+    cursor:pointer;
+    pointer-events:auto;
+
+    filter:
+        drop-shadow(1px 0 0 white)
+        drop-shadow(-1px 0 0 white)
+        drop-shadow(0 1px 0 white)
+        drop-shadow(0 -1px 0 white);
+}
+
+/* Pistes natives transparentes : le rail/progression maison les remplacent */
 .annee-slider__controls input[type="range"]::-webkit-slider-runnable-track {
     height:0.3rem;
-    background:#ccc;
-    border-radius:0.3rem;
+    background:transparent;
 }
 
 .annee-slider__controls input[type="range"]::-moz-range-track {
     height:0.3rem;
-    background:#ccc;
-    border-radius:0.3rem;
+    background:transparent;
 }
 
 .annee-slider__info {
