@@ -39,226 +39,213 @@ Analyse
 
 
 <section id="effectifs" class="bloc-analyse">
-
     <h2>Effectifs des professionnels de santé</h2>
 
-    <form action="{{ url_for('effectifs.afficher') }}" method="get">
+    <form class="formulaire-analyse"
+        action="{{ url_for('effectifs.afficher') }}"
+        method="get">
 
-        <label>Profession</label>
-        <select name="profession_id" required>
-            {% for p in professions %}
-                <option value="{{ p.id }}">
-                    {{ p.libelle }}
+        <div class="champ-formulaire">
+            <label>Profession</label>
+            <select name="profession_id" required>
+                <option value="" selected>
+                    -- Choisir une profession --
                 </option>
-            {% endfor %}
-        </select>
+                {% for p in professions %}
+                    <option value="{{ p.id }}">
+                        {{ p.libelle }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
+        <div class="champ-formulaire">
+            <label>Région</label>
+            <select name="region_id" id="region_effectif" required>
 
-        <label>Région</label>
-        <select name="region_id" id="region_effectif" required>
-
-            <option value="">
-                -- Choisir --
-            </option>
-
-            {% for r in regions %}
-                <option value="{{ r.id }}">
-                    {{ r.libelle }}
-                </option>
-            {% endfor %}
-
-        </select>
-
-
-        <label>Département</label>
-
-        <select name="departement_id" id="departement_effectif" required>
-
-            <option value="">
-                -- Choisir une région --
-            </option>
-
-        </select>
-
-
-        <label>Année</label>
-
-        <select name="annee" required>
-
-            {% for a in range(2024, 2009, -1) %}
-
-                <option value="{{ a }}">
-                    {{ a }}
+                <option value="">
+                    -- Choisir une région --
                 </option>
 
-            {% endfor %}
+                {% for r in regions %}
+                    <option value="{{ r.id }}">
+                        {{ r.libelle }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-        </select>
+        <div class="champ-formulaire">
+            <label>Département</label>
 
+            <select name="departement_id" id="departement_effectif" required>
+
+                <option value="">
+                    -- Choisir un département --
+                </option>
+
+            </select>
+        </div>
+
+        <div class="champ-formulaire">
+            <label>Année</label>
+
+            <select name="annee" required>
+
+                {% for a in range(2024, 2009, -1) %}
+
+                    <option value="{{ a }}">
+                        {{ a }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+        </div>
 
         <button type="submit">
             Afficher les effectifs
         </button>
 
     </form>
-
 </section>
 
 
-
-
-
 <section id="honoraires" class="bloc-analyse cache">
-
     <h2>Analyse des honoraires</h2>
 
+    <form class="formulaire-analyse"
+        action="{{ url_for('honoraires.afficher_honoraires') }}" 
+        method="get">
 
-    <form action="{{ url_for('honoraires.afficher_honoraires') }}" method="get">
-
-
-        <label>Spécialité</label>
-
-        <select name="profession_id" required>
-
-            {% for p in professions %}
-
-                <option value="{{ p.id }}">
-                    {{ p.libelle }}
+        <div class="champ-formulaire">
+            <label>Spécialité</label>
+            <select name="profession_id" required>
+                <option value="" selected>
+                    -- Choisir une spécialité --
                 </option>
+                {% for p in professions %}
+                    <option value="{{ p.id }}">
+                        {{ p.libelle }}
+                    </option>
 
-            {% endfor %}
+                {% endfor %}
+            </select>
+        </div>
 
-        </select>
-
-
-        <label>Année</label>
-
-        <select name="annee" required>
-
-            {% for a in range(2024, 2009, -1) %}
-
-                <option value="{{ a }}">
-                    {{ a }}
+        <div class="champ-formulaire">
+            <label>Région</label>
+            <select name="region_id" id="region_honoraires" required>
+                <option value="" selected>
+                    -- Choisir une région --
                 </option>
+                {% for r in regions %}
+                    <option value="{{ r.id }}">
+                        {{ r.libelle }}
+                    </option>
 
-            {% endfor %}
+                {% endfor %}
+            </select>
+        </div>
 
-        </select>
-
-
-        <label>Région</label>
-
-        <select name="region_id" id="region_honoraires" required>
-
-            {% for r in regions %}
-
-                <option value="{{ r.id }}">
-                    {{ r.libelle }}
+        <div class="champ-formulaire">
+            <label>Département</label>
+            <select name="departement_id" id="departement_honoraires" required>
+                <option>
+                    -- Choisir un département --
                 </option>
+            </select>
+        </div>
 
-            {% endfor %}
+        <div class="champ-formulaire">
+            <label>Année</label>
+            <select name="annee" required>
 
-        </select>
+                {% for a in range(2024, 2009, -1) %}
 
+                    <option value="{{ a }}">
+                        {{ a }}
+                    </option>
 
-        <label>Département</label>
-
-        <select name="departement_id" id="departement_honoraires" required>
-
-            <option>
-                -- Choisir une région --
-            </option>
-
-        </select>
-
+                {% endfor %}
+            </select>
+        </div>
 
         <button type="submit">
             Afficher les honoraires
         </button>
 
-
     </form>
-
 </section>
 
 
-
-
-
 <section id="prescriptions" class="bloc-analyse cache">
-
     <h2>Analyse des prescriptions</h2>
 
+    <form class="formulaire-analyse"
+        action="{{ url_for('prescriptions.afficher') }}" 
+        method="get">
 
-    <form action="{{ url_for('prescriptions.afficher') }}" method="get">
-
-
-        <label>Profession</label>
-
-        <select name="profession_id" required>
-
-            {% for p in professions %}
-
-                <option value="{{ p.id }}">
-                    {{ p.libelle }}
+        <div class="champ-formulaire">
+            <label>Profession</label>
+            <select name="profession_id" required>
+                <option value="" selected>
+                    -- Choisir une profession --
                 </option>
 
-            {% endfor %}
+                {% for p in professions %}
+                    <option value="{{ p.id }}">
+                        {{ p.libelle }}
+                    </option>
 
-        </select>
+                {% endfor %}
+            </select>
+        </div
 
+        <div class="champ-formulaire">
+            <label>Région</label>
+            <select name="region_id" id="region_prescription" required>
+                <option value="" selected>
+                    -- Choisir une région --
+                </option>
+                {% for r in regions %}
+                    <option value="{{ r.id }}">
+                        {{ r.libelle }}
+                    </option>
 
-        <label>Région</label>
+                {% endfor %}
+            </select>
+        </div>
 
-        <select name="region_id" id="region_prescription" required>
-
-            {% for r in regions %}
-
-                <option value="{{ r.id }}">
-                    {{ r.libelle }}
+        <div class="champ-formulaire">
+            <label>Département</label>
+            <select name="departement_id" id="departement_prescription" required>
+                <option>
+                    -- Choisir un département --
                 </option>
 
-            {% endfor %}
+            </select>
+        </div>
 
-        </select>
+        <div class="champ-formulaire">
+            <label>Année</label>
+            <select name="annee" required>
 
+                {% for a in range(2023, 2014, -1) %}
+                    <option value="{{ a }}">
+                        {{ a }}
+                    </option>
 
-        <label>Département</label>
-
-        <select name="departement_id" id="departement_prescription" required>
-
-            <option>
-                -- Choisir une région --
-            </option>
-
-        </select>
-
-
-        <label>Année</label>
-
-        <select name="annee" required>
-
-            {% for a in range(2023, 2014, -1) %}
-
-                <option value="{{ a }}">
-                    {{ a }}
-                </option>
-
-            {% endfor %}
-
-        </select>
-
+                {% endfor %}
+            </select>
+        </div>
 
         <button type="submit">
             Afficher les prescriptions
         </button>
 
-
     </form>
-
 </section>
-
-
 
 <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
 <script src="{{ url_for('static', filename='js/analyse.js') }}"></script>

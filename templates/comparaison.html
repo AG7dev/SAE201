@@ -167,11 +167,11 @@ Comparaison
 
         <div class="annee-slider__labels">
             <span id="anneeStartLabel">{{ annee_debut or 2010 }}</span>
-            <span id="anneeEndLabel">{{ annee_fin or 2023 }}</span>
+            <span id="anneeEndLabel">{{ annee_fin or 2024 }}</span>
         </div>
 
         <div class="annee-slider__track" aria-hidden="true">
-            {% for annee in range(2010, 2024) %}
+            {% for annee in range(2010, 2025) %}
                 <span class="annee-slider__tick">{{ annee }}</span>
             {% endfor %}
         </div>
@@ -182,7 +182,7 @@ Comparaison
                 id="annee_debut"
                 name="annee_debut"
                 min="2010"
-                max="2023"
+                max="2024"
                 step="1"
                 value="{{ annee_debut or 2010 }}"
                 required
@@ -193,9 +193,9 @@ Comparaison
                 id="annee_fin"
                 name="annee_fin"
                 min="2010"
-                max="2023"
+                max="2024"
                 step="1"
-                value="{{ annee_fin or 2023 }}"
+                value="{{ annee_fin or 2024 }}"
                 required
             >
         </div>
@@ -224,7 +224,7 @@ Comparaison
 document.addEventListener("DOMContentLoaded", () => {
 
     const MIN_YEAR = 2010;
-    const MAX_YEAR = 2023;
+    const MAX_YEAR = 2024;
 
     const sliderDebut = document.getElementById("annee_debut");
     const sliderFin = document.getElementById("annee_fin");

@@ -1,54 +1,4 @@
 /* =========================================
-   1. BULLE D'INFORMATION
-========================================= */
-.info-bulle {
-    background-color: #e8f4fd;
-    border: 1px solid #b6d4fe;
-    color: #084298;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 20px 0;
-    font-size: 0.95em;
-    line-height: 1.5;
-}
-
-.info-bulle p {
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
-
-.info-bulle ul {
-    margin-top: 5px;
-    margin-bottom: 0;
-}
-
-/* =========================================
-   2. FORMULAIRE DE RECHERCHE
-========================================= */
-form {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    margin-bottom: 30px;
-    border: 1px solid #dee2e6;
-}
-
-form label {
-    font-weight: bold;
-    margin-right: 5px;
-}
-
-form select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* =========================================
    3.1 NAVIGATION PRINCIPALE (NIVEAU 1)
 ========================================= */
 .onglets-principaux {
@@ -149,31 +99,6 @@ form select {
     background-color: white;
 }
 
-/* =========================================
-   5. TABLEAU DES DONNÉES
-========================================= */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-table th, table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-table th {
-    background-color: #3277B5;
-    color: white;
-}
-
-table tr:hover {
-    background-color: #f1f1f1;
-}
-
 /* Classes gérées par le JavaScript pour masquer les colonnes */
 table.masquer-total .col-total {
     display: none;
@@ -181,12 +106,4 @@ table.masquer-total .col-total {
 
 table.masquer-moyen .col-moyen {
     display: none;
-}
-
-/* =========================================
-   6. GRAPHIQUE
-========================================= */
-#div-graphique {
-    max-width: 800px;
-    margin: 20px auto;
 }
