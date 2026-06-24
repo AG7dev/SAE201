@@ -28,16 +28,16 @@ L'application permet d'exploiter des données de l'Assurance Maladie à travers 
 ## Technologies utilisées
 
 |Nom|Fonction|
-|:-:|:-:|
-|Flask 3|Framework web Python utilisé pour développer l'application et gérer les routes, requêtes HTTP et API.|
-|SQLAlchemy|ORM permettant d'interagir avec la base de données MySQL via des objets Python plutôt que du SQL brut.|
-|Jinja2|Moteur de templates utilisé par Flask pour générer dynamiquement les pages HTML.|
-|HTML5|Langage de balisage utilisé pour structurer le contenu des pages web.|
-|JavaScript|Langage de programmation côté client utilisé pour rendre l'interface interactive.|
-|Chart.js|Bibliothèque JavaScript permettant de créer des graphiques dynamiques et interactifs.|
-|MySQL|Système de gestion de base de données relationnelle utilisé pour stocker les données de l'application.|
-|Bootstrap|Framework CSS facilitant la création d'interfaces responsives et modernes.|
-|Pandas|Bibliothèque Python utilisée pour la manipulation, l'analyse et le traitement des données.|
+|:-|:-|
+|**Flask 3**|Framework web Python utilisé pour développer l'application et gérer les routes, requêtes HTTP et API.|
+|**SQLAlchemy**|ORM permettant d'interagir avec la base de données MySQL via des objets Python plutôt que du SQL brut.|
+|**Jinja2**|Moteur de templates utilisé par Flask pour générer dynamiquement les pages HTML.|
+|**HTML5**|Langage de balisage utilisé pour structurer le contenu des pages web.|
+|**JavaScript**|Langage de programmation côté client utilisé pour rendre l'interface interactive.|
+|**Chart.js**|Bibliothèque JavaScript permettant de créer des graphiques dynamiques et interactifs.|
+|**MySQL**|Système de gestion de base de données relationnelle utilisé pour stocker les données de l'application.|
+|**Bootstrap**|Framework CSS facilitant la création d'interfaces responsives et modernes.|
+|**Pandas**|Bibliothèque Python utilisée pour la manipulation, l'analyse et le traitement des données.|
 
 ---
 
@@ -51,139 +51,73 @@ L'application permet d'exploiter des données de l'Assurance Maladie à travers 
 graph TB
 
     subgraph CONFIG["Configuration"]
-        APP["app.py"]
-        CONFIG["config.py"]
-        ENV[".env"]
+        APP_APP["app.py"]
+        CONFIG_FILE["config.py"]
+        ENV_FILE[".env"]
     end
 
-    subgraph CONTROLLERS["Contrôleurs Flask"]
-        ACCUEIL["accueil.py"]
-        DASHBOARD["dashboard.py"]
-        EFFECTIFS["effectifs.py"]
-        HONORAIRES["honoraires.py"]
-        PRESCRIPTIONS["prescriptions.py"]
-        COMPARAISON["comparaison.py"]
-        ABOUT["about.py"]
-        LOGIN["login.py"]
-        API["api.py"]
+    subgraph FLASK["Application Flask (Blueprints)"]
+        ROUTES["Controllers Flask<br/>accueil, dashboard, effectifs,<br/>honoraires, prescriptions,<br/>comparaison, about, login, api"]
     end
 
-    subgraph SERVICES["Services Métier"]
-        AMELI["ameli_api.py"]
-        CACHE["cached_ameli_api.py"]
-        REDIS["redis_cached_ameli_api.py"]
-        COMP_SERVICE["comparaison_service.py"]
+    subgraph SERVICES["Services"]
+        AMELI_SVC["ameli_api.py"]
+        CACHE_SVC["cached_ameli_api.py"]
+        REDIS_SVC["redis_cached_ameli_api.py"]
+        COMP_SVC["comparaison_service.py"]
     end
 
-    subgraph MODELS["Modèle et Données"]
-        DB["db.py"]
-        DIM["dimensions.py"]
-        DATA["data_utils.py"]
+    subgraph MODEL["Modèle / Données"]
+        DB_MODEL["db.py"]
+        DIM_MODEL["dimensions.py"]
+        DATA_UTILS["data_utils.py"]
     end
 
     subgraph UTILS["Utilitaires"]
-        USER["user.py"]
-        CONST["constants.py"]
+        USER_UTIL["user.py"]
+        CONST_UTIL["constants.py"]
     end
 
-    subgraph TEMPLATES["Templates Jinja2"]
-        BASE["base.html"]
-        ACCUEIL_HTML["accueil.html"]
-        DASHBOARD_HTML["dashboard.html"]
-        EFFECTIFS_HTML["effectifs.html"]
-        HONORAIRES_HTML["honoraires.html"]
-        PRESCRIPTIONS_HTML["prescriptions.html"]
-        COMPARAISON_HTML["comparaison.html"]
-        ABOUT_HTML["about.html"]
-        LOGIN_HTML["login.html"]
+    subgraph VIEWS["Vues Jinja2"]
+        TEMPLATES["Templates HTML (base + pages)"]
     end
 
-    subgraph STATIC["Ressources Statiques"]
-        CSS["css/"]
-        JS["js/"]
-        IMG["images/"]
-        GEOJSON["geojson/"]
-        CSV["csv/"]
+    subgraph STATIC["Fichiers statiques"]
+        CSS_DIR["css/"]
+        JS_DIR["js/"]
+        IMG_DIR["images/"]
+        GEO_DIR["geojson/"]
+        CSV_DIR["csv/"]
     end
 
     subgraph TESTS["Tests"]
-        TEST_CACHE["test_cached_ameli_api.py"]
-        TEST_REDIS["test_redis_cached_ameli_api.py"]
+        TEST_CACHE["test_cached_ameli_api"]
+        TEST_REDIS["test_redis_cached_ameli_api"]
     end
 
-    APP --> ACCUEIL
-    APP --> DASHBOARD
-    APP --> EFFECTIFS
-    APP --> HONORAIRES
-    APP --> PRESCRIPTIONS
-    APP --> COMPARAISON
-    APP --> ABOUT
-    APP --> LOGIN
-    APP --> API
+    %% Relations principales
+    APP_APP --> ROUTES
+    APP_APP --> CONFIG_FILE
 
-    CONFIG --> APP
-    ENV --> CONFIG
+    ROUTES --> SERVICES
+    ROUTES --> MODEL
+    ROUTES --> VIEWS
+    ROUTES --> UTILS
 
-    ACCUEIL --> CACHE
-    DASHBOARD --> CACHE
-    EFFECTIFS --> CACHE
-    HONORAIRES --> CACHE
-    PRESCRIPTIONS --> CACHE
-    COMPARAISON --> COMP_SERVICE
+    SERVICES --> MODEL
+    CACHE_SVC --> AMELI_SVC
+    REDIS_SVC --> AMELI_SVC
+    COMP_SVC --> MODEL
 
-    CACHE --> AMELI
-    REDIS --> AMELI
+    MODEL --> DB_MODEL
+    MODEL --> DIM_MODEL
 
-    AMELI --> DATA
-    DATA --> DIM
-    DIM --> DB
+    VIEWS --> STATIC
 
-    LOGIN --> USER
-    APP --> CONST
+    TEST_CACHE --> CACHE_SVC
+    TEST_REDIS --> REDIS_SVC
 
-    ACCUEIL --> ACCUEIL_HTML
-    DASHBOARD --> DASHBOARD_HTML
-    EFFECTIFS --> EFFECTIFS_HTML
-    HONORAIRES --> HONORAIRES_HTML
-    PRESCRIPTIONS --> PRESCRIPTIONS_HTML
-    COMPARAISON --> COMPARAISON_HTML
-    ABOUT --> ABOUT_HTML
-    LOGIN --> LOGIN_HTML
-
-    ACCUEIL_HTML --> BASE
-    DASHBOARD_HTML --> BASE
-    EFFECTIFS_HTML --> BASE
-    HONORAIRES_HTML --> BASE
-    PRESCRIPTIONS_HTML --> BASE
-    COMPARAISON_HTML --> BASE
-    ABOUT_HTML --> BASE
-    LOGIN_HTML --> BASE
-
-    BASE --> CSS
-    BASE --> JS
-    BASE --> IMG
-
-    EFFECTIFS --> GEOJSON
-    COMPARAISON --> CSV
-
-    TEST_CACHE --> CACHE
-    TEST_REDIS --> REDIS
-
-    classDef config fill:#e0f2fe,stroke:#0284c7
-    classDef controller fill:#ffedd5,stroke:#ea580c
-    classDef service fill:#dcfce7,stroke:#16a34a
-    classDef model fill:#ede9fe,stroke:#7c3aed
-    classDef view fill:#f5f3ff,stroke:#9333ea
-    classDef util fill:#fef3c7,stroke:#d97706
-    classDef test fill:#fecaca,stroke:#dc2626
-
-    class APP,CONFIG,ENV config
-    class ACCUEIL,DASHBOARD,EFFECTIFS,HONORAIRES,PRESCRIPTIONS,COMPARAISON,ABOUT,LOGIN,API controller
-    class AMELI,CACHE,REDIS,COMP_SERVICE service
-    class DB,DIM,DATA model
-    class BASE,ACCUEIL_HTML,DASHBOARD_HTML,EFFECTIFS_HTML,HONORAIRES_HTML,PRESCRIPTIONS_HTML,COMPARAISON_HTML,ABOUT_HTML,LOGIN_HTML view
-    class USER,CONST util
-    class TEST_CACHE,TEST_REDIS test
+    CONFIG_FILE --> APP_APP
 ```
 
 ---
