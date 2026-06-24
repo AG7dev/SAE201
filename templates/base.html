@@ -24,6 +24,7 @@
 
         <!-- Feuille de style principale du site -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/honoraires.css') }}">
     </head>
 
     <body>
@@ -70,6 +71,7 @@
                 {% if current_user.permissions == "admin" %}
                     <a href="{{ url_for('about.adminPanel') }}">Admin panel</a>
                 {% endif %}
+                
 
             </nav>
         </header>

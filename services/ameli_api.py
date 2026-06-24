@@ -5,7 +5,7 @@
 """
 Service d'accès à l'API externe data.ameli.fr.
 
-Ce module encapsule les appels HTTP vers l'API Ameli afin de :
+Ce module encapsule les appels HTTP vers l'API Ameli afin de :b
 - récupérer les effectifs de professionnels de santé ;
 - obtenir l'évolution des effectifs dans le temps ;
 - centraliser la logique de requêtage et la gestion des erreurs.
@@ -81,6 +81,119 @@ class AmeliAPI:
         {"select": "annee,effectif,densite", "where": where,
         "order_by": "annee", "limit": 100},
         )
+            
+    
+
+    def get_honoraires(self, annee, profession, departement_code, type_honoraire=None) :
+
+        where = (
+        f"profession_sante=\"{profession}\" AND "
+        f"departement=\"{departement_code}\" AND "
+        f"year(annee)={annee}"
+        )
+
+        if type_honoraire:
+        
+            mapping = {
+                "Depassements": "Dépassements",
+                "Deplacement": "Indemnités de déplacement"
+            }
+            valeur_reelle = mapping.get(type_honoraire, type_honoraire)
+            where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
+
+        print(f"URL finale : {self.BASE_URL}/honoraires-detailles/records?select=...&where={where}")
+        return self._requete(
+        "honoraires-detailles",
+        {"select": "annee,montant_honoraires,montant_honoraires_moyens, type_honoraires_niveau_1", "where": where, "limit": 100},
+
+    
+    )
+
+    def get_evolution_honoraires(self, profession, departement_code, type_honoraire=None):
+            where = (
+                f"profession_sante=\"{profession}\" AND "
+                f"departement=\"{departement_code}\""
+            )
+
+            if type_honoraire:
+                mapping = {
+                    "Depassements": "Dépassements",
+                    "Deplacement": "Indemnités de déplacement"
+                }
+                valeur_reelle = mapping.get(type_honoraire, type_honoraire)
+                where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
+
+            resultats_totaux = []
+            offset = 0
+
+            # On fait la boucle ici au lieu de la faire dans _requete
+            while True:
+                params = {
+                    "select": "annee,montant_honoraires,montant_honoraires_moyens,type_honoraires_niveau_1", 
+                    "where": where, 
+                    "order_by": "annee", 
+                    "limit": 100,
+                    "offset": offset  # On ajoute le décalage ici
+                }
+                
+                # On utilise la fonction _requete intacte
+                donnees = self._requete("honoraires-detailles", params)
+                
+                # Si on ne reçoit rien, on arrête
+                if not donnees:
+                    break
+                    
+                resultats_totaux.extend(donnees)
+                
+                # Si on reçoit moins de 100 lignes, c'est qu'on a atteint la fin
+                if len(donnees) < 100:
+                    break
+                    
+                # Sinon, on décale de 100 pour chercher la suite
+                offset += 100
+                
+            return resultats_totaux
+    
+    def get_specialites(self, annee, territorio, type_honoraire=None):
+        where = f"departement=\"{territorio}\" AND year(annee)={annee}"
+
+        if type_honoraire:
+            mapping = {
+                "Depassements": "Dépassements",
+                "Deplacement": "Indemnités de déplacement"
+            }
+            valeur_reelle = mapping.get(type_honoraire, type_honoraire)
+            where += f" AND type_honoraires_niveau_1='{valeur_reelle}'"
+
+        params = {
+            "select": "profession_sante,montant_honoraires,montant_honoraires_moyens",
+            "where": where,
+            "limit": 100
+        }
+
+        donnees_brutes = self._requete("honoraires-detailles", params)
+        donnees_groupees = {}
+        
+        for d in donnees_brutes:
+            spe = d.get("profession_sante")
+            if spe:
+                total = float(d.get("montant_honoraires") or 0)
+                moyen = float(d.get("montant_honoraires_moyens") or 0)
+                
+                if spe in donnees_groupees:
+                    donnees_groupees[spe]["total"] += total
+                    donnees_groupees[spe]["moyen"] += moyen
+                else:
+                    donnees_groupees[spe] = {
+                        "specialite": spe,
+                        "total": total,
+                        "moyen": moyen
+                    }
+        
+        resultats = list(donnees_groupees.values())
+        resultats.sort(key=lambda x: x["total"], reverse=True)
+        return resultats
+     
     
     def get_prescriptions(self, profession, departement_code, annee):
         """Récupère les données de prescriptions médicales selon les critères."""
