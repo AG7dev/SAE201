@@ -103,6 +103,154 @@ def comparer_effectifs(
         "aucune_donnee": len(labels) == 0
     }
 
+def comparer_honoraires(
+    api,
+    profession1,
+    departement1,
+    profession2,
+    departement2,
+    annee_debut,
+    annee_fin,
+    legende1,
+    legende2,
+    rafraichir=False
+):
+    """
+    Compare deux séries d'honoraires.
+    """
+
+    reponse1 = api.get_evolution_honoraires(
+        profession1.libelle,
+        departement1.code
+    )
+
+    reponse2 = api.get_evolution_honoraires(
+        profession2.libelle,
+        departement2.code
+    )
+
+
+    reponse1 = filtrer_annees(
+        reponse1,
+        annee_debut,
+        annee_fin
+    )
+
+    reponse2 = filtrer_annees(
+        reponse2,
+        annee_debut,
+        annee_fin
+    )
+
+
+    serie1 = normaliser_honoraires(
+        reponse1
+    )
+
+    serie2 = normaliser_honoraires(
+        reponse2
+    )
+
+
+    labels, valeurs1, valeurs2 = aligner_series(
+        serie1,
+        serie2
+    )
+
+
+    if annee_debut == annee_fin:
+        type_graphique = "bar"
+    else:
+        type_graphique = "line"
+
+
+    return {
+        "labels": labels,
+        "serie1": valeurs1,
+        "serie2": valeurs2,
+        "legendes": [
+            legende1,
+            legende2
+        ],
+        "type_graphique": type_graphique,
+        "aucune_donnee": len(labels) == 0
+    }
+
+
+
+def comparer_prescriptions(
+    api,
+    profession1,
+    departement1,
+    profession2,
+    departement2,
+    annee_debut,
+    annee_fin,
+    legende1,
+    legende2,
+    rafraichir=False
+):
+    """
+    Compare deux séries de prescriptions.
+    """
+
+    reponse1 = api.get_evolution_prescriptions(
+        profession1.libelle,
+        departement1.code
+    )
+
+    reponse2 = api.get_evolution_prescriptions(
+        profession2.libelle,
+        departement2.code
+    )
+
+
+    reponse1 = filtrer_annees(
+        reponse1,
+        annee_debut,
+        annee_fin
+    )
+
+    reponse2 = filtrer_annees(
+        reponse2,
+        annee_debut,
+        annee_fin
+    )
+
+
+    serie1 = normaliser_prescriptions(
+        reponse1
+    )
+
+    serie2 = normaliser_prescriptions(
+        reponse2
+    )
+
+
+    labels, valeurs1, valeurs2 = aligner_series(
+        serie1,
+        serie2
+    )
+
+
+    if annee_debut == annee_fin:
+        type_graphique = "bar"
+    else:
+        type_graphique = "line"
+
+
+    return {
+        "labels": labels,
+        "serie1": valeurs1,
+        "serie2": valeurs2,
+        "legendes": [
+            legende1,
+            legende2
+        ],
+        "type_graphique": type_graphique,
+        "aucune_donnee": len(labels) == 0
+    }
+
 def filtrer_annees(data, annee_debut, annee_fin):
     """
     Filtre une évolution API entre deux années.
@@ -142,7 +290,37 @@ def normaliser_reponse_api(reponse):
         resultat[int(ligne["annee"])] = int(ligne["effectif"])
     return resultat
 
+def normaliser_honoraires(reponse):
+    """
+    Transforme les données honoraires en série année: valeur
+    """
 
+    resultat = {}
+
+    for ligne in reponse:
+
+        resultat[int(ligne["annee"])] = float(
+            ligne.get("montant_honoraires", 0)
+        )
+
+    return resultat
+
+
+
+def normaliser_prescriptions(reponse):
+    """
+    Transforme les données prescriptions en série année: valeur
+    """
+
+    resultat = {}
+
+    for ligne in reponse:
+
+        resultat[int(ligne["annee"])] = float(
+            ligne.get("montant_total", 0)
+        )
+
+    return resultat
 
 def aligner_series(serie1, serie2):
     """
