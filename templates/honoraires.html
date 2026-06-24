@@ -1,17 +1,27 @@
 {% extends "base.html" %}
-{% block titre %}Tableau de bord Honoraires{% endblock %}
+{% block titre %}Honoraires{% endblock %}
 {% block contenu %}
 
+
+    <!-- Lien de retour vers l'écran de recherche-->
     <a href="{{ url_for('accueil.index') }}" style="display:inline-block; margin-bottom:20px; text-decoration:none; color:#084298; font-weight:bold;">← Nouvelle recherche</a>
 
     <h1>Analyse des honoraires en {{ nom_territoire }}</h1>
+
+    <!-- Bibliothèque Chart.js utilisée pour les graphiques -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+    <!--EVOLUTION DES HONORAIRES SUR PLUSIEURS ANNEES-->
     <hr style="margin: 40px 0;">
     <h2>1. Évolution sur plusieurs années : {{ prof.libelle }}</h2>
 
+
+
+
     {% if donnees_groupees_evo %}
         <div class="controles-tableau">
+             <!-- Choix des données affichées -->
             <div class="groupe-controle">
                 <label for="choix_affichage_evo">Affichage :</label>
                 <select id="choix_affichage_evo">
@@ -29,8 +39,10 @@
             </div>
         </div>
 
+        <!-- Graphique d'évolution -->
         <div style="margin-bottom: 30px;"><canvas id="graphique-evolution"></canvas></div>
 
+        <!-- Tableau récapitulatif -->
         <table id="tableau-evolution">
             <thead>
                 <tr>
@@ -50,6 +62,7 @@
             </tbody>
         </table>
 
+        <!-- Génération dynamique des lignes -->
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 
@@ -60,10 +73,13 @@
                     donneesEvo[d.annee].total += parseFloat(d.montant_honoraires) || 0;
                     donneesEvo[d.annee].moyen += parseFloat(d.montant_honoraires_moyens) || 0;
                 });
-
+                
+                // Liste des années triées
                 const labelsEvo = Object.keys(donneesEvo).sort();
                 const ctxEvo = document.getElementById("graphique-evolution").getContext("2d");
                 
+
+                // Création du graphique
                 const graphEvo = new Chart(ctxEvo, {
                     type: "line",
                     data: {
@@ -80,12 +96,15 @@
                 const selectTriEvo = document.getElementById("choix_tri_evo");
                 const tableauEvo = document.getElementById("tableau-evolution");
 
+
+                //Gestion de l'affichage des colonnes et du graphique
                 selectAffichageEvo.addEventListener("change", () => {
                     const choix = selectAffichageEvo.value;
                     tableauEvo.classList.remove("masquer-total", "masquer-moyen");
                     if (choix === "total") tableauEvo.classList.add("masquer-moyen");
                     if (choix === "moyen") tableauEvo.classList.add("masquer-total");
 
+                    // Affichage des courbes correspondantes
                     if (choix === "les_deux" || choix === "total") {
                         graphEvo.setDatasetVisibility(0, true);
                         graphEvo.setDatasetVisibility(1, false);
@@ -96,6 +115,8 @@
                     graphEvo.update();
                 });
 
+
+                // Tri du tableau
                 selectTriEvo.addEventListener("change", () => {
                     const ordre = selectTriEvo.value.split("-")[1];
                     const tbody = tableauEvo.querySelector("tbody");
@@ -115,7 +136,7 @@
         <p>Aucune donnée d'évolution disponible pour cette spécialité.</p>
     {% endif %}
 
-
+    <!-- Comparaison des spécialités --> 
     <hr style="margin: 60px 0 40px 0;">
     <h2>2. Comparaison des spécialités en {{ annee }}</h2>
 
