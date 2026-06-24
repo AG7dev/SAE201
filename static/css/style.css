@@ -432,7 +432,6 @@ footer a {
    FOOTER
 ========================================== */
 
-
 footer {
     display: flex;
     align-items: center;
@@ -461,4 +460,42 @@ footer {
 .footer-links a {
     text-decoration: none;
     color: white;
+}
+
+/* ==========================
+   PAGE ACCUEIL
+========================== */
+
+.bloc-accueil {
+    background-color: rgba(116, 175, 234, 0.25);
+    border: 2px solid rgb(98, 88, 233);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.bloc-accueil h1,
+.bloc-accueil h2 {
+    color: #2E74B5;
+}
+
+.bloc-accueil p {
+    line-height: 1.5;
+}
+
+.bloc-accueil ul {
+    margin-bottom: 15px;
+}
+
+.bouton-accueil {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: #2E74B5;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.bouton-accueil:hover {
+    opacity: 0.8;
 }
