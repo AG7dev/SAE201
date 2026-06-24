@@ -160,56 +160,51 @@ Comparaison
     </div>
 
 
-    <!-- Années -->
-    <!-- Année de début -->
-    <div>
+    <!-- Période de comparaison -->
+    <div class="annee-slider">
 
-        <label for="annee_debut">
-            Année début :
-        </label>
+        <label>Années :</label>
 
-        <input
-            type="number"
-            id="annee_debut"
-            name="annee_debut"
-            value="{{ annee_debut or '' }}"
-            required
-        >
+        <div class="annee-slider__labels">
+            <span id="anneeStartLabel">{{ annee_debut or 2010 }}</span>
+            <span id="anneeEndLabel">{{ annee_fin or 2023 }}</span>
+        </div>
 
-    </div>
+        <div class="annee-slider__track" aria-hidden="true">
+            {% for annee in range(2010, 2024) %}
+                <span class="annee-slider__tick">{{ annee }}</span>
+            {% endfor %}
+        </div>
 
-
-    <!-- Option année unique -->
-    <div>
-
-        <label>
-
+        <div class="annee-slider__controls">
             <input
-                type="checkbox"
-                id="annee_unique"
-                name="annee_unique"
+                type="range"
+                id="annee_debut"
+                name="annee_debut"
+                min="2010"
+                max="2023"
+                step="1"
+                value="{{ annee_debut or 2010 }}"
+                required
             >
 
-            Comparer une seule année
+            <input
+                type="range"
+                id="annee_fin"
+                name="annee_fin"
+                min="2010"
+                max="2023"
+                step="1"
+                value="{{ annee_fin or 2023 }}"
+                required
+            >
+        </div>
 
-        </label>
-
-    </div>
-
-
-    <!-- Année de fin -->
-    <div id="bloc_annee_fin">
-
-        <label for="annee_fin">
-            Année fin :
-        </label>
-
-        <input
-            type="number"
-            id="annee_fin"
-            name="annee_fin"
-            value="{{ annee_fin or '' }}"
-        >
+        <div id="anneeSelectionInfo" class="annee-slider__info">
+            {% if annee_debut == annee_fin and annee_debut %}
+                Comparaison sur une seule année
+            {% endif %}
+        </div>
 
     </div>
 
@@ -223,6 +218,60 @@ Comparaison
 
 <!-- Chargement du module de cascade -->
 <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+
+<!-- Gestion du slider de période --> 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const MIN_YEAR = 2010;
+    const MAX_YEAR = 2023;
+
+    const sliderDebut = document.getElementById("annee_debut");
+    const sliderFin = document.getElementById("annee_fin");
+
+    if (!sliderDebut || !sliderFin) {
+        return;
+    }
+
+    const labelDebut = document.getElementById("anneeStartLabel");
+    const labelFin = document.getElementById("anneeEndLabel");
+    const info = document.getElementById("anneeSelectionInfo");
+
+    function mettreAJourAffichage() {
+
+        let debut = Number(sliderDebut.value);
+        let fin = Number(sliderFin.value);
+
+        if (debut > fin) {
+            if (document.activeElement === sliderDebut) {
+                fin = debut;
+            } else {
+                debut = fin;
+            }
+        }
+
+        debut = Math.min(Math.max(debut, MIN_YEAR), MAX_YEAR);
+        fin = Math.min(Math.max(fin, MIN_YEAR), MAX_YEAR);
+
+        sliderDebut.value = debut;
+        sliderFin.value = fin;
+
+        labelDebut.textContent = debut;
+        labelFin.textContent = fin;
+
+        if (debut === fin) {
+            info.textContent = "Comparaison sur une seule année";
+        } else {
+            info.textContent = `Période : ${debut} - ${fin}`;
+        }
+    }
+
+    sliderDebut.addEventListener("input", mettreAJourAffichage);
+    sliderFin.addEventListener("input", mettreAJourAffichage);
+
+    mettreAJourAffichage();
+});
+</script>
 
 <!-- Affichage du graphique après comparaison -->
 {% if resultat %}
@@ -274,57 +323,6 @@ Comparaison
     });
 
 // Fin du script
-</script>
-
-<script>
-const checkbox = document.getElementById("annee_unique");
-
-const anneeDebut = document.getElementById("annee_debut");
-
-const blocFin = document.getElementById("bloc_annee_fin");
-
-const anneeFin = document.getElementById("annee_fin");
-
-
-checkbox.addEventListener(
-    "change",
-    function() {
-
-        if (this.checked) {
-
-            blocFin.style.display = "none";
-
-            anneeFin.value =
-                anneeDebut.value;
-
-            anneeFin.required = false;
-
-        } else {
-
-            blocFin.style.display = "block";
-
-            anneeFin.required = true;
-
-        }
-
-    }
-);
-
-
-anneeDebut.addEventListener(
-    "input",
-    function() {
-
-        if (checkbox.checked) {
-
-            anneeFin.value =
-                this.value;
-
-        }
-
-    }
-);
-
 </script>
 
 {% endif %}
