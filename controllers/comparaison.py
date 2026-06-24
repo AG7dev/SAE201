@@ -103,6 +103,19 @@ def afficher():
         type=int
     )
 
+    if annee_debut and not (2010 <= annee_debut <= 2023):
+        return render_template(
+            "erreur.html",
+            message="Année début invalide."
+        ), 400
+
+
+    if annee_fin and not (2010 <= annee_fin <= 2023):
+
+        return render_template(
+            "erreur.html",
+            message="Année fin invalide."
+        ), 400
 
     rafraichir_force = (
         request.args.get("force_refresh") == "1"
@@ -142,9 +155,16 @@ def afficher():
         # Année unique
         # ==========================
 
-        if annee_debut and annee_fin is None:
-
+        if annee_debut and not annee_fin:
             annee_fin = annee_debut
+
+        elif annee_debut and annee_fin:
+            if annee_debut > annee_fin:
+
+                return render_template(
+                    "erreur.html",
+                    message="L'année de début doit être inférieure ou égale à l'année de fin."
+                ), 400
 
 
 
