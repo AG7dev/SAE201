@@ -4,7 +4,7 @@ from models.dimensions import ProfessionSante, Departement, Region
 from services.ameli_api import AmeliAPI
 import requests
 
-
+# Initialisation du Blueprint et du service API
 bp_honoraires = Blueprint("honoraires", __name__)
 api = AmeliAPI()
 
