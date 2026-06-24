@@ -49,12 +49,123 @@ class RedisCachedAmeliAPI:
             rafraichir=rafraichir
         )
 
-    def get_honoraires(self, profession, departement_code, annee, rafraichir=False):
-        cle = f"ameli:honoraires:{profession}:{departement_code}:{annee}"
-        
+    def get_prescriptions(self, profession, departement_code, annee, rafraichir=False):
+        cle = f"ameli:prescriptions:{profession}:{departement_code}:{annee}"
+
         return self._lire_ou_calculer(
             cle,
-            lambda: self._api.get_honoraires(profession, departement_code, annee),
+            lambda: self._api.get_prescriptions(
+                profession,
+                departement_code,
+                annee
+            ),
+            rafraichir=rafraichir
+        )
+
+
+    def get_evolution_prescriptions(self, profession, departement_code, rafraichir=False):
+        cle = f"ameli:evolution_prescriptions:{profession}:{departement_code}"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_prescriptions(
+                profession,
+                departement_code
+            ),
+            rafraichir=rafraichir
+        )
+
+
+    def get_specialites(self, annee, territorio, type_honoraire=None, rafraichir=False):
+        cle = (
+            f"ameli:specialites:"
+            f"{annee}:{territorio}:{type_honoraire}"
+        )
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_specialites(
+                annee,
+                territorio,
+                type_honoraire
+            ),
+            rafraichir=rafraichir
+        )
+
+
+    def get_evolution_honoraires(
+        self,
+        profession,
+        departement_code,
+        type_honoraire=None,
+        rafraichir=False
+    ):
+        cle = (
+            f"ameli:evolution_honoraires:"
+            f"{profession}:{departement_code}:{type_honoraire}"
+        )
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_honoraires(
+                profession,
+                departement_code,
+                type_honoraire
+            ),
+            rafraichir=rafraichir
+        )
+    
+    def get_indicateur_cle(self, rafraichir=False):
+        cle = "ameli:dashboard:indicateur_cle"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_indicateur_cle(),
+            rafraichir=rafraichir
+    )
+
+    def get_repartition__specialite(self, rafraichir=False):
+        cle = "ameli:dashboard:repartition_specialite"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_repartition__specialite(),
+            rafraichir=rafraichir
+        )
+
+    def get_evolution_effectifs_all(self, rafraichir=False):
+        cle = "ameli:dashboard:evolution_effectifs_all"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_effectifs_all(),
+            rafraichir=rafraichir
+        )
+
+    def get_repartition_profesionnel(self, rafraichir=False):
+        cle = "ameli:dashboard:repartition_professionnel"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_repartition_profesionnel(),
+            rafraichir=rafraichir
+        )
+
+    def get_presence_femme(self, rafraichir=False):
+        cle = "ameli:dashboard:presence_femme"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_presence_femme(),
+            rafraichir=rafraichir
+        )
+
+    def get_medecin_patient(self, rafraichir=False):
+        cle = "ameli:dashboard:medecin_patient"
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_medecin_patient(),
             rafraichir=rafraichir
         )
 

@@ -141,39 +141,136 @@ class CachedAmeliAPI:
             rafraichir=rafraichir
         )
 
-    def get_honoraires(self, profession, departement_code, annee, rafraichir=False):
-        """
-        Retourne les honoraires d'une profession pour une année donnée.
-
-        Utilise le cache afin d'éviter plusieurs appels identiques
-        à l'API AMELI.
-
-        Args:
-            profession (str):
-                Libellé de la profession de santé.
-
-            departement_code (str):
-                Code du département concerné.
-
-            annee (int):
-                Année des données recherchées.
-
-            rafraichir (bool, optional):
-                Indique s'il faut rafraîchir le cache.
-
-        Returns:
-            list | dict:
-                Données d'honoraires retournées par l'API.
-        """
-        cle = ("honoraires", profession, departement_code, annee)
+    def get_prescriptions(self, profession, departement_code, annee, rafraichir=False):
+        cle = (
+            "prescriptions",
+            profession,
+            departement_code,
+            annee
+        )
 
         return self._lire_ou_calculer(
             cle,
-            lambda: self._api.get_honoraires(
+            lambda: self._api.get_prescriptions(
                 profession,
                 departement_code,
                 annee
             ),
+            rafraichir=rafraichir
+        )
+
+
+    def get_evolution_prescriptions(self, profession, departement_code, rafraichir=False):
+        cle = (
+            "evolution_prescriptions",
+            profession,
+            departement_code
+        )
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_prescriptions(
+                profession,
+                departement_code
+            ),
+            rafraichir=rafraichir
+        )
+
+
+    def get_specialites(self, annee, territorio, type_honoraire=None, rafraichir=False):
+        cle = (
+            "specialites",
+            annee,
+            territorio,
+            type_honoraire
+        )
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_specialites(
+                annee,
+                territorio,
+                type_honoraire
+            ),
+            rafraichir=rafraichir
+        )
+
+
+    def get_evolution_honoraires(
+        self,
+        profession,
+        departement_code,
+        type_honoraire=None,
+        rafraichir=False
+    ):
+        cle = (
+            "evolution_honoraires",
+            profession,
+            departement_code,
+            type_honoraire
+        )
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_honoraires(
+                profession,
+                departement_code,
+                type_honoraire
+            ),
+            rafraichir=rafraichir
+        )
+
+    def get_indicateur_cle(self, rafraichir=False):
+        cle = ("dashboard", "indicateur_cle")
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_indicateur_cle(),
+            rafraichir=rafraichir
+    )
+
+    def get_repartition__specialite(self, rafraichir=False):
+        cle = ("dashboard", "repartition_specialite")
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_repartition__specialite(),
+            rafraichir=rafraichir
+        )
+
+    def get_evolution_effectifs_all(self, rafraichir=False):
+        cle = ("dashboard", "evolution_effectifs_all")
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_evolution_effectifs_all(),
+            rafraichir=rafraichir
+        )
+
+    def get_repartition_profesionnel(self, rafraichir=False):
+        cle = ("dashboard", "repartition_professionnel")
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_repartition_profesionnel(),
+            rafraichir=rafraichir
+        )
+
+    def get_presence_femme(self, rafraichir=False):
+        cle = ("dashboard", "presence_femme")
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_presence_femme(),
+            rafraichir=rafraichir
+        )
+
+    def get_medecin_patient(self, rafraichir=False):
+        cle = ("dashboard", "medecin_patient")
+
+        return self._lire_ou_calculer(
+            cle,
+            lambda: self._api.get_medecin_patient(),
             rafraichir=rafraichir
         )
 
