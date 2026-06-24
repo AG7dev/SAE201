@@ -1,0 +1,192 @@
+/* =========================================
+   1. BULLE D'INFORMATION
+========================================= */
+.info-bulle {
+    background-color: #e8f4fd;
+    border: 1px solid #b6d4fe;
+    color: #084298;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.info-bulle p {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.info-bulle ul {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+/* =========================================
+   2. FORMULAIRE DE RECHERCHE
+========================================= */
+form {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 30px;
+    border: 1px solid #dee2e6;
+}
+
+form label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+form select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* =========================================
+   3.1 NAVIGATION PRINCIPALE (NIVEAU 1)
+========================================= */
+.onglets-principaux {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #084298; 
+    padding-bottom: 0;
+}
+
+.onglets-principaux a {
+    text-decoration: none;
+    color: #495057;
+    font-size: 1.1em; 
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 8px 8px 0 0;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    transition: all 0.2s;
+}
+
+.onglets-principaux a:hover {
+    background-color: #e8f4fd;
+    color: #084298;
+}
+
+.onglets-principaux a.actif {
+    background-color: #084298;
+    color: white;
+    border-color: #084298;
+}
+
+/* =========================================
+   3.2 ONGLETS DE NAVIGATION
+========================================= */
+.onglets-honoraires {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #dee2e6; /* Ligne grise */
+    padding-bottom: 0;
+}
+
+.onglets-honoraires a {
+    margin-right: 5px;
+    text-decoration: none;
+    color: #6c757d;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0;
+    display: inline-block;
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    transition: background-color 0.2s;
+}
+
+.onglets-honoraires a:hover {
+    background-color: #dee2e6;
+    color: #084298;
+}
+
+.onglets-honoraires a.actif {
+    background-color: #3277B5;
+    color: white;
+    border-color: #3277B5;
+}
+
+/* =========================================
+   4. BARRE DE CONTRÔLE (AFFICHAGE ET TRI)
+========================================= */
+.controles-tableau {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    padding: 12px 20px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.groupe-controle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.groupe-controle label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.groupe-controle select {
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+}
+
+/* =========================================
+   5. TABLEAU DES DONNÉES
+========================================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #3277B5;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Classes gérées par le JavaScript pour masquer les colonnes */
+table.masquer-total .col-total {
+    display: none;
+}
+
+table.masquer-moyen .col-moyen {
+    display: none;
+}
+
+/* =========================================
+   6. GRAPHIQUE
+========================================= */
+#div-graphique {
+    max-width: 800px;
+    margin: 20px auto;
+}
