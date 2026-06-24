@@ -73,21 +73,36 @@ Comparaison
     </div>
 
 
-    <!-- Département 1 -->
+    <!-- Région & Département 1 -->
     <div>
-        <label for="departement1_id">Département 1 :</label>
-
-        <select id="departement1_id" name="departement1_id">
-
-            {% for departement in departements %}
+        <label for="region1_id">Région 1 :</label>
+        <select
+            id="region1_id"
+            name="region1_id"
+            data-region-target="#departement1_id"
+            data-selected-dept="{{ departement1_id or '' }}"
+            required
+        >
+            <option value="">-- Choisir --</option>
+            {% for region in regions %}
                 <option
-                    value="{{ departement.id }}"
-                    {% if departement1_id == departement.id %}selected{% endif %}
+                    value="{{ region.id }}"
+                    {% if region1_id == region.id %}selected{% endif %}
                 >
-                    {{ departement.libelle }}
+                    {{ region.code }} – {{ region.libelle }}
                 </option>
             {% endfor %}
+        </select>
+    </div>
 
+    <div>
+        <label for="departement1_id">Département 1 :</label>
+        <select
+            id="departement1_id"
+            name="departement1_id"
+            required
+        >
+            <option value="">-- Choisir --</option>
         </select>
     </div>
 
@@ -111,21 +126,36 @@ Comparaison
     </div>
 
 
-    <!-- Département 2 -->
-    <div>
-        <label for="departement2_id">Département 2 :</label>
-
-        <select id="departement2_id" name="departement2_id">
-
-            {% for departement in departements %}
+    <!-- Région & Département 2 -->
+        <div>
+        <label for="region2_id">Région 2 :</label>
+        <select
+            id="region2_id"
+            name="region2_id"
+            data-region-target="#departement2_id"
+            data-selected-dept="{{ departement2_id or '' }}"
+            required
+        >
+            <option value="">-- Choisir --</option>
+            {% for region in regions %}
                 <option
-                    value="{{ departement.id }}"
-                    {% if departement2_id == departement.id %}selected{% endif %}
+                    value="{{ region.id }}"
+                    {% if region2_id == region.id %}selected{% endif %}
                 >
-                    {{ departement.libelle }}
+                    {{ region.code }} – {{ region.libelle }}
                 </option>
             {% endfor %}
+        </select>
+    </div>
 
+    <div>
+        <label for="departement2_id">Département 2 :</label>
+        <select
+            id="departement2_id"
+            name="departement2_id"
+            required
+        >
+            <option value="">-- Choisir --</option>
         </select>
     </div>
 
@@ -191,6 +221,8 @@ Comparaison
 
 </form>
 
+<!-- Chargement du module de cascade -->
+<script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
 
 <!-- Affichage du graphique après comparaison -->
 {% if resultat %}
@@ -198,7 +230,6 @@ Comparaison
 <hr>
 
 <canvas id="comparaisonChart"></canvas>
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
