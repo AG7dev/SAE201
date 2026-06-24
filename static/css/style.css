@@ -545,3 +545,34 @@ footer {
     display:none;
 
 }
+
+/* ================= DASHBOARD ================= */
+
+.info-bulle {
+    background-color: #e8f4fd;
+    border: 1px solid #b6d4fe;
+    color: #084298;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.info-bulle h2 {
+    margin-top:0;
+}
+
+
+.btn-primary,
+.btn-refresh {
+    background-color:#2E74B5;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.btn-primary:hover,
+.btn-refresh:hover {
+    opacity:0.85;
+}
