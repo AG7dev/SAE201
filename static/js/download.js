@@ -5,7 +5,6 @@
 */
 
 /* Fichier JavaScript pour le téléchargement d'un graphique HTML en PDF via html2canvas + jsPDF */
-
 const { jsPDF } = window.jspdf;
 
 // Téléchargement d'un graphique HTML en PDF via html2canvas + jsPDF
@@ -20,12 +19,9 @@ document.getElementById("chartJsDownloadButton").addEventListener("click", async
 
     const doc = new jsPDF();
 
-    // Debug : vérification du déclenchement du clic
-    console.log("clique détécté");
-
     // Insertion de l'image dans le PDF (position + dimensions)
     doc.addImage(img, "PNG", 10, 10, 190, 100);
 
     // Téléchargement du fichier PDF généré
-    doc.save("test.pdf");
+    doc.save("graphe.pdf");
 });
