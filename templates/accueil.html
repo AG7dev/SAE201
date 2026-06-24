@@ -41,7 +41,7 @@
 
         <label for="annee">Année</label>
         <select name="annee" id="annee" required>
-            {% for a in range(2023, 2014, -1) %}
+            {% for a in range(2024, 2009, -1) %}
                 <option value="{{ a }}">{{ a }}</option>
             {% endfor %}
         </select>
@@ -51,5 +51,89 @@
     </form>
 
     <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+
+
+    <h2>Consulter les honoraires</h2>
+    
+    <div class="info-bulle">
+        <p>Cette rubrique vous permet d'analyser les honoraires sous deux angles :</p>
+        <ul>
+            <li><strong>L'évolution dans le temps</strong> pour la spécialité choisie.</li>
+            <li><strong>La comparaison entre toutes les spécialités</strong> pour l'année choisie.</li>
+        </ul>
+    </div>
+
+    <form action="{{ url_for('honoraires.afficher_honoraires') }}" method="get">
+        <label for="profession_hono">Spécialité (pour l'évolution)</label>
+        <select name="profession_id" id="profession_hono" required>
+            <option value="">-- Choisir --</option>
+            {% for p in professions %}
+                <option value="{{ p.id }}">{{ p.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="annee_hono">Année (pour la comparaison)</label>
+        <select name="annee" id="annee_hono" required>
+            <option value="">-- Choisir --</option>
+            {% for a in range(2024, 2009, -1) %}
+                <option value="{{ a }}">{{ a }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="region_hono">Région</label>
+        <select name="region_id" id="region_hono" required>
+            <option value="">-- Choisir --</option>
+            {% for r in regions %}
+                <option value="{{ r.id }}">{{ r.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="departement_hono">Département</label>
+        <select name="departement_id" id="departement_hono" required>
+            <option value="">-- Choisir une région --</option>
+        </select>
+
+        <label for="type_honoraire">Type d'honoraire</label>
+        <select name="type_honoraire" id="type_honoraire">
+            <option value="">-- Tous les types --</option>
+            <option value="Actes">Actes</option>
+            <option value="Rémunérations forfaitaires">Rémunérations forfaitaires</option>
+            <option value="Indemnités de déplacement">Indemnités de déplacement</option>
+            <option value="Dépassements">Dépassements</option>
+        </select>
+
+        <button type="submit">Afficher les honoraires</button>
+    </form>
+        <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+        <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const regionHonoSelect = document.getElementById("region_hono");
+        
+        if (regionHonoSelect) {
+            regionHonoSelect.addEventListener("change", async (e) => {
+                const regionId = e.target.value;
+                const selectDept = document.getElementById("departement_hono");
+                
+                selectDept.innerHTML = '<option value="">-- Choisir un département --</option>';
+                
+                if (!regionId) return;
+
+                try {
+                    const response = await fetch(`/api/departements/${regionId}`);
+                    const depts = await response.json();
+                    
+                    depts.forEach(dept => {
+                        const opt = document.createElement("option");
+                        opt.value = dept.id;
+                        opt.textContent = `${dept.code} ${dept.libelle}`;
+                        selectDept.appendChild(opt);
+                    });
+                } catch (err) {
+                    console.error("Erreur cascade honoraires :", err);
+                }
+            });
+        }
+    });
+</script>
 
 {% endblock %}
