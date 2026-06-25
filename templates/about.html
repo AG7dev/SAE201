@@ -1,0 +1,166 @@
+<!--
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier about.html :
+   Affiche la page "À propos" ainsi que le formulaire
+   de satisfaction utilisateur.
+  ===================================================== 
+-->
+
+{% extends "base.html" %}
+
+{% block titre  %}À propos{% endblock %}
+
+{% block contenu %}
+    {% if option == "about" %}
+    <!-- Affichage des informations "à propos" -->
+    <table id="aboutTable">
+        <tbody>
+            {% for item in data %}
+                <tr>
+                    <td><strong>{{ item[0] }}</strong></td>
+                    <td>
+                        {% if item[0] == "Lien(s) vers les données" %}
+                            <a href="https://data.ameli.fr/pages/home/" target="_blank">Accéder aux données</a>
+
+                        {% elif item[0] == "Auteur(s) du projet" %}
+                            {% for name in item[1] %}
+                                <ul>{{ name }}</ul>
+                            {% endfor %}
+
+                        {% elif item[0] == "Institution" %}
+                            <div class="horizontal">
+                                <p>IUT de Créteil-Vitry, département Informatique</p>
+                                <img src="{{ url_for('static', filename='images/upec-iutcv_info-color.png') }}" alt="Logo de l'IUT de Créteil-Vitry" id="logo-UPEC">
+                            </div>
+
+                        {% elif item[0] == "Technologies utilisées" %}
+                            {% for name, url in item[1] %}
+                                <a href="{{ url }}" target="_blank">{{ name }}</a>
+                            {% endfor %}
+
+                        {% else %}
+                            {{ item[1]|safe }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td><strong>Nous contacter</strong></td>
+                <td>
+                    <p>Référez vous à la page de contact</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% elif option == "form" %}
+    <h2>Formulaire de satisfaction</h2>
+
+    <form method="POST" class="formulaire-analyse">
+        <table class="table-satisfaction">
+
+            <tr>
+                <td><label>Satisfaction générale<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteSatisfaction" class="range" type="range" min="0" max="5" step="1" value="5"></td>
+            </tr>
+
+            <tr>
+                <td><label>Facilité d'utilisation<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteFacilite" class="range" type="range" min="0" max="5" step="1" value="5"></td>
+            </tr>
+
+            <tr>
+                <td><label>Design du site<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteDesign" class="range" type="range" min="0" max="5" step="1" value="5"></td>
+            </tr>
+
+            <tr>
+                <td><label>Rapidité du site<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteRapidite" class="range" type="range" min="0" max="5" step="1" value="5"></td>
+            </tr>
+
+            <tr>
+                <td><label>Utilité des fonctionnalités<strong>*</strong></label></td>
+                <td><output></output></td>
+                <td><input name="noteFonctionelite" class="range" type="range" min="0" max="5" step="1" value="5"></td>
+            </tr>
+
+            <tr>
+                <td><label>Recommanderez-vous ce site ?<strong>*</strong></label></td>
+                <td></td>
+                <td>
+                    <input type="radio" name="recommendation" value="oui" required> Oui
+                    <input type="radio" name="recommendation" value="non" required> Non
+                </td>
+            </tr>
+
+            <tr>
+                <td><label>Quelle fonctionnalité utilisez-vous le plus ?<strong>*</strong></label></td>
+                <td></td>
+                <td>
+                    <select name="fonction" required>
+                        <option>Recherche</option>
+                        <option>Graphiques</option>
+                        <option>Export de données</option>
+                        <option>Autre</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td><label>Quels problèmes avez-vous rencontrés ?</label></td>
+                <td></td>
+                <td>
+                    <input type="checkbox" name="problemeBugs" value="Bugs"> Bugs
+                    <input type="checkbox" name="problemeLenteurs" value="Lenteurs"> Lenteurs
+                    <input type="checkbox" name="problemeInterface" value="Interface peu claire"> Interface peu claire
+                </td>
+            </tr>
+
+            <tr>
+                <td><label>Commentaire libre</label></td>
+                <td></td>
+                <td>
+                    <textarea name="text" cols="40" rows="7" maxlength="256"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td><button type="submit" class="btn-primary">Valider</button></td>
+            </tr>
+
+        </table>
+    </form>
+    {% endif %}
+
+    <script>
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+        const output = slider.closest('tr').querySelector('output');
+        output.textContent = slider.value;
+        slider.addEventListener('input', () => {
+            output.textContent = slider.value;
+        });
+    });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <script>
+                Swal.fire({
+                    title: "Formulaire envoyé",
+                    text: "{{ message }}",
+                    icon: "success"
+                });
+            </script>
+        {% endfor %}
+    {% endwith %}
+{% endblock %}

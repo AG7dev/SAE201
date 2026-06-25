@@ -1,0 +1,81 @@
+<!-- 
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier accueil.html :
+   Page d'accueil permettant la sélection des filtres
+   pour consulter les effectifs médicaux.
+  ===================================================== 
+--> 
+
+{% extends "base.html" %}
+
+{% block titre %}
+Accueil
+{% endblock %}
+
+{% block contenu %}
+
+<section class="bloc-accueil">
+    <h1>Bienvenue sur Santé Data</h1>
+
+    <p>
+        Cette application permet d'explorer et d'analyser des données
+        de santé issues de l'API ameli.
+    </p>
+
+    <p>
+        Vous pouvez consulter les effectifs des professionnels de santé,
+        analyser les honoraires, étudier les prescriptions et comparer
+        les données selon les territoires et les périodes.
+    </p>
+</section>
+
+
+<section class="bloc-accueil">
+    <h2>Analyses disponibles</h2>
+
+    <p>
+        La partie analyse permet d'accéder aux différentes études :
+    </p>
+
+    <ul>
+        <li>Effectifs des professionnels de santé</li>
+        <li>Honoraires</li>
+        <li>Prescriptions</li>
+    </ul>
+
+    <a class="bouton-accueil" href="{{ url_for('analyse.index') }}">
+        Accéder aux analyses
+    </a>
+</section>
+
+
+<section class="bloc-accueil">
+    <h2>Dashboard</h2>
+
+    <p>
+        Le tableau de bord présente une vision globale des données
+        grâce à des indicateurs, graphiques et cartes interactives.
+    </p>
+
+    <a class="bouton-accueil" href="{{ url_for('dashboard.dashboard') }}">
+        Voir le dashboard
+    </a>
+</section>
+
+
+<section class="bloc-accueil">
+    <h2>Comparaison</h2>
+
+    <p>
+        Comparez différentes professions, différents départements
+        et différentes périodes afin d'observer les évolutions.
+    </p>
+
+    <a class="bouton-accueil" href="{{ url_for('comparaison.afficher') }}">
+        Comparer les données
+    </a>
+</section>
+
+{% endblock %}

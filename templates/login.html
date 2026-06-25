@@ -1,0 +1,144 @@
+<!-- 
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier login.html :
+   Page d’authentification et de création de compte.
+   Permet à l’utilisateur de se connecter ou de créer un
+   nouveau compte selon le mode sélectionné côté backend.
+   Affiche également des notifications dynamiques via
+   SweetAlert2 (succès / erreur).
+  =====================================================
+-->
+
+{% extends "base.html" %}
+
+{% block titre %}Login{% endblock %}
+
+{% block contenu %}
+
+    <!-- ======================= MODE CONNEXION ======================= -->
+    {% if option == "login" %}
+
+      <div class="page-login">
+          <div class="bloc-analyse carte-login">
+
+              <h2>Connexion</h2>
+
+              <form method="post" class="formulaire-analyse">
+
+                  <div class="champ-formulaire">
+                      <label for="username">Nom d'utilisateur :</label>
+                      <input id="username"
+                             name="username"
+                             placeholder="Nom d'utilisateur"
+                             autocomplete="off"
+                             minlength="3"
+                             maxlength="64"
+                             required>
+                  </div>
+
+                  <div class="champ-formulaire">
+                      <label for="password">Mot de passe :</label>
+                      <input id="password"
+                             name="password"
+                             type="password"
+                             placeholder="Mot de passe"
+                             minlength="3"
+                             maxlength="64"
+                             required>
+                  </div>
+
+                  <button type="submit" class="btn-primary">Connexion</button>
+              </form>
+
+              <a class="lien-retour" href="{{ url_for('login.createUser') }}">
+                  Pas de Compte ? Créer en un
+              </a>
+
+          </div>
+      </div>
+
+    <!-- ======================= MODE CRÉATION COMPTE ======================= -->
+    {% elif option == "createUser" %}
+
+    <div class="page-login">
+        <div class="bloc-analyse carte-login">
+
+            <h2>Créer un compte</h2>
+
+            <!-- Formulaire de création d’utilisateur -->
+            <form method="post" class="formulaire-analyse">
+
+                <!-- Nom d'utilisateur -->
+                <div class="champ-formulaire">
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input id="username"
+                           name="username"
+                           placeholder="Nom d'utilisateur"
+                           autocomplete="off"
+                           minlength="3"
+                           maxlength="64"
+                           required>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="champ-formulaire">
+                    <label for="password">Mot de passe :</label>
+                    <input id="password"
+                           name="password"
+                           type="password"
+                           minlength="3"
+                           maxlength="64"
+                           placeholder="Mot de passe"
+                           required>
+                </div>
+
+                <!-- Soumission création compte -->
+                <button type="submit" class="btn-primary">Créer un compte</button>
+            </form>
+
+            <!-- Lien retour vers connexion -->
+            <a class="lien-retour" href="{{ url_for('login.login') }}">
+                Vous avez un compte ? Connectez-vous
+            </a>
+
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- ======================= NOTIFICATIONS ======================= -->
+
+    <!-- Librairie SweetAlert2 pour popups stylisées -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Gestion des messages flash côté Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+
+            <!-- Message d’erreur -->
+            {% if category == "erreur" %}
+                <script>
+                    Swal.fire({
+                        title: "Erreur",
+                        text: "{{ message }}",
+                        icon: "error"
+                    });
+                </script>
+
+            <!-- Message de succès -->
+            {% elif category == "succes" %}
+                <script>
+                    Swal.fire({
+                        title: "Succés",
+                        text: "{{ message }}",
+                        icon: "success"
+                    });
+                </script>
+            {% endif %}
+
+        {% endfor %}
+    {% endwith %}
+
+{% endblock %}

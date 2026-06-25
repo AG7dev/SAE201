@@ -1,0 +1,148 @@
+<!-- 
+  ==========================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier prescriptions.html :
+   Page d'affichage des prescriptions par profession, département
+   et année. Présente les résultats sous forme de tableau
+   ainsi qu'un graphique d'évolution généré avec Chart.js.
+   Permet également le téléchargement des données en CSV
+   et l'export du graphique en image/PDF.
+  ==========================================================
+-->
+
+{% extends "base.html" %}
+
+{% block titre %}Prescriptions{% endblock %}
+
+{% block contenu %}
+
+    <!-- En-tête de page : titre + bouton d'actualisation -->
+    <div class="entete-page">
+
+        <h2>Prescriptions</h2>
+
+        <div class="actions-page">
+            <form action="{{ url_for(request.endpoint) }}" method="get">
+
+                <input type="hidden"
+                    name="profession_id"
+                    value="{{ prof.id }}">
+
+                <input type="hidden"
+                    name="departement_id"
+                    value="{{ dept.id }}">
+
+                <input type="hidden"
+                    name="annee"
+                    value="{{ annee }}">
+
+                <input type="hidden"
+                    name="force_refresh"
+                    value="1">
+
+                <button type="submit" class="btn-refresh">
+                    Actualiser les données
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Carte résumé des filtres sélectionnés -->
+    <div class="carte-resume">
+
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Profession</span>
+            <span class="carte-resume__valeur">{{ prof.libelle }}</span>
+        </div>
+
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Territoire</span>
+            <span class="carte-resume__valeur">{{ dept.code }} {{ dept.libelle }}</span>
+        </div>
+
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Année</span>
+            <span class="carte-resume__valeur">{{ annee }}</span>
+        </div>
+
+    </div>
+
+    <!-- Tableau des prescriptions -->
+    {% if resultats %}
+
+        <div class="tableau-conteneur">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Année</th>
+                        <th>Montant total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in resultats %}
+                        <tr>
+                            <td>{{ r.annee }}</td>
+                            <td>{{ r.montant_total | round(1) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <p>Aucune donnée disponible pour cette sélection.</p>
+    {% endif %}
+
+    <!-- Carte graphique d'évolution -->
+    <div class="bloc-analyse">
+
+        <h3>Évolution sur plusieurs années</h3>
+
+        <div id="div-graphique">
+            <canvas id="graphique"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Export des résultats -->
+    <div class="export-actions">
+
+        <a href="{{ url_for('static', filename='csv/donnees.csv') }}" download class="btn-secondary">
+            Télécharger les données (CSV)
+        </a>
+
+        <button id="chartJsDownloadButton" class="btn-secondary">
+            Télécharger le graphique
+        </button>
+
+    </div>
+
+    <!-- Librairies nécessaires au rendu et export du graphique -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Script local pour la gestion du téléchargement -->
+    <script src="{{ url_for('static', filename='js/download.js') }}"></script>
+
+    <script>
+        const donnees = {{ evolution|tojson }};
+
+        new Chart(document.getElementById("graphique"), {
+            type: "line",
+            data: {
+                labels: donnees.map(d => d.annee),
+                datasets: [{
+                    label: "Prescriptions",
+                    data: donnees.map(d => d.montant_total),
+                    borderColor: "#2E74B5",
+                    tension: 0.2,
+                }],
+            },
+        });
+    </script>
+
+{% endblock %}

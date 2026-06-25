@@ -1,0 +1,1037 @@
+/* 
+  ==================================================
+    SAÉ 2.01 - Développement d'une application WEB
+  ==================================================
+*/
+
+/* ==========================
+   VARIABLES GLOBALES
+========================== */
+:root {
+    --bleu-principal: #2E74B5;
+    --bleu-bandeau: #005aaa;
+    --bleu-clair: rgba(116, 175, 234, 0.25);
+    --violet-bordure: rgb(98, 88, 233);
+    --gris-fond: #f8f9fa;
+    --gris-bordure: #dee2e6;
+}
+
+
+/* ==========================
+   BASE
+========================== */
+body {
+    font-family:"Segoe UI", sans-serif;
+    margin:0;
+    color:#333;
+}
+
+main {
+    padding:2rem;
+    max-width:900px;
+    margin:auto;
+}
+
+.horizontal {
+    display:flex;
+    flex-direction:row;
+}
+
+.horizontal p {
+    margin:auto 0;
+}
+
+#logo-UPEC {
+    height:100px;
+}
+
+/* ==========================
+   HEADER
+========================== */
+.header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--bleu-bandeau);
+    padding:15px 30px;
+    color:white;
+}
+
+.logo-site img {
+    height:45px;
+}
+
+.navigation {
+    display:flex;
+    gap:25px;
+}
+
+.navigation a {
+    position:relative;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    padding-bottom:4px;
+}
+
+.navigation a::after {
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:2px;
+    background:white;
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform 0.25s ease;
+}
+
+.navigation a:hover::after {
+    transform:scaleX(1);
+}
+
+.navigation a.navigation__lien--actif {
+    color:white;
+    background:rgba(255,255,255,0.18);
+    padding:6px 14px 10px;
+    border-radius:6px;
+    margin:0 -14px;
+}
+
+.navigation a.navigation__lien--actif::after {
+    left:14px;
+    width:calc(100% - 28px);
+    transform:scaleX(1);
+    background:white;
+    height:3px;
+}
+
+.user-zone {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.user-zone a {
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.user-zone__nom {
+    font-weight:bold;
+    color:var(--bleu-bandeau);
+    background:white;
+    padding:4px 12px;
+    border-radius:20px;
+}
+
+
+/* ==========================
+   FOOTER
+========================== */
+footer {
+    display:flex;
+    align-items:center;
+    padding:30px 50px;
+    background-color:var(--bleu-bandeau);
+}
+
+.footer-logo {
+    width:180px;
+    height:auto;
+}
+
+.footer-separator {
+    height:70px;
+    width:2px;
+    background-color:white;
+    margin:0 30px;
+}
+
+.footer-links {
+    display:flex;
+    gap:30px;
+    margin-left:auto;
+}
+
+.footer-links a {
+    color:white;
+    text-decoration:none;
+}
+
+.footer-copyright {
+    color:white;
+    font-size:0.85rem;
+    margin:0 0 0 30px;
+    white-space:nowrap;
+}
+
+/* ==========================
+   BLOCS GENERIQUES
+========================== */
+.bloc-accueil,
+.bloc-analyse {
+    border-radius:10px;
+    padding:20px;
+    /* Suppression du display: flex global qui brisait la structure */
+}
+
+.bloc-accueil {
+    background-color:var(--bleu-clair);
+    border:2px solid var(--violet-bordure);
+    margin-bottom:25px;
+}
+
+css.bloc-accueil h1,
+.bloc-accueil h2,
+.bloc-analyse h2,
+.bloc-analyse h3 {
+    color:var(--bleu-principal);
+}
+
+.bloc-accueil p {
+    line-height:1.5;
+}
+
+.bloc-analyse {
+    background:white;
+    border:1px solid #dcdcdc;
+    margin-bottom:30px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.bloc-analyse h2 {
+    margin-top:0;
+}
+
+/* Forçage du centrage des boutons d'accès */
+.bloc-accueil .bouton-accueil,
+.bloc-analyse .btn-primary,
+.bloc-analyse a.btn-primary {
+    display: block;
+    width: max-content;
+    margin: 20px auto 0 auto; /* Centre horizontalement via les marges */
+    text-align: center;
+}
+
+.cache {
+    display:none;
+}
+
+/* ==========================
+   MENU ANALYSE (onglets)
+========================== */
+.menu-analyse {
+    display:flex;
+    gap:15px;
+    margin:30px 0;
+}
+
+.menu-analyse button {
+    background:white;
+    border:2px solid var(--bleu-principal);
+    color:var(--bleu-principal);
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+.menu-analyse button:hover {
+    background:#e8f1fb;
+}
+
+.menu-analyse button.onglet-actif {
+    background:var(--bleu-principal);
+    color:white;
+}
+
+/* ==========================
+   BOUTONS
+========================== */
+.btn-primary,
+.btn-refresh,
+.bouton-accueil,
+.formulaire-analyse button {
+    background-color:var(--bleu-principal);
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.btn-primary:hover,
+.btn-refresh:hover,
+.bouton-accueil:hover,
+.formulaire-analyse button:hover {
+    opacity:0.85;
+}
+
+/* ==========================
+   FORMULAIRES
+========================== */
+.formulaire-analyse {
+    background:var(--gris-fond);
+    border:1px solid var(--gris-bordure);
+    border-radius:8px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.champ-formulaire {
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.formulaire-analyse label,
+.champ-formulaire label {
+    font-weight:bold;
+    color:var(--bleu-principal);
+}
+
+/* Regroupement visuel Comparaison 1 / Comparaison 2 */
+.comparaison-colonnes {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    box-sizing:border-box;
+}
+
+.comparaison-colonne {
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    background:white;
+    border:1px solid var(--gris-bordure);
+    border-radius:6px;
+    padding:15px;
+    box-sizing:border-box;
+    min-width:0;
+}
+
+.comparaison-colonne__titre {
+    margin:0;
+    color:var(--bleu-principal);
+    border-bottom:2px solid var(--bleu-principal);
+    padding-bottom:8px;
+}
+
+@media (max-width:700px) {
+    .comparaison-colonnes {
+        grid-template-columns:1fr;
+    }
+}
+
+form select,
+form input,
+form textarea {
+    padding:8px 10px;
+    border:1px solid #ced4da;
+    border-radius:4px;
+}
+
+form textarea {
+    resize:vertical;
+}
+
+/* ==========================
+   TABLEAUX
+========================== */
+table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
+
+table th,
+table td {
+    padding:12px;
+    text-align:left;
+}
+
+table th {
+    background-color:#3277B5;
+    color:white;
+}
+
+table td {
+    border-bottom:1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color:var(--gris-fond);
+}
+
+table tbody tr:hover {
+    background-color:#f5f5f5;
+}
+
+/* DataTables */
+table.dataTable {
+    max-width:100%;
+    margin:20px auto;
+}
+
+table.dataTable thead th {
+    background-color:#f8eaca;
+}
+
+/* ==========================
+   GRILLES / DASHBOARD
+========================== */
+.wrapper {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-gap:10px;
+}
+
+.wrapper > div {
+    border:2px solid var(--violet-bordure);
+    border-radius:5px;
+    background-color:rgba(116,175,234,0.5);
+    padding:1em;
+    color:var(--violet-bordure);
+}
+
+#divIndicateurCle {
+    grid-column:1/5;
+}
+
+#divIndicateurCle > div {
+    border:2px solid var(--violet-bordure);
+    background:white;
+    border-radius:3px;
+    padding:10px;
+    height:175px;
+    width:125px;
+    text-align:center;
+    margin:auto;
+}
+
+#divIndicateurCle > div > h3 {
+    border:2px solid rgba(116,175,234,1);
+    background:rgba(100,160,220,0.52);
+    border-radius:20px;
+}
+
+#MapRegionRepartition {
+    height: 85%;
+    width: 100%;
+}
+
+/* Positions dashboard */
+#divRepartitionProfession {
+    grid-column:4;
+    grid-row:3;
+}
+
+#divEvolutionNombreProffessionel {
+    grid-column:1/5;
+    grid-row:2;
+    height:185px;
+}
+
+#divMapRegionRepartition {
+    grid-column:3/5;
+    grid-row:4/5;
+    height:385px;
+}
+
+#divMedecinPatient {
+    grid-column:1/3;
+    grid-row:4;
+}
+
+#divPresenceFemme {
+    grid-column:1/4;
+    grid-row:3;
+}
+
+canvas {
+    max-width:100%;
+}
+
+/* ==========================
+   SLIDER ANNEE
+========================== */
+.annee-slider {
+    margin-bottom:1.5rem;
+}
+
+.annee-slider__labels {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:0.5rem;
+    font-weight:bold;
+}
+
+.annee-slider__track {
+    display:flex;
+    justify-content:space-between;
+    gap:0.1rem;
+    margin-bottom:0.75rem;
+    font-size:0.85rem;
+    color:#444;
+}
+
+.annee-slider__tick {
+    flex:1;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.annee-slider__controls {
+    position:relative;
+    height:2rem;
+    display:flex;
+    align-items:center;
+}
+
+/* Rail de fond, fixe */
+.annee-slider__rail {
+    position:absolute;
+    top:50%;
+    left:0;
+    right:0;
+    height:0.3rem;
+    transform:translateY(-50%);
+    background:#ccc;
+    border-radius:0.3rem;
+    pointer-events:none;
+}
+
+/* Barre de progression colorée entre les deux poignées */
+.annee-slider__progression {
+    position:absolute;
+    top:50%;
+    height:0.3rem;
+    transform:translateY(-50%);
+    background:var(--bleu-principal);
+    border-radius:0.3rem;
+    pointer-events:none;
+    left:0%;
+    width:0%;
+}
+
+.annee-slider__controls input[type="range"] {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:2rem;
+    margin:0;
+    padding:0;
+    border:none;
+    border-radius:0;
+    background:transparent;
+    appearance:none;
+    -webkit-appearance:none;
+    /* Correctif ergonomie double-slider :
+       l'input lui-meme ne capte plus les clics sur toute sa largeur,
+       seule la poignee (::thumb) redevient cliquable ci-dessous.
+       Sans ca, le second input (au-dessus en z-index) "vole" tous
+       les clics sur la barre, peu importe la poignee visee. */
+    pointer-events:none;
+}
+
+.annee-slider__controls input[type="range"]:focus {
+    outline:none;
+}
+
+/* Poignees en triangle pointant vers le bas, apex centre sur le rail.
+   Le triangle occupe la moitie superieure de sa boite (apex a 50%),
+   pour que sa pointe touche exactement la barre, peu importe la
+   hauteur de la boite de la poignee. */
+.annee-slider__controls input[type="range"]::-webkit-slider-thumb {
+    appearance:none;
+    -webkit-appearance:none;
+
+    width:2rem;
+    height:2rem;
+
+    background:#cdcbca;
+    clip-path:polygon(50% 0%, 0% 50%, 100% 50%);
+
+    border:none;
+    cursor:pointer;
+    pointer-events:auto;
+
+    filter:
+        drop-shadow(1px 0 0 white)
+        drop-shadow(-1px 0 0 white)
+        drop-shadow(0 1px 0 white)
+        drop-shadow(0 -1px 0 white);
+}
+
+.annee-slider__controls input[type="range"]::-moz-range-thumb {
+    width:2rem;
+    height:2rem;
+
+    background:#cdcbca;
+    clip-path:polygon(50% 0%, 0% 50%, 100% 50%);
+
+    border:none;
+    cursor:pointer;
+    pointer-events:auto;
+
+    filter:
+        drop-shadow(1px 0 0 white)
+        drop-shadow(-1px 0 0 white)
+        drop-shadow(0 1px 0 white)
+        drop-shadow(0 -1px 0 white);
+}
+
+/* Pistes natives transparentes : le rail/progression maison les remplacent */
+.annee-slider__controls input[type="range"]::-webkit-slider-runnable-track {
+    height:0.3rem;
+    background:transparent;
+}
+
+.annee-slider__controls input[type="range"]::-moz-range-track {
+    height:0.3rem;
+    background:transparent;
+}
+
+.annee-slider__info {
+    margin-top:0.5rem;
+    font-size:0.95rem;
+    color:#333;
+}
+
+/* ==========================
+   DASHBOARD INFOS
+========================== */
+.info-bulle {
+    background:#e8f4fd;
+    border:1px solid #b6d4fe;
+    color:#084298;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:25px;
+}
+
+.info-bulle h2 {
+    margin-top:0;
+}
+
+/* ==========================
+   CONTROLES TABLEAU INTERACTIFS
+========================== */
+.controles-tableau {
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    margin-top:20px;
+    margin-bottom:15px;
+    background-color:var(--gris-fond);
+    padding:12px 20px;
+    border-radius:6px;
+    border:1px solid var(--gris-bordure);
+}
+
+.groupe-controle {
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.groupe-controle label {
+    font-weight:bold;
+    color:#495057;
+}
+
+.groupe-controle select {
+    padding:6px 10px;
+    border:1px solid #ced4da;
+    border-radius:4px;
+    background-color:white;
+}
+
+/* Classes gérées par le JavaScript pour masquer des colonnes */
+table.masquer-total .col-total {
+    display:none;
+}
+
+table.masquer-moyen .col-moyen {
+    display:none;
+}
+
+/* ==========================
+   CONTACT
+========================== */
+.contact-form {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:20px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding:10px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+.contact-form label {
+    font-weight:bold;
+}
+
+/* ==========================
+   PAGE A PROPOS
+========================== */
+#aboutTable td:first-child {
+    min-width:220px;
+    white-space:nowrap;
+    hyphens:none;
+}
+
+/* ==========================
+   RESULTATS
+========================== */
+.actions-page {
+    margin-bottom:20px;
+}
+
+.actions-page form {
+    background:none;
+    border:none;
+    padding:0;
+    margin:0;
+}
+
+.entete-page {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.entete-page .actions-page {
+    margin-bottom:0;
+}
+
+.carte-resume {
+    display:flex;
+    flex-wrap:wrap;
+    gap:35px;
+    background:var(--bleu-clair);
+    border:2px solid var(--violet-bordure);
+    border-radius:10px;
+    padding:20px 25px;
+    margin-bottom:25px;
+}
+
+.carte-resume__item {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.carte-resume__label {
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--violet-bordure);
+    font-weight:bold;
+}
+
+.carte-resume__valeur {
+    font-size:1.15rem;
+    font-weight:bold;
+    color:#333;
+}
+
+.tableau-conteneur {
+    overflow-x:auto;
+}
+
+.export-actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:20px;
+}
+
+.btn-secondary {
+    display:inline-block;
+    background:white;
+    color:var(--bleu-principal);
+    border:2px solid var(--bleu-principal);
+    padding:9px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    font-family:inherit;
+    font-size:1rem;
+    line-height:normal;
+    text-decoration:none;
+    appearance:none;
+    -webkit-appearance:none;
+}
+
+.btn-secondary:hover {
+    background:var(--bleu-clair);
+}
+
+.lien-retour {
+    display:inline-block;
+    margin-bottom:20px;
+    text-decoration:none;
+    color:#084298;
+    font-weight:bold;
+}
+
+.graphique-conteneur {
+    margin-bottom:30px;
+}
+
+.graphique-conteneur--grand {
+    position:relative;
+    height:500px;
+    width:100%;
+    margin-bottom:40px;
+}
+ 
+/* ==========================
+   PAGE LOGIN
+========================== */
+.page-login {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:60vh;
+    padding:2rem 0;
+}
+ 
+.carte-login {
+    max-width:380px;
+    width:100%;
+}
+ 
+.carte-login h2 {
+    margin-top:0;
+    text-align:center;
+}
+ 
+.carte-login .formulaire-analyse {
+    margin-bottom:15px;
+}
+ 
+.carte-login .lien-retour {
+    display:block;
+    text-align:center;
+    margin-bottom:0;
+}
+ 
+ 
+/* ==========================
+   ADMIN PANEL - SWITCHER VUES
+========================== */
+.entete-admin {
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:10px;
+}
+ 
+.vue-switcher {
+    display:flex;
+    gap:10px;
+}
+ 
+.vue-switcher__option {
+    background:white;
+    border:2px solid var(--bleu-principal);
+    color:var(--bleu-principal);
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.2s;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+ 
+.vue-switcher__option:hover {
+    background:#e8f1fb;
+}
+ 
+.vue-switcher__option--actif {
+    background:var(--bleu-principal);
+    color:white;
+}
+ 
+.vue-switcher__option input[type="radio"] {
+    accent-color:white;
+    margin:0;
+}
+ 
+/* ==========================
+   ADMIN PANEL - GRILLE STATS
+========================== */
+.grille-stats-admin {
+    grid-template-columns:repeat(2, 1fr);
+}
+ 
+.carte-graphique {
+    background:white;
+    border:1px solid var(--gris-bordure);
+    border-radius:8px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    color:#333;
+}
+ 
+.carte-graphique canvas {
+    max-height:320px;
+}
+ 
+@media (max-width:900px) {
+    .grille-stats-admin {
+        grid-template-columns:1fr;
+    }
+}
+ 
+/* ==========================
+   FORMULAIRE DE SATISFACTION
+========================== */
+.table-satisfaction {
+    box-shadow:none;
+    margin-top:0;
+}
+ 
+.table-satisfaction td {
+    border-bottom:none;
+    padding:10px 12px;
+}
+ 
+.table-satisfaction label {
+    font-weight:bold;
+    color:var(--bleu-principal);
+}
+ 
+.table-satisfaction output {
+    font-weight:bold;
+    color:var(--bleu-principal);
+    min-width:1.5em;
+    display:inline-block;
+    text-align:center;
+}
+ 
+.table-satisfaction input[type="range"] {
+    accent-color:var(--bleu-principal);
+    width:200px;
+}
+ 
+.table-satisfaction textarea {
+    width:100%;
+    box-sizing:border-box;
+}
+
+/* ==================================================
+   VUE D'ADMINISTRATION - OVERRIDES ET HARMONISATION
+================================================== */
+
+/* Conteneur pour prévenir l'éclatement du layout sur grands tableaux */
+.tableau-conteneur {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--gris-bordure);
+}
+
+/* En-têtes du tableau harmonisés avec la couleur principale */
+table.dataTable thead th {
+    background-color: var(--bleu-principal) !important;
+    color: white !important;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 10px !important;
+    white-space: nowrap; /* Empêche les retours à la ligne arbitraires */
+    border-bottom: 2px solid var(--bleu-bandeau) !important;
+}
+
+/* Ajustements des cellules de données */
+table.dataTable tbody td {
+    padding: 10px !important;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--gris-bordure) !important;
+    color: #333;
+}
+
+/* Formatage propre pour les colonnes de dates */
+.cellule-date {
+    font-family: monospace;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    color: #555;
+}
+
+/* Stylisation des blocs de contrôle DataTables (Recherche et Filtres) */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 15px;
+    color: #495057 !important;
+    font-size: 0.95rem;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    padding: 6px 10px !important;
+    border: 1px solid var(--gris-bordure) !important;
+    border-radius: 4px !important;
+    background-color: white !important;
+    outline: none;
+}
+
+/* Refonte esthétique de la pagination DataTables */
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 15px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 5px 12px !important;
+    margin-left: 5px !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--gris-bordure) !important;
+    background: white !important;
+    color: var(--bleu-principal) !important;
+    font-weight: bold;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: var(--bleu-principal) !important;
+    color: white !important;
+    border-color: var(--bleu-principal) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--bleu-clair) !important;
+    color: var(--bleu-principal) !important;
+    border-color: var(--bleu-principal) !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 15px !important;
+    color: #6c757d !important;
+    font-size: 0.9rem;
+}

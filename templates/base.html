@@ -1,0 +1,152 @@
+<!-- 
+  =====================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier base.html :
+   Template principal servant de structure commune à
+   toutes les pages du site. Il définit l’en-tête global,
+   la navigation, l’affichage utilisateur (connexion /
+   déconnexion), les droits d’accès (admin), ainsi que
+   les blocs dynamiques (titre et contenu) injectés par
+   les templates enfants.
+  =====================================================
+-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block titre %}
+        Données de santé
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <header class="header">
+
+
+        <!-- LOGO MAISON -->
+        <div class="logo-site">
+
+            <a href="{{ url_for('accueil.index') }}">
+                <img 
+                    src="{{ url_for('static', filename='images/home.svg') }}"
+                alt="Accueil">
+            </a>
+
+        </div>
+
+
+
+        <!-- NAVIGATION -->
+        <nav class="navigation">
+
+            <a href="{{ url_for('accueil.index') }}"
+               class="{% if request.endpoint == 'accueil.index' %}navigation__lien--actif{% endif %}">
+                Accueil
+            </a>
+
+            <a href="{{ url_for('analyse.index') }}"
+               class="{% if request.endpoint == 'analyse.index' %}navigation__lien--actif{% endif %}">
+                Analyse
+            </a>
+
+            <a href="{{ url_for('dashboard.dashboard') }}"
+               class="{% if request.endpoint == 'dashboard.dashboard' %}navigation__lien--actif{% endif %}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('comparaison.afficher') }}"
+               class="{% if request.endpoint == 'comparaison.afficher' %}navigation__lien--actif{% endif %}">
+                Comparaison
+            </a>
+
+        </nav>
+
+
+
+        <!-- UTILISATEUR -->
+        <div class="user-zone">
+
+            <img 
+                src="{{ url_for('static', filename='images/login_user_icon.svg') }}"
+                alt="Utilisateur"
+            height="45">
+
+
+            {% if current_user.id %}
+
+                <span class="user-zone__nom">
+                    {{ current_user.id }}
+                </span>
+
+                <a href="{{ url_for('about.form') }}">
+                    Mon avis
+                </a>
+
+                {% if current_user.permissions == "admin" %}
+                    <a href="{{ url_for('about.adminPanel') }}">
+                        Administration
+                    </a>
+                {% endif %}
+
+                <a href="{{ url_for('login.logout') }}">
+                    Déconnexion
+                </a>
+
+
+            {% else %}
+
+                <a href="{{ url_for('login.login') }}">
+                    Connexion
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </header>
+
+    <main>
+
+    {% block contenu %}
+
+    {% endblock %}
+
+    </main>
+
+    <footer>
+        <a href="https://data.ameli.fr/pages/home/" target="_blank">
+            <img 
+                class="footer-logo"
+                src="{{ url_for('static', filename='images/ameliAPI.png') }}"
+                alt="ameli API">
+        </a>
+
+        <div class="footer-separator"></div>
+
+        <nav class="footer-links">
+            <a href="{{ url_for('about.about') }}">
+                À propos
+            </a>
+
+            <a href="{{ url_for('footer.mentions_legales') }}">
+                Mentions légales
+            </a>
+
+            <a href="{{ url_for('footer.contact') }}">
+                Contact
+            </a>
+        </nav>
+
+        <p class="footer-copyright">
+            &copy; Équipe A6, 2026
+        </p>
+    </footer>
+</body>
+</html>

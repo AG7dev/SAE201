@@ -1,0 +1,365 @@
+<!-- 
+  ==========================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier comparaison.html :
+   Page de comparaison des données de santé.
+   Permet de sélectionner un dataset, deux professions,
+   deux départements ainsi qu’une période d’analyse.
+   Affiche ensuite les résultats sous forme de graphique
+   généré avec Chart.js selon le type de données fourni.
+  ==========================================================
+-->
+
+{% extends "base.html" %}
+
+{% block titre %}
+Comparaison
+{% endblock %}
+
+{% block contenu %}
+
+<!-- Titre de la page -->
+<h2>Comparaison des données de santé</h2>
+
+<!-- Message d'erreur lors d'un formulaire incomplet -->
+{% if erreur %}
+
+<div class="message-erreur">
+
+    {{ erreur }}
+
+</div>
+
+{% endif %}
+
+<!-- Formulaire de comparaison -->
+<form method="get" action="{{ url_for('comparaison.afficher') }}" class="formulaire-analyse">
+
+    <!-- Choix du dataset -->
+    <div class="champ-formulaire">
+        <label for="dataset">Dataset :</label>
+        <select id="dataset" name="dataset">
+            <option value="" selected>
+                -- Choisir un jeu de données --
+            </option>
+
+            {% for ds in datasets %}
+                <option
+                    value="{{ ds }}"
+                    {% if ds == dataset_selectionne %}selected{% endif %}
+                >
+                    {{ ds }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <!-- Deux colonnes : Comparaison 1 / Comparaison 2 -->
+    <div class="comparaison-colonnes">
+
+        <!-- Colonne Comparaison 1 -->
+        <div class="comparaison-colonne">
+            <h3 class="comparaison-colonne__titre">Comparaison 1</h3>
+
+            <div class="champ-formulaire">
+                <label for="profession1_id">Spécialité 1 :</label>
+                <select id="profession1_id" name="profession1_id">
+                    <option value="" selected>
+                        -- Choisir la première spécialité --
+                    </option>
+                    {% for profession in professions %}
+                        <option
+                            value="{{ profession.id }}"
+                            {% if profession1_id == profession.id %}selected{% endif %}
+                        >
+                            {{ profession.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-formulaire">
+                <label for="region1_id">Région 1 :</label>
+                <select
+                    id="region1_id"
+                    name="region1_id"
+                    data-region-target="#departement1_id"
+                    data-selected-dept="{{ departement1_id or '' }}"
+                    required
+                >
+                    <option value="">-- Choisir la première région --</option>
+                    {% for region in regions %}
+                        <option
+                            value="{{ region.id }}"
+                            {% if region1_id == region.id %}selected{% endif %}
+                        >
+                            {{ region.code }} – {{ region.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-formulaire">
+                <label for="departement1_id">Département 1 :</label>
+                <select
+                    id="departement1_id"
+                    name="departement1_id"
+                    required
+                >
+                    <option value="">-- Choisir le premier département --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Colonne Comparaison 2 -->
+        <div class="comparaison-colonne">
+            <h3 class="comparaison-colonne__titre">Comparaison 2</h3>
+
+            <div class="champ-formulaire">
+                <label for="profession2_id">Spécialité 2 :</label>
+                <select id="profession2_id" name="profession2_id">
+                    <option value="" selected>
+                        -- Choisir la seconde spécialité --
+                    </option>
+                    {% for profession in professions %}
+                        <option
+                            value="{{ profession.id }}"
+                            {% if profession2_id == profession.id %}selected{% endif %}
+                        >
+                            {{ profession.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-formulaire">
+                <label for="region2_id">Région 2 :</label>
+                <select
+                    id="region2_id"
+                    name="region2_id"
+                    data-region-target="#departement2_id"
+                    data-selected-dept="{{ departement2_id or '' }}"
+                    required
+                >
+                    <option value="">-- Choisir la seconde région --</option>
+                    {% for region in regions %}
+                        <option
+                            value="{{ region.id }}"
+                            {% if region2_id == region.id %}selected{% endif %}
+                        >
+                            {{ region.code }} – {{ region.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="champ-formulaire">
+                <label for="departement2_id">Département 2 :</label>
+                <select
+                    id="departement2_id"
+                    name="departement2_id"
+                    required
+                >
+                    <option value="">-- Choisir le second département --</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Période de comparaison -->
+    <div class="annee-slider">
+
+        <label>Années :</label>
+
+        <div class="annee-slider__labels">
+            <span id="anneeStartLabel">{{ annee_debut or 2010 }}</span>
+            <span id="anneeEndLabel">{{ annee_fin or 2024 }}</span>
+        </div>
+
+        <div class="annee-slider__track" aria-hidden="true">
+            {% for annee in range(2010, 2025) %}
+                <span class="annee-slider__tick">{{ annee }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="annee-slider__controls">
+            <div class="annee-slider__rail"></div>
+            <div class="annee-slider__progression" id="anneeProgression"></div>
+
+            <input
+                type="range"
+                id="annee_debut"
+                name="annee_debut"
+                min="2010"
+                max="2024"
+                step="1"
+                value="{{ annee_debut or 2010 }}"
+                required
+            >
+
+            <input
+                type="range"
+                id="annee_fin"
+                name="annee_fin"
+                min="2010"
+                max="2024"
+                step="1"
+                value="{{ annee_fin or 2024 }}"
+                required
+            >
+        </div>
+
+        <div id="anneeSelectionInfo" class="annee-slider__info">
+            {% if annee_debut == annee_fin and annee_debut %}
+                Comparaison sur une seule année
+            {% endif %}
+        </div>
+
+    </div>
+
+
+    <!-- Validation -->
+    <button type="submit" class="btn-primary">
+        Comparer
+    </button>
+
+</form>
+
+<!-- Chargement du module de cascade -->
+<script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+
+<!-- Gestion du slider de période --> 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const MIN_YEAR = 2010;
+    const MAX_YEAR = 2024;
+
+    const sliderDebut = document.getElementById("annee_debut");
+    const sliderFin = document.getElementById("annee_fin");
+
+    if (!sliderDebut || !sliderFin) {
+        return;
+    }
+
+    const labelDebut = document.getElementById("anneeStartLabel");
+    const labelFin = document.getElementById("anneeEndLabel");
+    const info = document.getElementById("anneeSelectionInfo");
+    const progression = document.getElementById("anneeProgression");
+
+    function mettreAJourAffichage() {
+
+        let debut = Number(sliderDebut.value);
+        let fin = Number(sliderFin.value);
+
+        if (debut > fin) {
+            if (document.activeElement === sliderDebut) {
+                fin = debut;
+            } else {
+                debut = fin;
+            }
+        }
+
+        debut = Math.min(Math.max(debut, MIN_YEAR), MAX_YEAR);
+        fin = Math.min(Math.max(fin, MIN_YEAR), MAX_YEAR);
+
+        sliderDebut.value = debut;
+        sliderFin.value = fin;
+
+        labelDebut.textContent = debut;
+        labelFin.textContent = fin;
+
+        if (debut === fin) {
+            info.textContent = "Comparaison sur une seule année";
+        } else {
+            info.textContent = `Période : ${debut} - ${fin}`;
+        }
+
+        const pctDebut = ((debut - MIN_YEAR) / (MAX_YEAR - MIN_YEAR)) * 100;
+        const pctFin = ((fin - MIN_YEAR) / (MAX_YEAR - MIN_YEAR)) * 100;
+
+        if (progression) {
+            progression.style.left = pctDebut + "%";
+            progression.style.width = (pctFin - pctDebut) + "%";
+        }
+    }
+
+    sliderDebut.addEventListener("input", mettreAJourAffichage);
+    sliderFin.addEventListener("input", mettreAJourAffichage);
+
+    mettreAJourAffichage();
+});
+</script>
+
+<!-- Affichage du graphique après comparaison -->
+{% if resultat %}
+
+<hr>
+
+<div id="div-graphique">
+    <canvas id="comparaisonChart"></canvas>
+</div>
+
+<div class="export-actions">
+    <button id="chartJsDownloadButton" class="btn-secondary">Télécharger le graphique</button>
+    <a href="{{ url_for('static', filename='csv/donnees.csv') }}" download class="btn-secondary">
+        Télécharger les données (CSV)
+    </a>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Script local pour la gestion du téléchargement -->
+<script src="{{ url_for('static', filename='js/download.js') }}"></script>
+
+<script>
+
+    // Récupération du canvas
+    const ctx = document.getElementById(
+        "comparaisonChart"
+    );
+
+
+    // Création du graphique
+    new Chart(ctx, {
+
+        type: {{ resultat.type_graphique | tojson }},
+
+        data: {
+
+            labels: {{ resultat.labels | tojson }},
+
+            datasets: [
+
+                {
+                    label: {{ resultat.legendes[0] | tojson }},
+                    data: {{ resultat.serie1 | tojson }}
+                },
+
+                {
+                    label: {{ resultat.legendes[1] | tojson }},
+                    data: {{ resultat.serie2 | tojson }}
+                }
+
+            ]
+
+        },
+
+        options: {
+            responsive: true
+        }
+
+    });
+
+// Fin du script
+</script>
+
+{% endif %}
+{% endblock %}

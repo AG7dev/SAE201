@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block titre %}Dashboard{% endblock %}
+
+
+{% block contenu %}
+
+    <div class="info-bulle">
+        <h2>Tableau de bord santé</h2>
+
+        <p>
+            Cette page permet d'obtenir une vision globale des données
+            liées aux professionnels de santé.
+        </p>
+
+        <p>
+            Les indicateurs présentent la répartition des professions,
+            leur évolution dans le temps, leur présence géographique
+            ainsi que plusieurs informations démographiques.
+        </p>
+    </div>
+
+
+    <!-- Formulaire actualisation -->
+    <div style="margin-bottom:20px;">
+        <form action="{{ url_for(request.endpoint) }}" method="GET">
+
+            <input type="hidden" name="force_refresh" value="1">
+
+            <button type="submit" class="btn-primary">
+                🔄 Actualiser les données
+            </button>
+
+        </form>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <div class="wrapper">
+        <div id="divIndicateurCle" class="horizontal">
+            {% for item in indicateurCle %}
+                <div>
+                    <h3>{{ item[1] }}</h3>
+                    <p>{{ item[0] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>    
+        
+        <!-- Doughnut avec la répartition des proffession -->
+        <div id="divRepartitionProfession">
+            <canvas id="graphiqueRepartitionProfession"></canvas>
+            <script>
+                const donneeRepartitionSpecialite = {{ repartitionSpecialite|tojson }}
+
+                new Chart(document.getElementById("graphiqueRepartitionProfession"), {
+                    type: "doughnut",
+                    data: {
+                        labels: donneeRepartitionSpecialite.map(d => d.profession_sante),
+                        datasets: [{
+                            data: donneeRepartitionSpecialite.map(d => d.effectif),
+                            hoverOffset: 4,
+                        }]                    
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: "Répartition des spécialitées chez les professionels de santé"
+                            }
+                        }
+                    }
+                })
+            </script>
+        </div>
+        
+        <!-- Courbe qui montre le nbr de médecin en fonction du temps -->
+        <div id="divEvolutionNombreProffessionel">
+            <canvas id="graphiqueEvolutionNombreProffessionel" height="2rem"></canvas>
+            <script>
+                const donneeEvolutionNombreProfessionel = {{ evolutionNombreProfessionel|tojson }}
+
+                const x = donneeEvolutionNombreProfessionel.map(d => Number(d.annee.slice(0, 4)));
+                const y = donneeEvolutionNombreProfessionel.map(d => d.effectif);
+
+                // Nuage de points
+                const points = x.map((val, i) => ({
+                    x: val,
+                    y: y[i]
+                }));
+
+                // Droite de régression
+                const moyX = x.reduce((sum, v) => sum + v, 0) / x.length
+                const moyY = y.reduce((sum, v) => sum + v, 0) / y.length
+                
+                const varX = x.reduce((sum, v) => sum + (v - moyX) ** 2, 0) / x.length;
+                const varY = y.reduce((sum, v) => sum + (v - moyY) ** 2, 0) / y.length;
+            
+                let sommeXY = 0;
+
+                for (let i = 0; i < x.length; i++) {
+                    sommeXY += x[i] * y[i];
+                }
+
+                const moyXY = sommeXY / x.length;
+
+                const covXY = moyXY - (moyX * moyY)
+                
+                const r = covXY / Math.sqrt(varX * varY);
+                const r2 = r * r;
+
+                const a = covXY / varX
+                const b = moyY - a * moyX
+
+                const anneeMin = Math.min(...x);
+                const anneeMax = Math.max(...x);
+
+                const ligne = [];
+                for (let annee = Math.min(...x); annee <= anneeMax + 10; annee++) {
+                    ligne.push({
+                        x: annee,
+                        y: Math.round(a * annee + b)
+                    });
+                }
+
+                new Chart(document.getElementById("graphiqueEvolutionNombreProffessionel"), {
+                    type: "scatter",
+                    data: {
+                        datasets: [
+                            {
+                                label: "Valeur réelle",
+                                data: points,
+                                pointRadius: 5
+                            },
+                            {
+                                label:"Projection",
+                                type: "line",
+                                data: ligne,
+                                pointRadius: 0,
+                                borderWidth: 3,
+                                borderDash: [8, 5],
+                                tension: 0
+                            }
+                        ]
+                    },
+
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: "linear",
+                                min: anneeMin,
+                                max: anneeMax + 10,
+                                title: {
+                                    display: false,
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: false,
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: "Nombre de professionel de danté total et projection"
+                            },
+                            legend: {
+                                display: true
+                            },
+                            subtitle: {
+                                display:true,
+                                text: "Coef de corr. = " + Math.round((r2 + Number.EPSILON) * 100) / 100
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest',
+                            intersect: false,
+                            axis: 'x'
+                        },
+                    }
+                });
+            </script>
+        </div>
+        
+        <!-- Carte qui montre la répartition des professionel par région -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+        <div id="divMapRegionRepartition">
+            <p>Carte choroplèthe de la présence de professionel de santé</p>
+            <div id="MapRegionRepartition"></div>
+            <script>
+                const donneeRepartitionProfessionel = {{ repartitionProfessionel|tojson }}
+
+                const effectifsParRegion = {};
+
+                donneeRepartitionProfessionel.forEach(d => {
+                    effectifsParRegion[d.libelle_region] = d.effectif;
+                });
+
+                const effectifsTotauxParRegion = {};
+
+                donneeRepartitionProfessionel.forEach(d => {
+                    effectifsTotauxParRegion[d.libelle_region] = d.effectif_totaux;
+                });
+
+                function getColor(valeur) {
+                return valeur > 15 ? '#800026' :
+                    valeur > 10 ? '#BD0026' :
+                    valeur > 7  ? '#E31A1C' :
+                    valeur > 5  ? '#FC4E2A' :
+                    valeur > 3  ? '#FD8D3C' :
+                    valeur > 1  ? '#FEB24C' :
+                                    '#FED976';
+                }
+
+                var map = L.map('MapRegionRepartition').setView([46.5 , 2], 5);
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                fetch("{{ url_for('static', filename='geojson/france-regions.geojson') }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        L.geoJSON(data, {
+                            style: function(feature) {
+                                const pourcentage = effectifsParRegion[feature.properties.nom] ?? 0;
+                                
+                                return {
+                                    fillColor: getColor(pourcentage),
+                                    fillOpacity: 0.8,
+                                    weight: 1,
+                                    color: "#555"
+                                };
+                            },
+                            onEachFeature: function(feature, layer) {
+                                layer.on({
+                                    mouseover: function(e) {
+
+                                        e.target.setStyle({
+                                            weight: 3,
+                                            fillOpacity: 1
+                                        });
+
+                                        const props = feature.properties;
+
+                                        e.target.bindTooltip(`
+                                            <strong>${props.nom}</strong><br>
+                                            Pourcentage de l'effectif : ${Math.round(effectifsParRegion[props.nom]) ?? 0} %<br>
+                                            Effectif totaux: ${Math.round(effectifsTotauxParRegion[props.nom]) ?? 0}
+                                            `
+                                            ,
+                                            {
+                                                sticky: true
+                                            }
+                                        ).openTooltip();
+                                    },
+
+                                    mouseout: function(e) {
+
+                                        e.target.setStyle({
+                                            weight: 1,
+                                            fillOpacity: 0.8
+                                        });
+
+                                        e.target.closeTooltip();
+                                    }
+                                });
+                            }
+                        }).addTo(map);
+                    });
+            </script>
+        </div>
+        
+        <!-- Histogramme du salaire par métier -->
+        <div id="divMedecinPatient">
+            <canvas id="graphiqueMedecinPatient"></canvas>
+            <script>
+                const donneeMedecinPatient = {{ medecinPatient|tojson }}
+
+                new Chart(document.getElementById("graphiqueMedecinPatient"), {
+                    type: "line",
+                    data: {
+                        labels: donneeMedecinPatient.map(d => d.annee.slice(0, 4)),
+                        datasets:  [{
+                            label:"Patient unique par médecin",
+                            data: donneeMedecinPatient.map(d => d.patient_unique),
+                            borderColor: "#2E74B5",
+                            tension: 0.2,
+                            yAxisID: 'y'
+                        }, 
+                        {
+                            label: "Nombre de patient dont le médecin est traitant",
+                            data: donneeMedecinPatient.map(d => d.patient_traitant),
+                            borderColor: "#F1283A",
+                            tension: 0.2,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        stacked: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: "Information sur les médecins généralistes et leurs patients"
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                label: "Nbr patient unique"
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                label:"Nbr patient traitant",
+                                grid: {
+                                    drawOnChartArea: false,
+                                },
+                            }
+                        },
+                    }
+                })
+            </script>
+        </div>
+
+        <div id="divPresenceFemme">
+            <canvas id="graphiquePresenceFemme"></canvas>
+            <script>
+                const donneePresenceFemme = {{ presenceFemme|tojson }}
+
+                const couleursParite = donneePresenceFemme.map((_, i) =>
+                    i % 2 === 0 ? "cyan" : "#e74c3c"
+                );
+
+                new Chart(document.getElementById("graphiquePresenceFemme"), {
+                    type: "bar",
+                    data: {
+                        labels: donneePresenceFemme.map(d => d.profession_sante),
+                        datasets:  [{
+                            data: donneePresenceFemme.map(d => d.part_femmes*100),
+                            backgroundColor: couleursParite,
+                            borderColor: "#2E74B5",
+                            tension: 0.2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: "Présence des femmes dans les spécialité en 2024 en pourcentage"
+                            },
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                })
+            </script>
+        </div>
+    </div>
+
+    <div id="divMapDepartementMedecin">
+        
+    </div>
+{% endblock %}
