@@ -14,7 +14,7 @@ class RedisCachedAmeliAPI:
     via un serveur Redis.
     """
 
-    def __init__(self, api_sous_jacente, hote='localhost', port=6379, db=0, duree_vie_seconde=300):
+    def __init__(self, api_sous_jacente, hote='localhost', port=6379, db=0, duree_vie_seconde=600):
         """
         Initialise le décorateur de cache Redis.
         """

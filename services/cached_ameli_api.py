@@ -34,7 +34,7 @@ class CachedAmeliAPI:
             et éventuellement à sa date d'expiration.
     """
 
-    def __init__(self, api_sous_jacente, duree_vie_seconde=300):
+    def __init__(self, api_sous_jacente, duree_vie_seconde=600):
         """
         Initialise le décorateur de cache.
 
