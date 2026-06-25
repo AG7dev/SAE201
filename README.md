@@ -234,7 +234,6 @@ Application accessible sur :
 
 - SQLAlchemy (ORM)
 - MySQL
-- Pandas (export et traitement)
 
 ### Déploiement
 

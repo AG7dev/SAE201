@@ -5,8 +5,6 @@
 # Importations des modules nécessaires
 import json
 import redis
-from models.db import Session
-from models.dimensions import UserTable
 
 class RedisCachedAmeliAPI:
     """
@@ -168,23 +166,6 @@ class RedisCachedAmeliAPI:
         return self._lire_ou_calculer(
             cle,
             lambda: self._api.get_medecin_patient(),
-            rafraichir=rafraichir
-        )
-
-    def get_permission(self, username, rafraichir=False):
-        cle = f"user:{username}"
-        
-        def permission(username):
-            session = Session()
-            try:
-                user = session.query(UserTable).filter(UserTable.username == username).first()
-            finally:
-                session.close()
-            return user.permissions if user else None
-        
-        return self._lire_ou_calculer(
-            cle,
-            lambda: permission(username),
             rafraichir=rafraichir
         )
 

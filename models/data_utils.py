@@ -73,7 +73,6 @@ def get_about_data():
             ("Flask", "https://flask.palletsprojects.com/"), 
             ("MySQL", "https://dev.mysql.com/"), 
             ("Plotly", "https://plotly.com/"), 
-            ("Pandas", "https://pandas.pydata.org/"), 
             ("DataTables", "https://datatables.net/"), 
             ("Folium", "https://python-visualization.github.io/folium/"), 
             ("Bootstrap", "https://getbootstrap.com/docs/5.3/getting-started/introduction/")
