@@ -5,7 +5,6 @@
 */
 
 /* Fichier JavaScript pour le téléchargement d'un graphique HTML en PDF via html2canvas + jsPDF */
-
 const { jsPDF } = window.jspdf;
 
 // Téléchargement d'un graphique HTML en PDF via html2canvas + jsPDF

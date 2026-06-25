@@ -20,45 +20,44 @@
     <!-- ======================= MODE CONNEXION ======================= -->
     {% if option == "login" %}
 
-    <div class="page-login">
-        <div class="bloc-analyse carte-login">
+      <div class="page-login">
+          <div class="bloc-analyse carte-login">
 
-            <h2>Connexion</h2>
+              <h2>Connexion</h2>
 
-            <!-- Formulaire de connexion utilisateur -->
-            <form method="post" class="formulaire-analyse">
+              <form method="post" class="formulaire-analyse">
 
-                <!-- Champ identifiant -->
-                <div class="champ-formulaire">
-                    <label for="username">Nom d'utilisateur :</label>
-                    <input id="username"
-                           name="username"
-                           placeholder="Nom d'utilisateur"
-                           autocomplete="off"
-                           required>
-                </div>
+                  <div class="champ-formulaire">
+                      <label for="username">Nom d'utilisateur :</label>
+                      <input id="username"
+                             name="username"
+                             placeholder="Nom d'utilisateur"
+                             autocomplete="off"
+                             minlength="3"
+                             maxlength="64"
+                             required>
+                  </div>
 
-                <!-- Champ mot de passe -->
-                <div class="champ-formulaire">
-                    <label for="password">Mot de passe :</label>
-                    <input id="password"
-                           name="password"
-                           type="password"
-                           placeholder="Mot de passe"
-                           required>
-                </div>
+                  <div class="champ-formulaire">
+                      <label for="password">Mot de passe :</label>
+                      <input id="password"
+                             name="password"
+                             type="password"
+                             placeholder="Mot de passe"
+                             minlength="3"
+                             maxlength="64"
+                             required>
+                  </div>
 
-                <!-- Soumission du formulaire -->
-                <button type="submit" class="btn-primary">Connexion</button>
-            </form>
+                  <button type="submit" class="btn-primary">Connexion</button>
+              </form>
 
-            <!-- Lien vers la création de compte -->
-            <a class="lien-retour" href="{{ url_for('login.createUser') }}">
-                Pas de Compte ? Créer en un
-            </a>
+              <a class="lien-retour" href="{{ url_for('login.createUser') }}">
+                  Pas de Compte ? Créer en un
+              </a>
 
-        </div>
-    </div>
+          </div>
+      </div>
 
     <!-- ======================= MODE CRÉATION COMPTE ======================= -->
     {% elif option == "createUser" %}
