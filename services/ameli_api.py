@@ -253,8 +253,7 @@ class AmeliAPI:
                  "libelle_classe_age=\"Tout âge\"")
         requete = self._requete("demographie-effectifs-et-les-densites", {"select":"SUM(effectif) as effectif",
                                 "where":where, "group_by":"annee"})
-        print("DEBUG")
-        print(requete)
+
         indicateur_cle.append(["Taux de croissance des professionels de sante entre 2023 et 2024",
                                round(((requete[1]["effectif"] - requete[0]["effectif"]) / requete[0]["effectif"]) * 100, 2)])
         

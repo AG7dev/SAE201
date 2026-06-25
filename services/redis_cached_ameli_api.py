@@ -2,9 +2,9 @@
 #   SAÉ 2.01 - Développement d'une application WEB
 # ==================================================
 
+# Importations des modules nécessaires
 import json
 import redis
-from services.ameli_api import AmeliAPI
 from models.db import Session
 from models.dimensions import UserTable
 
@@ -201,7 +201,6 @@ class RedisCachedAmeliAPI:
 
         # Calcul/Appel API si absent ou rafraîchissement forcé
         resultat = produire()
-        print(f"[DEBUG] {cle=} {resultat}")
 
         # Sérialisation en chaîne JSON obligatoire pour le stockage Redis
         valeur_json = json.dumps(resultat)

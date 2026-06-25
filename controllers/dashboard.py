@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, current_app
 from models.db import Session
-from models.dimensions import ProfessionSante
 
 bp_dashboard = Blueprint("dashboard", __name__)
 

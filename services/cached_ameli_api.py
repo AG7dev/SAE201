@@ -15,8 +15,6 @@ données, améliorant ainsi les performances de l'application.
 
 # Importations nécessaires
 import time
-from services.ameli_api import AmeliAPI
-
 
 class CachedAmeliAPI:
     """
