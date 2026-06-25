@@ -44,11 +44,18 @@ app.secret_key = Config.get_secret_key()
 # Initialisation de l'API AMELI avec cache
 api_brute = AmeliAPI()
 
-# OPTION A : Cache local en mémoire (dictionnaire)
-# app.api_ameli = CachedAmeliAPI(api_brute, duree_vie_seconde=300)
-
-# OPTION B : Cache partagé Redis (à activer pour la mise en commun)
-app.api_ameli = RedisCachedAmeliAPI(api_brute, hote='localhost', port=6379, duree_vie_seconde=300)
+# Stratégie de mise en cache avec tolérance aux pannes (Fallback)
+try:
+    import redis
+    # Tentative de ping pour valider la disponibilité réelle du serveur Redis
+    connexion_redis = redis.Redis(host='localhost', port=6379, socket_connect_timeout=2)
+    connexion_redis.ping()
+    
+    # Activation du cache partagé Redis si opérationnel
+    app.api_ameli = RedisCachedAmeliAPI(api_brute, hote='localhost', port=6379, duree_vie_seconde=300)
+except Exception:
+    # Repli critique sur le cache local en mémoire (dictionnaire) en cas d'échec
+    app.api_ameli = CachedAmeliAPI(api_brute, duree_vie_seconde=300)
 
 # Initialise le gestionnaire d'utilisateur
 login_manager = LoginManager()
