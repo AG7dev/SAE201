@@ -46,19 +46,23 @@
         <!-- NAVIGATION -->
         <nav class="navigation">
 
-            <a href="{{ url_for('accueil.index') }}">
+            <a href="{{ url_for('accueil.index') }}"
+               class="{% if request.endpoint == 'accueil.index' %}navigation__lien--actif{% endif %}">
                 Accueil
             </a>
 
-            <a href="{{ url_for('analyse.index') }}">
+            <a href="{{ url_for('analyse.index') }}"
+               class="{% if request.endpoint == 'analyse.index' %}navigation__lien--actif{% endif %}">
                 Analyse
             </a>
 
-            <a href="{{ url_for('dashboard.dashboard') }}">
+            <a href="{{ url_for('dashboard.dashboard') }}"
+               class="{% if request.endpoint == 'dashboard.dashboard' %}navigation__lien--actif{% endif %}">
                 Dashboard
             </a>
 
-            <a href="{{ url_for('comparaison.afficher') }}">
+            <a href="{{ url_for('comparaison.afficher') }}"
+               class="{% if request.endpoint == 'comparaison.afficher' %}navigation__lien--actif{% endif %}">
                 Comparaison
             </a>
 
@@ -117,10 +121,12 @@
     </main>
 
     <footer>
-        <img 
-            class="footer-logo"
-            src="{{ url_for('static', filename='images/ameliAPI.png') }}"
-            alt="ameli API">
+        <a href="https://data.ameli.fr/pages/home/" target="_blank">
+            <img 
+                class="footer-logo"
+                src="{{ url_for('static', filename='images/ameliAPI.png') }}"
+                alt="ameli API">
+        </a>
 
         <div class="footer-separator"></div>
 
@@ -137,6 +143,10 @@
                 Contact
             </a>
         </nav>
+
+        <p class="footer-copyright">
+            &copy; 2026 Équipe A6
+        </p>
     </footer>
 </body>
 </html>

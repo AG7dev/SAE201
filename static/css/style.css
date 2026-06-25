@@ -67,13 +67,44 @@ main {
 }
 
 .navigation a {
+    position:relative;
     color:white;
     text-decoration:none;
     font-weight:bold;
+    padding-bottom:4px;
 }
 
-.navigation a:hover {
-    text-decoration:underline;
+.navigation a::after {
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:2px;
+    background:white;
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform 0.25s ease;
+}
+
+.navigation a:hover::after {
+    transform:scaleX(1);
+}
+
+.navigation a.navigation__lien--actif {
+    color:white;
+    background:rgba(255,255,255,0.18);
+    padding:6px 14px 10px;
+    border-radius:6px;
+    margin:0 -14px;
+}
+
+.navigation a.navigation__lien--actif::after {
+    left:14px;
+    width:calc(100% - 28px);
+    transform:scaleX(1);
+    background:white;
+    height:3px;
 }
 
 .user-zone {
@@ -119,6 +150,13 @@ footer {
 .footer-links a {
     color:white;
     text-decoration:none;
+}
+
+.footer-copyright {
+    color:white;
+    font-size:0.85rem;
+    margin:0 0 0 30px;
+    white-space:nowrap;
 }
 
 /* ==========================

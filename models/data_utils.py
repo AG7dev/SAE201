@@ -41,7 +41,7 @@ def get_about_data():
     """
     about = [
         ["Projet", "Visualisation des données de data Ameli de 2010 à 2024"],
-        ["Source(s) des données", "Base de données World Population Prospects 2024 de l'ONU"],
+        ["Source(s) des données", "DataAmeli (Service API)"],
         ["Lien(s) vers les données", "<a href='https://population.un.org/wpp/downloads?folder=Standard' target='_blank'>https://population.un.org/wpp/downloads?folder=Standard</a>"],
         ["Auteur(s) du projet", ["BODILIS Macéo", "GOBALASAMY Arvin", "GONET--PETIT Clément", "SETTOURAMAN Arthy"]],
         ["Institution", "IUT de Créteil-Vitry, département Informatique"],
@@ -58,7 +58,7 @@ def get_about_data():
         ["Technologies utilisées", [
             ("Python", "https://www.python.org/"), 
             ("Flask", "https://flask.palletsprojects.com/"), 
-            ("SQLite", "https://www.sqlite.org/index.html"), 
+            ("MySQL", "https://dev.mysql.com/"), 
             ("Plotly", "https://plotly.com/"), 
             ("Pandas", "https://pandas.pydata.org/"), 
             ("DataTables", "https://datatables.net/"), 
