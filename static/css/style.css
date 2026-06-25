@@ -368,12 +368,18 @@ table.dataTable thead th {
     height:175px;
     width:125px;
     text-align:center;
+    margin:auto;
 }
 
 #divIndicateurCle > div > h3 {
     border:2px solid rgba(116,175,234,1);
     background:rgba(100,160,220,0.52);
     border-radius:20px;
+}
+
+#MapRegionRepartition {
+    height: 85%;
+    width: 100%;
 }
 
 /* Positions dashboard */

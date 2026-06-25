@@ -201,6 +201,7 @@ class RedisCachedAmeliAPI:
 
         # Calcul/Appel API si absent ou rafraîchissement forcé
         resultat = produire()
+        print(f"[DEBUG] {cle=} {resultat}")
 
         # Sérialisation en chaîne JSON obligatoire pour le stockage Redis
         valeur_json = json.dumps(resultat)

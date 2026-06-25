@@ -314,7 +314,7 @@ class AmeliAPI:
     def get_medecin_patient(self):
         """Nombre moyen de patient unique et dont il est le médecin traitane 
         pour les médecin généraliste"""
-        where = ("departement!=\"999\" AND" 
+        where = ("departement!=\"999\" AND " 
                  "profession_sante=\"Ensemble des médecins généralistes\"")
         return self._requete("patientele", {
             "select":"AVG(patients_medecin_traitant_integer) as patient_traitant, AVG(patients_uniques_integer) as patient_unique",
