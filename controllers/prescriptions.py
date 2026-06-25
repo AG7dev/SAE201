@@ -2,6 +2,7 @@ import logging
 from flask import Blueprint, render_template, request, current_app
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement
+from models.data_utils import exportToCsv
 
 bp_prescriptions = Blueprint("prescriptions", __name__)
 
@@ -24,6 +25,9 @@ def afficher():
         message="Paramètres manquants."), 400
         resultats = current_app.api_ameli.get_prescriptions(prof.libelle, dept.code, annee, rafraichir=rafraichir_force)
         evolution = current_app.api_ameli.get_evolution_prescriptions(prof.libelle, dept.code, rafraichir=rafraichir_force)
+        
+        exportToCsv(evolution)
+        
         return render_template("prescriptions.html", prof=prof, dept=dept, annee=annee, resultats=resultats, evolution=evolution)
     
     except Exception as e:
