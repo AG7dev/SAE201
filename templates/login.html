@@ -20,56 +20,88 @@
     <!-- ======================= MODE CONNEXION ======================= -->
     {% if option == "login" %}
 
-        <!-- Formulaire de connexion utilisateur -->
-        <form method="post">
+    <div class="page-login">
+        <div class="bloc-analyse carte-login">
 
-            <!-- Champ identifiant -->
-            <input name="username"
-                   placeholder="Nom d'utilisateur"
-                   autocomplete="off"
-                   required>
+            <h2>Connexion</h2>
 
-            <!-- Champ mot de passe -->
-            <input name="password"
-                   type="password"
-                   placeholder="Mot de passe"
-                   required>
+            <!-- Formulaire de connexion utilisateur -->
+            <form method="post" class="formulaire-analyse">
 
-            <!-- Soumission du formulaire -->
-            <button type="submit">Connexion</button>
-        </form>
+                <!-- Champ identifiant -->
+                <div class="champ-formulaire">
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input id="username"
+                           name="username"
+                           placeholder="Nom d'utilisateur"
+                           autocomplete="off"
+                           required>
+                </div>
 
-        <!-- Lien vers la création de compte -->
-        <a href="{{ url_for('login.createUser') }}">
-            Pas de Compte ? Créer en un
-        </a>
+                <!-- Champ mot de passe -->
+                <div class="champ-formulaire">
+                    <label for="password">Mot de passe :</label>
+                    <input id="password"
+                           name="password"
+                           type="password"
+                           placeholder="Mot de passe"
+                           required>
+                </div>
+
+                <!-- Soumission du formulaire -->
+                <button type="submit" class="btn-primary">Connexion</button>
+            </form>
+
+            <!-- Lien vers la création de compte -->
+            <a class="lien-retour" href="{{ url_for('login.createUser') }}">
+                Pas de Compte ? Créer en un
+            </a>
+
+        </div>
+    </div>
 
     <!-- ======================= MODE CRÉATION COMPTE ======================= -->
     {% elif option == "createUser" %}
 
-        <!-- Formulaire de création d’utilisateur -->
-        <form method="post">
+    <div class="page-login">
+        <div class="bloc-analyse carte-login">
 
-            <!-- Nom d'utilisateur -->
-            <input name="username"
-                   placeholder="Nom d'utilisateur"
-                   autocomplete="off"
-                   required>
+            <h2>Créer un compte</h2>
 
-            <!-- Mot de passe -->
-            <input name="password"
-                   type="password"
-                   placeholder="Mot de passe"
-                   required>
+            <!-- Formulaire de création d’utilisateur -->
+            <form method="post" class="formulaire-analyse">
 
-            <!-- Soumission création compte -->
-            <button type="submit">Créer un compte</button>
-        </form>
+                <!-- Nom d'utilisateur -->
+                <div class="champ-formulaire">
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input id="username"
+                           name="username"
+                           placeholder="Nom d'utilisateur"
+                           autocomplete="off"
+                           required>
+                </div>
 
-        <!-- Lien retour vers connexion -->
-        <a href="{{ url_for('login.login') }}">
-            Vous avez un compte ? Connectez-vous
-        </a>
+                <!-- Mot de passe -->
+                <div class="champ-formulaire">
+                    <label for="password">Mot de passe :</label>
+                    <input id="password"
+                           name="password"
+                           type="password"
+                           placeholder="Mot de passe"
+                           required>
+                </div>
+
+                <!-- Soumission création compte -->
+                <button type="submit" class="btn-primary">Créer un compte</button>
+            </form>
+
+            <!-- Lien retour vers connexion -->
+            <a class="lien-retour" href="{{ url_for('login.login') }}">
+                Vous avez un compte ? Connectez-vous
+            </a>
+
+        </div>
+    </div>
 
     {% endif %}
 

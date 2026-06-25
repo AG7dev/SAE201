@@ -740,3 +740,34 @@ table.masquer-moyen .col-moyen {
     width:100%;
     margin-bottom:40px;
 }
+ 
+/* ==========================
+   PAGE LOGIN
+========================== */
+.page-login {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:60vh;
+    padding:2rem 0;
+}
+ 
+.carte-login {
+    max-width:380px;
+    width:100%;
+}
+ 
+.carte-login h2 {
+    margin-top:0;
+    text-align:center;
+}
+ 
+.carte-login .formulaire-analyse {
+    margin-bottom:15px;
+}
+ 
+.carte-login .lien-retour {
+    display:block;
+    text-align:center;
+    margin-bottom:0;
+}
