@@ -12,9 +12,8 @@ Ce module fournit une classe User permettant de :
 """
 
 # Importation des modules nécessaires
+from flask import current_app
 from flask_login import UserMixin
-from models.db import Session
-from models.dimensions import UserTable
 
 class User(UserMixin):
     """
@@ -34,9 +33,4 @@ class User(UserMixin):
         Returns:
             str | None: niveau de permission de l'utilisateur.
         """
-        session = Session()
-        try:
-            user = session.query(UserTable).filter(UserTable.username == self.id).first()
-        finally:
-            session.close()
-        return user.permissions if user else None
+        return current_app.api_ameli.get_permission(self.id)
