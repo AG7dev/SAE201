@@ -16,6 +16,7 @@ from flask import url_for
 import os
 
 def exportToCsv(data:list):
+    return None
     """
     Exporte une liste de données vers un fichier CSV.
 

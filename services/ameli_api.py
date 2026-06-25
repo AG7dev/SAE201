@@ -5,7 +5,7 @@
 """
 Service d'accès à l'API externe data.ameli.fr.
 
-Ce module encapsule les appels HTTP vers l'API Ameli afin de :b
+Ce module encapsule les appels HTTP vers l'API Ameli afin de :
 - récupérer les effectifs de professionnels de santé ;
 - obtenir l'évolution des effectifs dans le temps ;
 - centraliser la logique de requêtage et la gestion des erreurs.
@@ -80,9 +80,9 @@ class AmeliAPI:
         "demographie-effectifs-et-les-densites",
         {"select": "annee,effectif,densite", "where": where,
         "order_by": "annee", "limit": 100},
-        )
-            
+        )    
 
+    
     def get_evolution_honoraires(self, profession, departement_code, type_honoraire=None):
             """
             Récupère l'évolution des honoraires sur plusieurs années pour une profession et un département.
@@ -318,7 +318,7 @@ class AmeliAPI:
                  "profession_sante=\"Ensemble des médecins généralistes\"")
         return self._requete("patientele", {
             "select":"AVG(patients_medecin_traitant_integer) as patient_traitant, AVG(patients_uniques_integer) as patient_unique",
-            where:where, "group_by":"annee"})
+            "where":where, "group_by":"annee"})
     
     def _requete(self, dataset, params):
         """
