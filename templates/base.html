@@ -81,6 +81,16 @@
                     {{ current_user.id }}
                 </span>
 
+                <a href="{{ url_for('about.form') }}">
+                    Mon avis
+                </a>
+
+                {% if current_user.permissions == "admin" %}
+                    <a href="{{ url_for('about.adminPanel') }}">
+                        Administration
+                    </a>
+                {% endif %}
+
                 <a href="{{ url_for('login.logout') }}">
                     Déconnexion
                 </a>

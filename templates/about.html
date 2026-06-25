@@ -50,11 +50,7 @@
             <tr>
                 <td><strong>Nous contacter</strong></td>
                 <td>
-                    {% if current_user.id %}
-                        <a href="{{ url_for('about.form') }}">Remplir un formulaire</a>
-                    {% else %}
-                        <p>Référez vous à la page de contact</p>
-                    {% endif %}
+                    <p>Référez vous à la page de contact</p>
                 </td>
             </tr>
         </tbody>
@@ -63,8 +59,8 @@
     {% elif option == "form" %}
     <h2>Formulaire de satisfaction</h2>
 
-    <form method="POST">
-        <table>
+    <form method="POST" class="formulaire-analyse">
+        <table class="table-satisfaction">
 
             <tr>
                 <td><label>Satisfaction générale<strong>*</strong></label></td>
@@ -137,7 +133,7 @@
             </tr>
 
             <tr>
-                <td><button type="submit">Valider</button></td>
+                <td><button type="submit" class="btn-primary">Valider</button></td>
             </tr>
 
         </table>

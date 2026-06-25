@@ -771,3 +771,203 @@ table.masquer-moyen .col-moyen {
     text-align:center;
     margin-bottom:0;
 }
+ 
+ 
+/* ==========================
+   ADMIN PANEL - SWITCHER VUES
+========================== */
+.entete-admin {
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:10px;
+}
+ 
+.vue-switcher {
+    display:flex;
+    gap:10px;
+}
+ 
+.vue-switcher__option {
+    background:white;
+    border:2px solid var(--bleu-principal);
+    color:var(--bleu-principal);
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.2s;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+ 
+.vue-switcher__option:hover {
+    background:#e8f1fb;
+}
+ 
+.vue-switcher__option--actif {
+    background:var(--bleu-principal);
+    color:white;
+}
+ 
+.vue-switcher__option input[type="radio"] {
+    accent-color:white;
+    margin:0;
+}
+ 
+/* ==========================
+   ADMIN PANEL - GRILLE STATS
+========================== */
+.grille-stats-admin {
+    grid-template-columns:repeat(2, 1fr);
+}
+ 
+.carte-graphique {
+    background:white;
+    border:1px solid var(--gris-bordure);
+    border-radius:8px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    color:#333;
+}
+ 
+.carte-graphique canvas {
+    max-height:320px;
+}
+ 
+@media (max-width:900px) {
+    .grille-stats-admin {
+        grid-template-columns:1fr;
+    }
+}
+ 
+/* ==========================
+   FORMULAIRE DE SATISFACTION
+========================== */
+.table-satisfaction {
+    box-shadow:none;
+    margin-top:0;
+}
+ 
+.table-satisfaction td {
+    border-bottom:none;
+    padding:10px 12px;
+}
+ 
+.table-satisfaction label {
+    font-weight:bold;
+    color:var(--bleu-principal);
+}
+ 
+.table-satisfaction output {
+    font-weight:bold;
+    color:var(--bleu-principal);
+    min-width:1.5em;
+    display:inline-block;
+    text-align:center;
+}
+ 
+.table-satisfaction input[type="range"] {
+    accent-color:var(--bleu-principal);
+    width:200px;
+}
+ 
+.table-satisfaction textarea {
+    width:100%;
+    box-sizing:border-box;
+}
+
+/* ==================================================
+   VUE D'ADMINISTRATION - OVERRIDES ET HARMONISATION
+================================================== */
+
+/* Conteneur pour prévenir l'éclatement du layout sur grands tableaux */
+.tableau-conteneur {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--gris-bordure);
+}
+
+/* En-têtes du tableau harmonisés avec la couleur principale */
+table.dataTable thead th {
+    background-color: var(--bleu-principal) !important;
+    color: white !important;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 10px !important;
+    white-space: nowrap; /* Empêche les retours à la ligne arbitraires */
+    border-bottom: 2px solid var(--bleu-bandeau) !important;
+}
+
+/* Ajustements des cellules de données */
+table.dataTable tbody td {
+    padding: 10px !important;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--gris-bordure) !important;
+    color: #333;
+}
+
+/* Formatage propre pour les colonnes de dates */
+.cellule-date {
+    font-family: monospace;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    color: #555;
+}
+
+/* Stylisation des blocs de contrôle DataTables (Recherche et Filtres) */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 15px;
+    color: #495057 !important;
+    font-size: 0.95rem;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    padding: 6px 10px !important;
+    border: 1px solid var(--gris-bordure) !important;
+    border-radius: 4px !important;
+    background-color: white !important;
+    outline: none;
+}
+
+/* Refonte esthétique de la pagination DataTables */
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 15px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 5px 12px !important;
+    margin-left: 5px !important;
+    border-radius: 4px !important;
+    border: 1px solid var(--gris-bordure) !important;
+    background: white !important;
+    color: var(--bleu-principal) !important;
+    font-weight: bold;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: var(--bleu-principal) !important;
+    color: white !important;
+    border-color: var(--bleu-principal) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--bleu-clair) !important;
+    color: var(--bleu-principal) !important;
+    border-color: var(--bleu-principal) !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 15px !important;
+    color: #6c757d !important;
+    font-size: 0.9rem;
+}
