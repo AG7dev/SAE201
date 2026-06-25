@@ -10,14 +10,13 @@ Ce module fournit :
 - les informations statiques affichées dans la page "about".
 """
 
-# Import du module Pandas pour la manipulation de données et l'export CSV
-import pandas as pd
 from flask import url_for
 import os
+import csv
 
 def exportToCsv(data: list, filename: str = "donnees.csv"):
     """
-    Exporte une liste de données vers un fichier CSV.
+    Exporte une liste de données vers un fichier CSV sans dépendance externe (Pandas).
 
     Args:
         data (list): liste de dictionnaires issue d'une requête API.
@@ -26,9 +25,23 @@ def exportToCsv(data: list, filename: str = "donnees.csv"):
     Returns:
         None
     """
+    if not data or not isinstance(data, list):
+        print("[data_utils.py] Données invalides ou vides pour l'export CSV.")
+        return
+
+    chemin_fichier = os.path.join("static", "csv", filename)
+    
+    # Sécurité : création du sous-dossier si absent
+    os.makedirs(os.path.dirname(chemin_fichier), exist_ok=True)
+
     try:
-        df = pd.DataFrame(data)
-        df.to_csv(os.path.join("static", "csv", filename), index=False)
+        with open(chemin_fichier, mode="w", encoding="utf-8", newline="") as f:
+            # Extraction des en-têtes à partir des clés du premier dictionnaire
+            en_tetes = data[0].keys()
+            writer = csv.DictWriter(f, fieldnames=en_tetes)
+            
+            writer.writeheader()
+            writer.writerows(data)
     except (TypeError, OSError) as e:
         print("[data_utils.py] Erreur dans la fonction exportToCsv()\n", e)
         
