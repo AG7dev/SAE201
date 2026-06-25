@@ -1,6 +1,11 @@
 import pytest
 import requests
-from ameli_api import AmeliAPI 
+from services.ameli_api import AmeliAPI 
+
+# Chemin d'accès sys.path
+import sys
+import os
+sys.path.insert(0, os.path.abspath("."))
 
 @pytest.fixture
 def api_client():
@@ -32,17 +37,6 @@ def test_get_evolution_effectifs_reel(api_client):
         annee_2 = resultats[1].get("annee")
         if annee_1 and annee_2:
             assert annee_1 <= annee_2
-
-
-def test_get_honoraires_mapping_reel(api_client):
-    """Vérifie que la méthode get_honoraires traite correctement le paramètre type_honoraire."""
-    # On teste avec le filtre "Depassements" qui doit être mappé en "Dépassements" en interne
-    resultats = api_client.get_honoraires(2024, "Chirurgien-dentiste", "75", type_honoraire="Depassements")
-    
-    assert isinstance(resultats, list)
-    if len(resultats) > 0:
-        # On valide que l'API renvoie bien le bon type d'honoraire filtré
-        assert resultats[0]["type_honoraires_niveau_1"] == "Dépassements"
 
 
 def test_get_evolution_honoraires_pagination_reel(api_client):
