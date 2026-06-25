@@ -1,21 +1,47 @@
+<!-- 
+  ==========================================================
+   SAE 2.01 - Développement d'une application WEB
+
+   Fichier honoraires.html :
+   Page d’analyse des honoraires des professionnels de santé.
+   Affiche l’évolution des montants d’honoraires sur plusieurs
+   années ainsi qu’une comparaison entre spécialités pour une
+   année donnée. Les résultats sont présentés sous forme de
+   tableaux interactifs et de graphiques générés avec Chart.js.
+   Permet le tri et la personnalisation de l’affichage des
+   données selon les choix de l’utilisateur.
+  ==========================================================
+-->
+
 {% extends "base.html" %}
-{% block titre %}Tableau de bord Honoraires{% endblock %}
+{% block titre %}Honoraires{% endblock %}
 {% block contenu %}
 
+
+    <!-- Lien permettant de revenir à la page de recherche -->
     <a href="{{ url_for('accueil.index') }}" style="display:inline-block; margin-bottom:20px; text-decoration:none; color:#084298; font-weight:bold;">← Nouvelle recherche</a>
 
+    <!-- Titre principal affichant le territoire sélectionné -->
     <h1>Analyse des honoraires en {{ nom_territoire }}</h1>
+
+    <!-- Bibliothèque Chart.js utilisée pour la création de graphiques -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <hr style="margin: 40px 0;">
+
+    <!-- ======================= ÉVOLUTION DES HONORAIRES ======================= -->
+    <!-- Affichage de l'évolution des honoraires de la spécialité sélectionnée -->
     <h2>1. Évolution sur plusieurs années : {{ prof.libelle }}</h2>
 
+
+
+    <!-- Vérifie la présence de données d'évolution -->
     {% if donnees_groupees_evo %}
         <div class="controles-tableau">
+             <!-- Contrôles d'affichage et de tri du tableau -->
             <div class="groupe-controle">
                 <label for="choix_affichage_evo">Affichage :</label>
                 <select id="choix_affichage_evo">
-                    <option value="les_deux">Montant Total et Moyen (Tableau)</option>
+                    <option value="les_deux">Montant Total et Moyen</option>
                     <option value="total">Montant Total uniquement</option>
                     <option value="moyen">Montant Moyen uniquement</option>
                 </select>
@@ -29,8 +55,10 @@
             </div>
         </div>
 
-        <div style="margin-bottom: 30px;"><canvas id="graphique-evolution"></canvas></div>
+        <!-- Graphique d'évolution des honoraires -->
+        <canvas id="graphique-evolution"></canvas>
 
+        <!-- Tableau récapitulatif  des montants par années-->
         <table id="tableau-evolution">
             <thead>
                 <tr>
@@ -53,39 +81,79 @@
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 
+                // Récupération des données envoyées par Flask
                 const donneesEvoBrutes = {{ donnees_evolution|tojson }};
                 const donneesEvo = {};
+                // Regroupement des données par année
                 donneesEvoBrutes.forEach(d => {
                     if (!donneesEvo[d.annee]) { donneesEvo[d.annee] = { total: 0, moyen: 0 }; }
                     donneesEvo[d.annee].total += parseFloat(d.montant_honoraires) || 0;
                     donneesEvo[d.annee].moyen += parseFloat(d.montant_honoraires_moyens) || 0;
                 });
-
+                
+                // Liste des années triées
                 const labelsEvo = Object.keys(donneesEvo).sort();
                 const ctxEvo = document.getElementById("graphique-evolution").getContext("2d");
                 
+
+                // Création du graphique d'évolution
                 const graphEvo = new Chart(ctxEvo, {
                     type: "line",
                     data: {
                         labels: labelsEvo, 
                         datasets: [
-                            { label: "Montant Total (€)", data: labelsEvo.map(a => donneesEvo[a].total), borderColor: "#3277B5", backgroundColor: "rgba(50, 119, 181, 0.2)", fill: true, tension: 0.3 },
-                            { label: "Montant Moyen (€)", data: labelsEvo.map(a => donneesEvo[a].moyen), borderColor: "#ff9900", backgroundColor: "rgba(255, 153, 0, 0.2)", fill: true, tension: 0.3 }
+                            {
+                                label: "Montant Total (€)",
+                                data: labelsEvo.map(a => donneesEvo[a].total),
+                                yAxisID: 'yTotal', 
+                                borderColor: "#3277B5",
+                                backgroundColor: "rgba(50, 119, 181, 0.2)",
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: "Montant Moyen (€)",
+                                data: labelsEvo.map(a => donneesEvo[a].moyen),
+                                yAxisID: 'yMoyen', 
+                                borderColor: "#ff9900",
+                                backgroundColor: "rgba(255, 153, 0, 0.2)",
+                                fill: true,
+                                tension: 0.3
+                            }
                         ]
                     },
-                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                    options: {
+                        responsive: true,
+                        scales: {
+                            yTotal: {
+                                type: 'linear',
+                                position: 'left',
+                                title: { display: true, text: 'Montant Total (€)' }
+                            },
+                            yMoyen: {
+                                type: 'linear',
+                                position: 'right', 
+                                grid: { drawOnChartArea: false }, 
+                                title: { display: true, text: 'Montant Moyen (€)' }
+                            }
+                        }
+                    }
                 });
-
+                // Gestion de l'affichage des colonnes et des courbes
                 const selectAffichageEvo = document.getElementById("choix_affichage_evo");
+                // Tri du tableau selon l'ordre choisi
                 const selectTriEvo = document.getElementById("choix_tri_evo");
                 const tableauEvo = document.getElementById("tableau-evolution");
 
+
+                //Gestion de l'affichage des colonnes et du graphique
                 selectAffichageEvo.addEventListener("change", () => {
                     const choix = selectAffichageEvo.value;
                     tableauEvo.classList.remove("masquer-total", "masquer-moyen");
                     if (choix === "total") tableauEvo.classList.add("masquer-moyen");
                     if (choix === "moyen") tableauEvo.classList.add("masquer-total");
 
+                    // Affichage des courbes correspondantes
                     if (choix === "les_deux" || choix === "total") {
                         graphEvo.setDatasetVisibility(0, true);
                         graphEvo.setDatasetVisibility(1, false);
@@ -93,9 +161,16 @@
                         graphEvo.setDatasetVisibility(0, false);
                         graphEvo.setDatasetVisibility(1, true);
                     }
+                    graphEvo.setDatasetVisibility(0, (choix === "total" || choix === "les_deux"));
+                    graphEvo.setDatasetVisibility(1, (choix === "moyen" || choix === "les_deux"));
+                    
+                    graphEvo.options.scales.yTotal.display = (choix === "total" || choix === "les_deux");
+                    graphEvo.options.scales.yMoyen.display = (choix === "moyen" || choix === "les_deux");
                     graphEvo.update();
                 });
 
+
+                // Tri du tableau
                 selectTriEvo.addEventListener("change", () => {
                     const ordre = selectTriEvo.value.split("-")[1];
                     const tbody = tableauEvo.querySelector("tbody");
@@ -115,18 +190,20 @@
         <p>Aucune donnée d'évolution disponible pour cette spécialité.</p>
     {% endif %}
 
-
-    <hr style="margin: 60px 0 40px 0;">
+    <!-- ==================== COMPARAISON DES SPÉCIALITÉS ==================== -->
+    <!-- Comparaison des spécialités pour l'année sélectionnée -->
     <h2>2. Comparaison des spécialités en {{ annee }}</h2>
 
+    <!-- Vérifie la présence de données de comparaison -->
     {% if donnees_specialites %}
+        <!-- Options de filtrage du graphique et du tableau -->
         <div class="controles-tableau">
             <div class="groupe-controle">
                 <label for="choix_donnee_spe">Donnée affichée :</label>
                 <select id="choix_donnee_spe">
                     <option value="total">Montant Total uniquement</option>
                     <option value="moyen">Montant Moyen uniquement</option>
-                    <option value="les_deux">Montant Total et Moyen (Tableau)</option>
+                    <option value="les_deux">Montant Total et Moyen (Tableau uniquement)</option>
                 </select>
             </div>
             <div class="groupe-controle">
@@ -146,9 +223,10 @@
         </div>
 
         <div style="position: relative; height:500px; width:100%; margin-bottom: 40px;">
+            <!-- Graphique comparatif des spécialités -->
             <canvas id="graphique-specialites"></canvas>
         </div>
-
+        <!-- Tableau récapitulatif des spécialités -->
         <table id="tableau-specialites">
             <thead>
                 <tr>
@@ -162,6 +240,7 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
+                // Récupération des données des spécialités
                 const donneesSpeBrutes = {{ donnees_specialites|tojson }};
                 let graphSpe = null;
 
@@ -170,7 +249,7 @@
                 const selectTriSpe = document.getElementById("choix_tri_spe");
                 const tableauSpe = document.getElementById("tableau-specialites");
                 const tbodySpe = tableauSpe.querySelector("tbody");
-
+                // Met à jour le tableau et le graphique selon les choix utilisateur
                 function actualiserSpe() {
                     const donneeCible = selectDonneeSpe.value; 
                     const typeGraph = selectTypeSpe.value;
@@ -182,7 +261,7 @@
                         return ordreTri === "valeur-desc" ? b[critere] - a[critere] : a[critere] - b[critere];
                     });
 
-                    // MàJ Tableau
+                    // Màj Tableau
                     tbodySpe.innerHTML = "";
                     tableauSpe.classList.remove("masquer-total", "masquer-moyen");
                     if (donneeCible === "total") tableauSpe.classList.add("masquer-moyen");
@@ -214,14 +293,17 @@
                         options: { responsive: true, maintainAspectRatio: false, indexAxis: typeGraph === "horizontal" ? 'y' : 'x' }
                     });
                 }
-
+                // Mise à jour lors d'un changement de filtre
                 selectDonneeSpe.addEventListener("change", actualiserSpe);
                 selectTypeSpe.addEventListener("change", actualiserSpe);
                 selectTriSpe.addEventListener("change", actualiserSpe);
+
+                // Affichage initial
                 actualiserSpe();
             });
         </script>
     {% else %}
+        <!-- Message affiché si aucune donnée n'est disponible -->
         <p>Aucune donnée de comparaison disponible pour cette année.</p>
     {% endif %}
 {% endblock %}
