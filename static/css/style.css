@@ -128,6 +128,7 @@ footer {
 .bloc-analyse {
     border-radius:10px;
     padding:20px;
+    /* Suppression du display: flex global qui brisait la structure */
 }
 
 .bloc-accueil {
@@ -156,6 +157,16 @@ css.bloc-accueil h1,
 
 .bloc-analyse h2 {
     margin-top:0;
+}
+
+/* Forçage du centrage des boutons d'accès */
+.bloc-accueil .bouton-accueil,
+.bloc-analyse .btn-primary,
+.bloc-analyse a.btn-primary {
+    display: block;
+    width: max-content;
+    margin: 20px auto 0 auto; /* Centre horizontalement via les marges */
+    text-align: center;
 }
 
 .cache {
