@@ -107,14 +107,14 @@ def afficher():
         type=int
     )
 
-    if annee_debut and not (2010 <= annee_debut <= 2023):
+    if annee_debut and not (2010 <= annee_debut <= 2024):
         return render_template(
             "erreur.html",
             message="Année début invalide."
         ), 400
 
 
-    if annee_fin and not (2010 <= annee_fin <= 2023):
+    if annee_fin and not (2010 <= annee_fin <= 2024):
 
         return render_template(
             "erreur.html",

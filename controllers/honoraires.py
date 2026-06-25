@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, current_app
+from models.data_utils import exportToCsv
 from models.db import Session
 from models.dimensions import ProfessionSante, Departement, Region
 
@@ -49,6 +50,12 @@ def afficher_honoraires():
             except Exception as e:
                 print(f"Erreur API Spécialités : {e}")
 
+    if donnees_evolution:
+        exportToCsv(donnees_evolution, filename="honoraires_evolution.csv")
+
+    if donnees_specialites:
+        exportToCsv(donnees_specialites, filename="honoraires_specialites.csv")
+        
     return render_template(
         'honoraires.html',
         donnees_evolution=donnees_evolution,

@@ -10,188 +10,72 @@
 
 {% extends "base.html" %}
 
-{% block titre %}Accueil{% endblock %}
+{% block titre %}
+Accueil
+{% endblock %}
 
 {% block contenu %}
 
-    <h2>Consulter les effectifs</h2>
+<section class="bloc-accueil">
+    <h1>Bienvenue sur Santé Data</h1>
 
-    <form action="{{ url_for('effectifs.afficher') }}" method="get">
+    <p>
+        Cette application permet d'explorer et d'analyser des données
+        de santé issues de l'API ameli.
+    </p>
 
-        <div class="form-grid">
-
-            <div class="form-group">
-                <label for="profession">Profession</label>
-                <select name="profession_id" id="profession" required>
-                    <option value="">-- Choisir --</option>
-                    {% for p in professions %}
-                        <option value="{{ p.id }}">{{ p.libelle }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="region">Région</label>
-                <select name="region_id" id="region0" required>
-                    <option value="">-- Choisir --</option>
-                    {% for r in regions %}
-                        <option value="{{ r.id }}">{{ r.libelle }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="annee">Année</label>
-                <select name="annee" id="annee" required>
-                    {% for a in range(2024, 2009, -1) %}
-                        <option value="{{ a }}">{{ a }}</option>
-                    {% endfor %}
-                </select>
-
-            <div class="form-group">
-                <label for="departement">Département</label>
-                <select name="departement_id" id="departement0" required>
-                    <option value="">-- Choisir une région --</option>
-                </select>
-            </div>
+    <p>
+        Vous pouvez consulter les effectifs des professionnels de santé,
+        analyser les honoraires, étudier les prescriptions et comparer
+        les données selon les territoires et les périodes.
+    </p>
+</section>
 
 
-        </div>
-        <button type="submit" class="btn-primary">Afficher les effectifs</button>
-    </form>
+<section class="bloc-accueil">
+    <h2>Analyses disponibles</h2>
 
-    <h2>Consulter les prescriptions</h2>
+    <p>
+        La partie analyse permet d'accéder aux différentes études :
+    </p>
 
-    <form action="{{ url_for('prescriptions.afficher') }}" method="get">
+    <ul>
+        <li>Effectifs des professionnels de santé</li>
+        <li>Honoraires</li>
+        <li>Prescriptions</li>
+    </ul>
 
-        <div class="form-grid">
-
-            <div class="form-group">
-                <label for="profession">Profession</label>
-                <select name="profession_id" id="profession1" required>
-                    <option value="">-- Choisir --</option>
-                    {% for p in professions %}
-                        <option value="{{ p.id }}">{{ p.libelle }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="region">Région</label>
-                <select name="region_id" id="region1" required>
-                    <option value="">-- Choisir --</option>
-                    {% for r in regions %}
-                        <option value="{{ r.id }}">{{ r.libelle }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="departement">Département</label>
-                <select name="departement_id" id="departement1" required>
-                    <option value="">-- Choisir --</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="annee">Année</label>
-                <select name="annee" id="annee" required>
-                    {% for a in range(2023, 2014, -1) %}
-                        <option value="{{ a }}">{{ a }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-        </div>
-
-        <button type="submit" class="btn-primary">Afficher les prescriptions</button>
-
-    </form>
-
-    <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
+    <a class="bouton-accueil" href="{{ url_for('analyse.index') }}">
+        Accéder aux analyses
+    </a>
+</section>
 
 
-    <h2>Consulter les honoraires</h2>
-    
-    <div class="info-bulle">
-        <p>Cette rubrique vous permet d'analyser les honoraires sous deux angles :</p>
-        <ul>
-            <li><strong>L'évolution dans le temps</strong> pour la spécialité choisie.</li>
-            <li><strong>La comparaison entre toutes les spécialités</strong> pour l'année choisie.</li>
-        </ul>
-    </div>
+<section class="bloc-accueil">
+    <h2>Dashboard</h2>
 
-    <form action="{{ url_for('honoraires.afficher_honoraires') }}" method="get">
-        <label for="profession_hono">Spécialité (pour l'évolution)</label>
-        <select name="profession_id" id="profession_hono" required>
-            <option value="">-- Choisir --</option>
-            {% for p in professions %}
-                <option value="{{ p.id }}">{{ p.libelle }}</option>
-            {% endfor %}
-        </select>
+    <p>
+        Le tableau de bord présente une vision globale des données
+        grâce à des indicateurs, graphiques et cartes interactives.
+    </p>
 
-        <label for="annee_hono">Année (pour la comparaison)</label>
-        <select name="annee" id="annee_hono" required>
-            <option value="">-- Choisir --</option>
-            {% for a in range(2024, 2009, -1) %}
-                <option value="{{ a }}">{{ a }}</option>
-            {% endfor %}
-        </select>
+    <a class="bouton-accueil" href="{{ url_for('dashboard.dashboard') }}">
+        Voir le dashboard
+    </a>
+</section>
 
-        <label for="region_hono">Région</label>
-        <select name="region_id" id="region_hono" required>
-            <option value="">-- Choisir --</option>
-            {% for r in regions %}
-                <option value="{{ r.id }}">{{ r.libelle }}</option>
-            {% endfor %}
-        </select>
 
-        <label for="departement_hono">Département</label>
-        <select name="departement_id" id="departement_hono" required>
-            <option value="">-- Choisir une région --</option>
-        </select>
+<section class="bloc-accueil">
+    <h2>Comparaison</h2>
 
-        <label for="type_honoraire">Type d'honoraire</label>
-        <select name="type_honoraire" id="type_honoraire">
-            <option value="">-- Tous les types --</option>
-            <option value="Actes">Actes</option>
-            <option value="Rémunérations forfaitaires">Rémunérations forfaitaires</option>
-            <option value="Indemnités de déplacement">Indemnités de déplacement</option>
-            <option value="Dépassements">Dépassements</option>
-        </select>
+    <p>
+        Comparez différentes professions, différents départements
+        et différentes périodes afin d'observer les évolutions.
+    </p>
 
-        <button type="submit">Afficher les honoraires</button>
-    </form>
-        <script src="{{ url_for('static', filename='js/cascade.js') }}"></script>
-        <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const regionHonoSelect = document.getElementById("region_hono");
-        
-        if (regionHonoSelect) {
-            regionHonoSelect.addEventListener("change", async (e) => {
-                const regionId = e.target.value;
-                const selectDept = document.getElementById("departement_hono");
-                
-                selectDept.innerHTML = '<option value="">-- Choisir un département --</option>';
-                
-                if (!regionId) return;
-
-                try {
-                    const response = await fetch(`/api/departements/${regionId}`);
-                    const depts = await response.json();
-                    
-                    depts.forEach(dept => {
-                        const opt = document.createElement("option");
-                        opt.value = dept.id;
-                        opt.textContent = `${dept.code} ${dept.libelle}`;
-                        selectDept.appendChild(opt);
-                    });
-                } catch (err) {
-                    console.error("Erreur cascade honoraires :", err);
-                }
-            });
-        }
-    });
-</script>
+    <a class="bouton-accueil" href="{{ url_for('comparaison.afficher') }}">
+        Comparer les données
+    </a>
+</section>
 
 {% endblock %}

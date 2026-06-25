@@ -13,167 +13,144 @@
 
 {% extends "base.html" %}
 
-{% block titre  %}A propos{% endblock %}
+{% block titre  %}Panneau administrateur{% endblock %}
 
 {% block contenu %}
 
-    <!-- Conteneur horizontal regroupant le texte et le formulaire de sélection de vue -->
-    <div class="horizontal">
-        <p>Faut mettre un truv</p>
+    <div class="horizontal entete-admin">
+        <p>Panneau d'administration</p>
 
-        <!-- Formulaire GET utilisé pour changer dynamiquement la vue (form / user / stat) -->
-        <form method="get">
-            <table>
-                <tr>
+        <form method="get" class="vue-switcher">
 
-                    <!-- Vue "form" : affichage des données de sondage -->
-                    <td>
-                        <input type="radio" name="view" value="form"
-                               onchange="this.form.submit()"
-                               {% if view == "form" %}checked{% endif %}>
-                        <label>Formulaire</label>
-                    </td>
+            <label class="vue-switcher__option {% if view == 'form' %}vue-switcher__option--actif{% endif %}">
+                <input type="radio" name="view" value="form"
+                       onchange="this.form.submit()"
+                       {% if view == "form" %}checked{% endif %}>
+                Formulaire
+            </label>
 
-                    <!-- Vue "user" : gestion des utilisateurs -->
-                    <td>
-                        <input type="radio" name="view" value="user"
-                               onchange="this.form.submit()"
-                               {% if view == "user" %}checked{% endif %}>
-                        <label>Utilisateur</label>
-                    </td>
+            <label class="vue-switcher__option {% if view == 'user' %}vue-switcher__option--actif{% endif %}">
+                <input type="radio" name="view" value="user"
+                       onchange="this.form.submit()"
+                       {% if view == "user" %}checked{% endif %}>
+                Utilisateur
+            </label>
 
-                    <!-- Vue "stat" : affichage des statistiques -->
-                    <td>
-                        <input type="radio" name="view" value="stat"
-                               onchange="this.form.submit()"
-                               {% if view == "stat" %}checked{% endif %}>
-                        <label>Statistique</label>
-                    </td>
+            <label class="vue-switcher__option {% if view == 'stat' %}vue-switcher__option--actif{% endif %}">
+                <input type="radio" name="view" value="stat"
+                       onchange="this.form.submit()"
+                       {% if view == "stat" %}checked{% endif %}>
+                Statistique
+            </label>
 
-                </tr>
-            </table>
         </form>
     </div>
 
-    <!-- ======================= VUE FORMULAIRE ======================= -->
     {% if view == "form" %}
 
-        <!-- Tableau des réponses de sondage -->
-        <table id="dataTable" class="display" width="150%">
-            <thead>
-                <tr>
-                    <td>Auteurs</td>
-                    <td>Date</td>
-                    <td>Satisfaction générale</td>
-                    <td>Facilité d'utilisation</td>
-                    <td>Design du site</td>
-                    <td>Rapidité du site</td>
-                    <td>Utilité des fonctionnalités</td>
-                    <td>Recommandation</td>
-                    <td>Utilisation des fonctionnalités</td>
-                    <td>Problèmes</td>
-                    <td>Commentaire</td>
-                </tr>
-            </thead>
+        <div class="tableau-conteneur">
+            <table id="dataTableForm" class="display" width="100%">
+                <thead>
+                    <tr>
+                        <th>Auteurs</th>
+                        <th>Date</th>
+                        <th>Satisfaction générale</th>
+                        <th>Facilité d'utilisation</th>
+                        <th>Design du site</th>
+                        <th>Rapidité du site</th>
+                        <th>Utilité des fonctionnalités</th>
+                        <th>Recommandation</th>
+                        <th>Utilisation des fonctionnalités</th>
+                        <th>Problèmes</th>
+                        <th>Commentaire</th>
+                    </tr>
+                </thead>
 
-            <!-- Boucle sur les données de sondage -->
-            {% for d in data %}
-            <body>
-                <tr>
-                    <td>{{ d.username }}</td>
-                    <td>{{ d.date }}</td>
-                    <td>{{ d.satisfaction_generale }}</td>
-                    <td>{{ d.facilite_utilisation }}</td>
-                    <td>{{ d.design_site }}</td>
-                    <td>{{ d.rapidite_site }}</td>
-                    <td>{{ d.utilite_fontionalite }}</td>
+                <tbody>
+                    {% for d in data %}
+                    <tr>
+                        <td>{{ d.username }}</td>
+                        <td class="cellule-date">{{ d.date }}</td>
+                        <td>{{ d.satisfaction_generale }}</td>
+                        <td>{{ d.facilite_utilisation }}</td>
+                        <td>{{ d.design_site }}</td>
+                        <td>{{ d.rapidite_site }}</td>
+                        <td>{{ d.utilite_fontionalite }}</td>
 
-                    <!-- Conversion booléen -> texte -->
-                    <td>{% if d.recommendation == 0 %}Non{% else %}Oui{% endif %}</td>
+                        <td>{% if d.recommendation == 0 %}Non{% else %}Oui{% endif %}</td>
 
-                    <td>{{ d.utilisation_fontionalite }}</td>
-                    <td>{{ d.probleme }}</td>
-                    <td>{{ d.commentaire }}</td>
-                </tr>
-            </body>
-            {% endfor %}
-        </table>
+                        <td>{{ d.utilisation_fontionalite }}</td>
+                        <td>{{ d.probleme }}</td>
+                        <td>{{ d.commentaire }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <!-- ======================= VUE UTILISATEURS ======================= -->
     {% elif view == "user" %}
 
-        <!-- Tableau de gestion des utilisateurs -->
-        <table id="dataTable" class="display" width="100%">
-            <thead>
-                <tr>
-                    <td>Nom d'utilisateur</td>
-                    <td>Date de création</td>
-                    <td>Permissions</td>
-                    <td>Changer permissions</td>
-                    <td>Supprimer</td>
-                </tr>
-            </thead>
+        <div class="tableau-conteneur">
+            <table id="dataTableUser" class="display" width="100%">
+                <thead>
+                    <tr>
+                        <th>Nom d'utilisateur</th>
+                        <th>Date de création</th>
+                        <th>Permissions</th>
+                        <th>Changer permissions</th>
+                        <th>Supprimer</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-            {% for d in data %}
-                <tr>
-                    <td>{{ d.username }}</td>
-                    <td>{{ d.date }}</td>
-                    <td>{{ d.permissions }}</td>
+                <tbody>
+                {% for d in data %}
+                    <tr>
+                        <td>{{ d.username }}</td>
+                        <td class="cellule-date">{{ d.date }}</td>
+                        <td>{{ d.permissions }}</td>
 
-                    <!-- Modification des permissions via formulaire POST -->
-                    <td>
-                        {% if d.username == "admin" %}
-                            --
-                        {% else %}
-                            <form method="post">
-                                <select name="changePermission" onchange="this.form.submit()">
+                        <td>
+                            {% if d.username == "admin" %}
+                                --
+                            {% else %}
+                                <form method="post" style="background:none; border:none; padding:0; margin:0;">
+                                    <select name="changePermission" onchange="this.form.submit()">
+                                        <option value="{{ d.username }};None" {% if d.permissions == None %}selected{% endif %}>
+                                            Aucune
+                                        </option>
+                                        <option value="{{ d.username }};admin" {% if d.permissions == "admin" %}selected{% endif %}>
+                                            Admin
+                                        </option>
+                                    </select>
+                                </form>
+                            {% endif %}
+                        </td>
 
-                                    <!-- Permission None -->
-                                    <option value="{{ d.username }};None"
-                                            {% if d.permissions == None %}selected{% endif %}>
-                                        Aucune
-                                    </option>
+                        <td>
+                            {% if d.permissions == "admin" or d.username == current_user.id %}
+                                --
+                            {% else %}
+                                <form method="post" style="background:none; border:none; padding:0; margin:0;">
+                                    <button name="deleteButton" value="{{ d.username }}" type="submit" class="btn-primary" style="background-color:#d9534f; padding:5px 10px; font-size:0.9rem;">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-                                    <!-- Permission admin -->
-                                    <option value="{{ d.username }};admin"
-                                            {% if d.permissions == "admin" %}selected{% endif %}>
-                                        Admin
-                                    </option>
-
-                                </select>
-                            </form>
-                        {% endif %}
-                    </td>
-
-                    <!-- Suppression utilisateur avec protection admin/self -->
-                    <td>
-                        {% if d.permissions == "admin" or d.username == current_user.id %}
-                            --
-                        {% else %}
-                            <form method="post">
-                                <button name="deleteButton" value="{{ d.username }}" type="submit">
-                                    Supprimer
-                                </button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-    <!-- ======================= VUE STATISTIQUES ======================= -->
     {% elif view == "stat" %}
 
-        <!-- Librairies Chart.js -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-        <div class="wrapper">
+        <div class="wrapper grille-stats-admin">
 
-        <!-- ================= Graphique 1 : moyennes des notes ================= -->
-        <div class="divGraphiqueNotes">
+        <div class="divGraphiqueNotes carte-graphique">
             <canvas id="graphiqueNotes"></canvas>
         </div>
 
@@ -227,8 +204,7 @@
             });
         </script>
 
-        <!-- ================= Graphique 2 : recommandation ================= -->
-        <div class="divGraphiqueRecommendation">
+        <div class="divGraphiqueRecommendation carte-graphique">
             <canvas id="graphiqueRecommendation"></canvas>
         </div>
 
@@ -268,8 +244,7 @@
             });
         </script>
 
-        <!-- ================= Graphique 3 : fonctionnalités ================= -->
-        <div class="divGraphiqueFonctionnalites">
+        <div class="divGraphiqueFonctionnalites carte-graphique">
             <canvas id="graphiqueFonctionnalites"></canvas>
         </div>
 
@@ -307,8 +282,7 @@
             });
         </script>
 
-        <!-- ================= Graphique 4 : problèmes ================= -->
-        <div class="divGraphiqueProblemes">
+        <div class="divGraphiqueProblemes carte-graphique">
             <canvas id="graphiqueProblemes"></canvas>
         </div>
 
@@ -356,8 +330,7 @@
             });
         </script>
 
-        <!-- ================= Graphique 5 : répartition utilisateurs ================= -->
-        <div class="divGraphiqueProblemesUtilisateurs">
+        <div class="divGraphiqueProblemesUtilisateurs carte-graphique">
             <canvas id="graphiqueProblemesUtilisateurs"></canvas>
         </div>
 
@@ -415,25 +388,29 @@
         </div>
     {% endif %}
 
-    <!-- ======================= SCRIPTS TABLE ======================= -->
-
-    <!-- JQuery requis pour DataTables -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- DataTables + responsive -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.js"></script>
 
     <script>
-        // Initialisation DataTables (pagination, tri, recherche, traduction FR)
         $(document).ready(function() {
-            $('#dataTable').DataTable({
+            var configDataTables = {
                 language: {
                     url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/fr-FR.json"
                 },
                 responsive: true,
                 paging: true,
-            });
+                pageLength: 10
+            };
+
+            // Initialisation conditionnelle selon la table injectée dans le DOM
+            if ($('#dataTableForm').length) {
+                $('#dataTableForm').DataTable(configDataTables);
+            }
+            if ($('#dataTableUser').length) {
+                $('#dataTableUser').DataTable(configDataTables);
+            }
         });
     </script>
 

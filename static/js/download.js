@@ -23,5 +23,5 @@ document.getElementById("chartJsDownloadButton").addEventListener("click", async
     doc.addImage(img, "PNG", 10, 10, 190, 100);
 
     // Téléchargement du fichier PDF généré
-    doc.save("graphe.pdf");
+    doc.save("graphique.pdf");
 });

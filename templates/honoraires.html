@@ -17,293 +17,332 @@
 {% block titre %}Honoraires{% endblock %}
 {% block contenu %}
 
+    <!-- En-tête de page : titre + bouton d'actualisation -->
+    <div class="entete-page">
 
-    <!-- Lien permettant de revenir à la page de recherche -->
-    <a href="{{ url_for('accueil.index') }}" style="display:inline-block; margin-bottom:20px; text-decoration:none; color:#084298; font-weight:bold;">← Nouvelle recherche</a>
+        <h1>Analyse des honoraires en {{ nom_territoire }}</h1>
 
-    <!-- Titre principal affichant le territoire sélectionné -->
-    <h1>Analyse des honoraires en {{ nom_territoire }}</h1>
+        <div class="actions-page">
+            <form action="{{ url_for(request.endpoint) }}" method="GET">
 
-    <!-- Bibliothèque Chart.js utilisée pour la création de graphiques -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <input type="hidden" name="profession_id" value="{{ prof.id }}">
+                <input type="hidden" name="departement_id" value="{{ dept.id }}">
+                <input type="hidden" name="annee" value="{{ annee }}">
+                <input type="hidden" name="force_refresh" value="1">
 
+                <button type="submit" class="btn-refresh">
+                    Actualiser les données
+                </button>
 
-    <!-- ======================= ÉVOLUTION DES HONORAIRES ======================= -->
-    <!-- Affichage de l'évolution des honoraires de la spécialité sélectionnée -->
-    <h2>1. Évolution sur plusieurs années : {{ prof.libelle }}</h2>
-
-
-
-    <!-- Vérifie la présence de données d'évolution -->
-    {% if donnees_groupees_evo %}
-        <div class="controles-tableau">
-             <!-- Contrôles d'affichage et de tri du tableau -->
-            <div class="groupe-controle">
-                <label for="choix_affichage_evo">Affichage :</label>
-                <select id="choix_affichage_evo">
-                    <option value="les_deux">Montant Total et Moyen</option>
-                    <option value="total">Montant Total uniquement</option>
-                    <option value="moyen">Montant Moyen uniquement</option>
-                </select>
-            </div>
-            <div class="groupe-controle">
-                <label for="choix_tri_evo">Trier le tableau par :</label>
-                <select id="choix_tri_evo">
-                    <option value="annee-asc">Année (Croissant)</option>
-                    <option value="annee-desc">Année (Décroissant)</option>
-                </select>
-            </div>
+            </form>
         </div>
 
-        <!-- Graphique d'évolution des honoraires -->
-        <canvas id="graphique-evolution"></canvas>
+    </div>
 
-        <!-- Tableau récapitulatif  des montants par années-->
-        <table id="tableau-evolution">
-            <thead>
-                <tr>
-                    <th class="col-annee">Année</th>
-                    <th class="col-total">Montant total (€)</th>
-                    <th class="col-moyen">Montant moyen (€)</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for an, valeurs in donnees_groupees_evo|dictsort %}
-                <tr>
-                    <td class="col-annee">{{ an }}</td>
-                    <td class="col-total">{{ valeurs.total | round(2) }}</td>
-                    <td class="col-moyen">{{ valeurs.moyen | round(2) }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <a href="{{ url_for('accueil.index') }}" class="lien-retour">← Nouvelle recherche</a>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                
-                // Récupération des données envoyées par Flask
-                const donneesEvoBrutes = {{ donnees_evolution|tojson }};
-                const donneesEvo = {};
-                // Regroupement des données par année
-                donneesEvoBrutes.forEach(d => {
-                    if (!donneesEvo[d.annee]) { donneesEvo[d.annee] = { total: 0, moyen: 0 }; }
-                    donneesEvo[d.annee].total += parseFloat(d.montant_honoraires) || 0;
-                    donneesEvo[d.annee].moyen += parseFloat(d.montant_honoraires_moyens) || 0;
-                });
-                
-                // Liste des années triées
-                const labelsEvo = Object.keys(donneesEvo).sort();
-                const ctxEvo = document.getElementById("graphique-evolution").getContext("2d");
-                
+    <!-- Carte résumé des filtres sélectionnés -->
+    <div class="carte-resume">
 
-                // Création du graphique d'évolution
-                const graphEvo = new Chart(ctxEvo, {
-                    type: "line",
-                    data: {
-                        labels: labelsEvo, 
-                        datasets: [
-                            {
-                                label: "Montant Total (€)",
-                                data: labelsEvo.map(a => donneesEvo[a].total),
-                                yAxisID: 'yTotal', 
-                                borderColor: "#3277B5",
-                                backgroundColor: "rgba(50, 119, 181, 0.2)",
-                                fill: true,
-                                tension: 0.3
-                            },
-                            {
-                                label: "Montant Moyen (€)",
-                                data: labelsEvo.map(a => donneesEvo[a].moyen),
-                                yAxisID: 'yMoyen', 
-                                borderColor: "#ff9900",
-                                backgroundColor: "rgba(255, 153, 0, 0.2)",
-                                fill: true,
-                                tension: 0.3
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            yTotal: {
-                                type: 'linear',
-                                position: 'left',
-                                title: { display: true, text: 'Montant Total (€)' }
-                            },
-                            yMoyen: {
-                                type: 'linear',
-                                position: 'right', 
-                                grid: { drawOnChartArea: false }, 
-                                title: { display: true, text: 'Montant Moyen (€)' }
-                            }
-                        }
-                    }
-                });
-                // Gestion de l'affichage des colonnes et des courbes
-                const selectAffichageEvo = document.getElementById("choix_affichage_evo");
-                // Tri du tableau selon l'ordre choisi
-                const selectTriEvo = document.getElementById("choix_tri_evo");
-                const tableauEvo = document.getElementById("tableau-evolution");
-
-
-                //Gestion de l'affichage des colonnes et du graphique
-                selectAffichageEvo.addEventListener("change", () => {
-                    const choix = selectAffichageEvo.value;
-                    tableauEvo.classList.remove("masquer-total", "masquer-moyen");
-                    if (choix === "total") tableauEvo.classList.add("masquer-moyen");
-                    if (choix === "moyen") tableauEvo.classList.add("masquer-total");
-
-                    // Affichage des courbes correspondantes
-                    if (choix === "les_deux" || choix === "total") {
-                        graphEvo.setDatasetVisibility(0, true);
-                        graphEvo.setDatasetVisibility(1, false);
-                    } else if (choix === "moyen") {
-                        graphEvo.setDatasetVisibility(0, false);
-                        graphEvo.setDatasetVisibility(1, true);
-                    }
-                    graphEvo.setDatasetVisibility(0, (choix === "total" || choix === "les_deux"));
-                    graphEvo.setDatasetVisibility(1, (choix === "moyen" || choix === "les_deux"));
-                    
-                    graphEvo.options.scales.yTotal.display = (choix === "total" || choix === "les_deux");
-                    graphEvo.options.scales.yMoyen.display = (choix === "moyen" || choix === "les_deux");
-                    graphEvo.update();
-                });
-
-
-                // Tri du tableau
-                selectTriEvo.addEventListener("change", () => {
-                    const ordre = selectTriEvo.value.split("-")[1];
-                    const tbody = tableauEvo.querySelector("tbody");
-                    const lignes = Array.from(tbody.querySelectorAll("tr"));
-                    lignes.sort((a, b) => {
-                        let valA = parseInt(a.querySelector(".col-annee").textContent);
-                        let valB = parseInt(b.querySelector(".col-annee").textContent);
-                        return ordre === "asc" ? valA - valB : valB - valA;
-                    });
-                    lignes.forEach(l => tbody.appendChild(l));
-                });
-                
-                selectAffichageEvo.dispatchEvent(new Event("change"));
-            });
-        </script>
-    {% else %}
-        <p>Aucune donnée d'évolution disponible pour cette spécialité.</p>
-    {% endif %}
-
-    <!-- ==================== COMPARAISON DES SPÉCIALITÉS ==================== -->
-    <!-- Comparaison des spécialités pour l'année sélectionnée -->
-    <h2>2. Comparaison des spécialités en {{ annee }}</h2>
-
-    <!-- Vérifie la présence de données de comparaison -->
-    {% if donnees_specialites %}
-        <!-- Options de filtrage du graphique et du tableau -->
-        <div class="controles-tableau">
-            <div class="groupe-controle">
-                <label for="choix_donnee_spe">Donnée affichée :</label>
-                <select id="choix_donnee_spe">
-                    <option value="total">Montant Total uniquement</option>
-                    <option value="moyen">Montant Moyen uniquement</option>
-                    <option value="les_deux">Montant Total et Moyen (Tableau uniquement)</option>
-                </select>
-            </div>
-            <div class="groupe-controle">
-                <label for="choix_type_spe">Graphique :</label>
-                <select id="choix_type_spe">
-                    <option value="vertical">Bâtons (Vertical)</option>
-                    <option value="horizontal">Barres (Horizontal)</option>
-                </select>
-            </div>
-            <div class="groupe-controle">
-                <label for="choix_tri_spe">Trier par :</label>
-                <select id="choix_tri_spe">
-                    <option value="valeur-desc">Montant (Décroissant)</option>
-                    <option value="valeur-asc">Montant (Croissant)</option>
-                </select>
-            </div>
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Profession</span>
+            <span class="carte-resume__valeur">{{ prof.libelle }}</span>
         </div>
 
-        <div style="position: relative; height:500px; width:100%; margin-bottom: 40px;">
-            <!-- Graphique comparatif des spécialités -->
-            <canvas id="graphique-specialites"></canvas>
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Territoire</span>
+            <span class="carte-resume__valeur">{{ nom_territoire }}</span>
         </div>
-        <!-- Tableau récapitulatif des spécialités -->
-        <table id="tableau-specialites">
-            <thead>
-                <tr>
-                    <th class="col-spe">Spécialité</th>
-                    <th class="col-total">Montant total (€)</th>
-                    <th class="col-moyen">Montant moyen (€)</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Récupération des données des spécialités
-                const donneesSpeBrutes = {{ donnees_specialites|tojson }};
-                let graphSpe = null;
+        <div class="carte-resume__item">
+            <span class="carte-resume__label">Année</span>
+            <span class="carte-resume__valeur">{{ annee }}</span>
+        </div>
 
-                const selectDonneeSpe = document.getElementById("choix_donnee_spe");
-                const selectTypeSpe = document.getElementById("choix_type_spe");
-                const selectTriSpe = document.getElementById("choix_tri_spe");
-                const tableauSpe = document.getElementById("tableau-specialites");
-                const tbodySpe = tableauSpe.querySelector("tbody");
-                // Met à jour le tableau et le graphique selon les choix utilisateur
-                function actualiserSpe() {
-                    const donneeCible = selectDonneeSpe.value; 
-                    const typeGraph = selectTypeSpe.value;
-                    const ordreTri = selectTriSpe.value;
+    </div>
 
-                    let donneesTriees = [...donneesSpeBrutes];
-                    donneesTriees.sort((a, b) => {
-                        let critere = donneeCible === "moyen" ? "moyen" : "total";
-                        return ordreTri === "valeur-desc" ? b[critere] - a[critere] : a[critere] - b[critere];
+    <!-- ======================= SECTION 1 : ÉVOLUTION ======================= -->
+    <div class="bloc-analyse">
+
+        <h2>1. Évolution sur plusieurs années : {{ prof.libelle }}</h2>
+
+        {% if donnees_groupees_evo %}
+
+            <div class="controles-tableau">
+                <div class="groupe-controle">
+                    <label for="choix_affichage_evo">Affichage :</label>
+                    <select id="choix_affichage_evo">
+                        <option value="les_deux">Montant Total et Moyen (Tableau)</option>
+                        <option value="total">Montant Total uniquement</option>
+                        <option value="moyen">Montant Moyen uniquement</option>
+                    </select>
+                </div>
+                <div class="groupe-controle">
+                    <label for="choix_tri_evo">Trier le tableau par :</label>
+                    <select id="choix_tri_evo">
+                        <option value="annee-asc">Année (Croissant)</option>
+                        <option value="annee-desc">Année (Décroissant)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="div-graphique-evolution" class="graphique-conteneur">
+                <canvas id="graphique-evolution"></canvas>
+            </div>
+
+            <div class="export-actions">
+                <a href="{{ url_for('static', filename='csv/honoraires_evolution.csv') }}" download class="btn-secondary">
+                    Télécharger les données (CSV)
+                </a>
+                <button id="btn-export-evolution" class="btn-secondary">
+                    Télécharger le graphique
+                </button>
+            </div>
+
+            <div class="tableau-conteneur">
+                <table id="tableau-evolution">
+                    <thead>
+                        <tr>
+                            <th class="col-annee">Année</th>
+                            <th class="col-total">Montant total (€)</th>
+                            <th class="col-moyen">Montant moyen (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for an, valeurs in donnees_groupees_evo|dictsort %}
+                        <tr>
+                            <td class="col-annee">{{ an }}</td>
+                            <td class="col-total">{{ valeurs.total | round(2) }}</td>
+                            <td class="col-moyen">{{ valeurs.moyen | round(2) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+
+                    const donneesEvoBrutes = {{ donnees_evolution|tojson }};
+                    const donneesEvo = {};
+                    donneesEvoBrutes.forEach(d => {
+                        if (!donneesEvo[d.annee]) { donneesEvo[d.annee] = { total: 0, moyen: 0 }; }
+                        donneesEvo[d.annee].total += parseFloat(d.montant_honoraires) || 0;
+                        donneesEvo[d.annee].moyen += parseFloat(d.montant_honoraires_moyens) || 0;
                     });
 
-                    // Màj Tableau
-                    tbodySpe.innerHTML = "";
-                    tableauSpe.classList.remove("masquer-total", "masquer-moyen");
-                    if (donneeCible === "total") tableauSpe.classList.add("masquer-moyen");
-                    if (donneeCible === "moyen") tableauSpe.classList.add("masquer-total");
+                    const labelsEvo = Object.keys(donneesEvo).sort();
+                    const ctxEvo = document.getElementById("graphique-evolution").getContext("2d");
 
-                    donneesTriees.forEach(d => {
-                        let tr = document.createElement("tr");
-                        tr.innerHTML = `<td class="col-spe">${d.specialite}</td><td class="col-total">${parseFloat(d.total).toFixed(2)}</td><td class="col-moyen">${parseFloat(d.moyen).toFixed(2)}</td>`;
-                        tbodySpe.appendChild(tr);
-                    });
-
-                    // MàJ Graphique
-                    const donneeGraphique = donneeCible === "moyen" ? "moyen" : "total";
-                    const couleurs = donneeGraphique === "total" ? ["rgba(50, 119, 181, 0.6)", "#3277B5"] : ["rgba(255, 153, 0, 0.6)", "#ff9900"];
-
-                    if (graphSpe) graphSpe.destroy();
-                    const ctxSpe = document.getElementById("graphique-specialites").getContext("2d");
-                    
-                    graphSpe = new Chart(ctxSpe, {
-                        type: 'bar',
+                    const graphEvo = new Chart(ctxEvo, {
+                        type: "line",
                         data: {
-                            labels: donneesTriees.map(d => d.specialite),
-                            datasets: [{
-                                label: donneeGraphique === "total" ? "Montant Total (€)" : "Montant Moyen (€)",
-                                data: donneesTriees.map(d => d[donneeGraphique]),
-                                backgroundColor: couleurs[0], borderColor: couleurs[1], borderWidth: 1
-                            }]
+                            labels: labelsEvo,
+                            datasets: [
+                                { label: "Montant Total (€)", data: labelsEvo.map(a => donneesEvo[a].total), borderColor: "#3277B5", backgroundColor: "rgba(50, 119, 181, 0.2)", fill: true, tension: 0.3 },
+                                { label: "Montant Moyen (€)", data: labelsEvo.map(a => donneesEvo[a].moyen), borderColor: "#ff9900", backgroundColor: "rgba(255, 153, 0, 0.2)", fill: true, tension: 0.3 }
+                            ]
                         },
-                        options: { responsive: true, maintainAspectRatio: false, indexAxis: typeGraph === "horizontal" ? 'y' : 'x' }
+                        options: { responsive: true, scales: { y: { beginAtZero: true } } }
                     });
-                }
-                // Mise à jour lors d'un changement de filtre
-                selectDonneeSpe.addEventListener("change", actualiserSpe);
-                selectTypeSpe.addEventListener("change", actualiserSpe);
-                selectTriSpe.addEventListener("change", actualiserSpe);
 
-                // Affichage initial
-                actualiserSpe();
-            });
-        </script>
-    {% else %}
-        <!-- Message affiché si aucune donnée n'est disponible -->
-        <p>Aucune donnée de comparaison disponible pour cette année.</p>
-    {% endif %}
+                    const selectAffichageEvo = document.getElementById("choix_affichage_evo");
+                    const selectTriEvo = document.getElementById("choix_tri_evo");
+                    const tableauEvo = document.getElementById("tableau-evolution");
+
+                    selectAffichageEvo.addEventListener("change", () => {
+                        const choix = selectAffichageEvo.value;
+                        tableauEvo.classList.remove("masquer-total", "masquer-moyen");
+                        if (choix === "total") tableauEvo.classList.add("masquer-moyen");
+                        if (choix === "moyen") tableauEvo.classList.add("masquer-total");
+
+                        if (choix === "les_deux" || choix === "total") {
+                            graphEvo.setDatasetVisibility(0, true);
+                            graphEvo.setDatasetVisibility(1, false);
+                        } else if (choix === "moyen") {
+                            graphEvo.setDatasetVisibility(0, false);
+                            graphEvo.setDatasetVisibility(1, true);
+                        }
+                        graphEvo.update();
+                    });
+
+                    selectTriEvo.addEventListener("change", () => {
+                        const ordre = selectTriEvo.value.split("-")[1];
+                        const tbody = tableauEvo.querySelector("tbody");
+                        const lignes = Array.from(tbody.querySelectorAll("tr"));
+                        lignes.sort((a, b) => {
+                            let valA = parseInt(a.querySelector(".col-annee").textContent);
+                            let valB = parseInt(b.querySelector(".col-annee").textContent);
+                            return ordre === "asc" ? valA - valB : valB - valA;
+                        });
+                        lignes.forEach(l => tbody.appendChild(l));
+                    });
+
+                    selectAffichageEvo.dispatchEvent(new Event("change"));
+                });
+            </script>
+
+        {% else %}
+            <p>Aucune donnée d'évolution disponible pour cette spécialité.</p>
+        {% endif %}
+
+    </div>
+
+    <!-- ======================= SECTION 2 : COMPARAISON SPÉCIALITÉS ======================= -->
+    <div class="bloc-analyse">
+
+        <h2>2. Comparaison des spécialités en {{ annee }}</h2>
+
+        {% if donnees_specialites %}
+
+            <div class="controles-tableau">
+                <div class="groupe-controle">
+                    <label for="choix_donnee_spe">Donnée affichée :</label>
+                    <select id="choix_donnee_spe">
+                        <option value="total">Montant Total uniquement</option>
+                        <option value="moyen">Montant Moyen uniquement</option>
+                        <option value="les_deux">Montant Total et Moyen (Tableau)</option>
+                    </select>
+                </div>
+                <div class="groupe-controle">
+                    <label for="choix_type_spe">Graphique :</label>
+                    <select id="choix_type_spe">
+                        <option value="vertical">Bâtons (Vertical)</option>
+                        <option value="horizontal">Barres (Horizontal)</option>
+                    </select>
+                </div>
+                <div class="groupe-controle">
+                    <label for="choix_tri_spe">Trier par :</label>
+                    <select id="choix_tri_spe">
+                        <option value="valeur-desc">Montant (Décroissant)</option>
+                        <option value="valeur-asc">Montant (Croissant)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="div-graphique-specialites" class="graphique-conteneur graphique-conteneur--grand">
+                <canvas id="graphique-specialites"></canvas>
+            </div>
+
+            <div class="export-actions">
+                <a href="{{ url_for('static', filename='csv/honoraires_specialites.csv') }}" download class="btn-secondary">
+                    Télécharger les données (CSV)
+                </a>
+                <button id="btn-export-specialites" class="btn-secondary">
+                    Télécharger le graphique
+                </button>
+            </div>
+
+            <div class="tableau-conteneur">
+                <table id="tableau-specialites">
+                    <thead>
+                        <tr>
+                            <th class="col-spe">Spécialité</th>
+                            <th class="col-total">Montant total (€)</th>
+                            <th class="col-moyen">Montant moyen (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const donneesSpeBrutes = {{ donnees_specialites|tojson }};
+                    let graphSpe = null;
+
+                    const selectDonneeSpe = document.getElementById("choix_donnee_spe");
+                    const selectTypeSpe = document.getElementById("choix_type_spe");
+                    const selectTriSpe = document.getElementById("choix_tri_spe");
+                    const tableauSpe = document.getElementById("tableau-specialites");
+                    const tbodySpe = tableauSpe.querySelector("tbody");
+
+                    function actualiserSpe() {
+                        const donneeCible = selectDonneeSpe.value;
+                        const typeGraph = selectTypeSpe.value;
+                        const ordreTri = selectTriSpe.value;
+
+                        let donneesTriees = [...donneesSpeBrutes];
+                        donneesTriees.sort((a, b) => {
+                            let critere = donneeCible === "moyen" ? "moyen" : "total";
+                            return ordreTri === "valeur-desc" ? b[critere] - a[critere] : a[critere] - b[critere];
+                        });
+
+                        tbodySpe.innerHTML = "";
+                        tableauSpe.classList.remove("masquer-total", "masquer-moyen");
+                        if (donneeCible === "total") tableauSpe.classList.add("masquer-moyen");
+                        if (donneeCible === "moyen") tableauSpe.classList.add("masquer-total");
+
+                        donneesTriees.forEach(d => {
+                            let tr = document.createElement("tr");
+                            tr.innerHTML = `<td class="col-spe">${d.specialite}</td><td class="col-total">${parseFloat(d.total).toFixed(2)}</td><td class="col-moyen">${parseFloat(d.moyen).toFixed(2)}</td>`;
+                            tbodySpe.appendChild(tr);
+                        });
+
+                        const donneeGraphique = donneeCible === "moyen" ? "moyen" : "total";
+                        const couleurs = donneeGraphique === "total" ? ["rgba(50, 119, 181, 0.6)", "#3277B5"] : ["rgba(255, 153, 0, 0.6)", "#ff9900"];
+
+                        if (graphSpe) graphSpe.destroy();
+                        const ctxSpe = document.getElementById("graphique-specialites").getContext("2d");
+
+                        graphSpe = new Chart(ctxSpe, {
+                            type: 'bar',
+                            data: {
+                                labels: donneesTriees.map(d => d.specialite),
+                                datasets: [{
+                                    label: donneeGraphique === "total" ? "Montant Total (€)" : "Montant Moyen (€)",
+                                    data: donneesTriees.map(d => d[donneeGraphique]),
+                                    backgroundColor: couleurs[0], borderColor: couleurs[1], borderWidth: 1
+                                }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, indexAxis: typeGraph === "horizontal" ? 'y' : 'x' }
+                        });
+                    }
+
+                    selectDonneeSpe.addEventListener("change", actualiserSpe);
+                    selectTypeSpe.addEventListener("change", actualiserSpe);
+                    selectTriSpe.addEventListener("change", actualiserSpe);
+                    actualiserSpe();
+                });
+            </script>
+
+        {% else %}
+            <p>Aucune donnée de comparaison disponible pour cette année.</p>
+        {% endif %}
+
+    </div>
+
+    <!-- Librairies nécessaires à l'export des graphiques en PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const { jsPDF } = window.jspdf;
+
+            async function telechargerGraphique(idConteneur, nomFichier) {
+                const canvas = await html2canvas(document.getElementById(idConteneur), { scale: 8 });
+                const img = canvas.toDataURL("image/png");
+                const doc = new jsPDF();
+                doc.addImage(img, "PNG", 10, 10, 190, 100);
+                doc.save(nomFichier);
+            }
+
+            const boutonEvo = document.getElementById("btn-export-evolution");
+            if (boutonEvo) {
+                boutonEvo.addEventListener("click", () => {
+                    telechargerGraphique("div-graphique-evolution", "evolution_honoraires.pdf");
+                });
+            }
+
+            const boutonSpe = document.getElementById("btn-export-specialites");
+            if (boutonSpe) {
+                boutonSpe.addEventListener("click", () => {
+                    telechargerGraphique("div-graphique-specialites", "comparaison_specialites.pdf");
+                });
+            }
+        });
+    </script>
+
 {% endblock %}

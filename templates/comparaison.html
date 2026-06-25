@@ -34,12 +34,15 @@ Comparaison
 {% endif %}
 
 <!-- Formulaire de comparaison -->
-<form method="get" action="{{ url_for('comparaison.afficher') }}">
+<form method="get" action="{{ url_for('comparaison.afficher') }}" class="formulaire-analyse">
 
     <!-- Choix du dataset -->
-    <div>
+    <div class="champ-formulaire">
         <label for="dataset">Dataset :</label>
         <select id="dataset" name="dataset">
+            <option value="" selected>
+                -- Choisir un jeu de données --
+            </option>
 
             {% for ds in datasets %}
                 <option
@@ -53,110 +56,117 @@ Comparaison
         </select>
     </div>
 
+    <!-- Deux colonnes : Comparaison 1 / Comparaison 2 -->
+    <div class="comparaison-colonnes">
 
-    <!-- Profession 1 -->
-    <div>
-        <label for="profession1_id">Profession 1 :</label>
+        <!-- Colonne Comparaison 1 -->
+        <div class="comparaison-colonne">
+            <h3 class="comparaison-colonne__titre">Comparaison 1</h3>
 
-        <select id="profession1_id" name="profession1_id">
+            <div class="champ-formulaire">
+                <label for="profession1_id">Profession 1 :</label>
+                <select id="profession1_id" name="profession1_id">
+                    <option value="" selected>
+                        -- Choisir la première profession --
+                    </option>
+                    {% for profession in professions %}
+                        <option
+                            value="{{ profession.id }}"
+                            {% if profession1_id == profession.id %}selected{% endif %}
+                        >
+                            {{ profession.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            {% for profession in professions %}
-                <option
-                    value="{{ profession.id }}"
-                    {% if profession1_id == profession.id %}selected{% endif %}
+            <div class="champ-formulaire">
+                <label for="region1_id">Région 1 :</label>
+                <select
+                    id="region1_id"
+                    name="region1_id"
+                    data-region-target="#departement1_id"
+                    data-selected-dept="{{ departement1_id or '' }}"
+                    required
                 >
-                    {{ profession.libelle }}
-                </option>
-            {% endfor %}
+                    <option value="">-- Choisir la première région --</option>
+                    {% for region in regions %}
+                        <option
+                            value="{{ region.id }}"
+                            {% if region1_id == region.id %}selected{% endif %}
+                        >
+                            {{ region.code }} – {{ region.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        </select>
-    </div>
-
-
-    <!-- Région & Département 1 -->
-    <div>
-        <label for="region1_id">Région 1 :</label>
-        <select
-            id="region1_id"
-            name="region1_id"
-            data-region-target="#departement1_id"
-            data-selected-dept="{{ departement1_id or '' }}"
-            required
-        >
-            <option value="">-- Choisir --</option>
-            {% for region in regions %}
-                <option
-                    value="{{ region.id }}"
-                    {% if region1_id == region.id %}selected{% endif %}
+            <div class="champ-formulaire">
+                <label for="departement1_id">Département 1 :</label>
+                <select
+                    id="departement1_id"
+                    name="departement1_id"
+                    required
                 >
-                    {{ region.code }} – {{ region.libelle }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+                    <option value="">-- Choisir le premier département --</option>
+                </select>
+            </div>
+        </div>
 
-    <div>
-        <label for="departement1_id">Département 1 :</label>
-        <select
-            id="departement1_id"
-            name="departement1_id"
-            required
-        >
-            <option value="">-- Choisir --</option>
-        </select>
-    </div>
+        <!-- Colonne Comparaison 2 -->
+        <div class="comparaison-colonne">
+            <h3 class="comparaison-colonne__titre">Comparaison 2</h3>
 
+            <div class="champ-formulaire">
+                <label for="profession2_id">Profession 2 :</label>
+                <select id="profession2_id" name="profession2_id">
+                    <option value="" selected>
+                        -- Choisir la seconde profession --
+                    </option>
+                    {% for profession in professions %}
+                        <option
+                            value="{{ profession.id }}"
+                            {% if profession2_id == profession.id %}selected{% endif %}
+                        >
+                            {{ profession.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <!-- Profession 2 -->
-    <div>
-        <label for="profession2_id">Profession 2 :</label>
-
-        <select id="profession2_id" name="profession2_id">
-
-            {% for profession in professions %}
-                <option
-                    value="{{ profession.id }}"
-                    {% if profession2_id == profession.id %}selected{% endif %}
+            <div class="champ-formulaire">
+                <label for="region2_id">Région 2 :</label>
+                <select
+                    id="region2_id"
+                    name="region2_id"
+                    data-region-target="#departement2_id"
+                    data-selected-dept="{{ departement2_id or '' }}"
+                    required
                 >
-                    {{ profession.libelle }}
-                </option>
-            {% endfor %}
+                    <option value="">-- Choisir la seconde région --</option>
+                    {% for region in regions %}
+                        <option
+                            value="{{ region.id }}"
+                            {% if region2_id == region.id %}selected{% endif %}
+                        >
+                            {{ region.code }} – {{ region.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        </select>
-    </div>
-
-
-    <!-- Région & Département 2 -->
-        <div>
-        <label for="region2_id">Région 2 :</label>
-        <select
-            id="region2_id"
-            name="region2_id"
-            data-region-target="#departement2_id"
-            data-selected-dept="{{ departement2_id or '' }}"
-            required
-        >
-            <option value="">-- Choisir --</option>
-            {% for region in regions %}
-                <option
-                    value="{{ region.id }}"
-                    {% if region2_id == region.id %}selected{% endif %}
+            <div class="champ-formulaire">
+                <label for="departement2_id">Département 2 :</label>
+                <select
+                    id="departement2_id"
+                    name="departement2_id"
+                    required
                 >
-                    {{ region.code }} – {{ region.libelle }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+                    <option value="">-- Choisir le second département --</option>
+                </select>
+            </div>
+        </div>
 
-    <div>
-        <label for="departement2_id">Département 2 :</label>
-        <select
-            id="departement2_id"
-            name="departement2_id"
-            required
-        >
-            <option value="">-- Choisir --</option>
-        </select>
     </div>
 
 
@@ -167,22 +177,25 @@ Comparaison
 
         <div class="annee-slider__labels">
             <span id="anneeStartLabel">{{ annee_debut or 2010 }}</span>
-            <span id="anneeEndLabel">{{ annee_fin or 2023 }}</span>
+            <span id="anneeEndLabel">{{ annee_fin or 2024 }}</span>
         </div>
 
         <div class="annee-slider__track" aria-hidden="true">
-            {% for annee in range(2010, 2024) %}
+            {% for annee in range(2010, 2025) %}
                 <span class="annee-slider__tick">{{ annee }}</span>
             {% endfor %}
         </div>
 
         <div class="annee-slider__controls">
+            <div class="annee-slider__rail"></div>
+            <div class="annee-slider__progression" id="anneeProgression"></div>
+
             <input
                 type="range"
                 id="annee_debut"
                 name="annee_debut"
                 min="2010"
-                max="2023"
+                max="2024"
                 step="1"
                 value="{{ annee_debut or 2010 }}"
                 required
@@ -193,9 +206,9 @@ Comparaison
                 id="annee_fin"
                 name="annee_fin"
                 min="2010"
-                max="2023"
+                max="2024"
                 step="1"
-                value="{{ annee_fin or 2023 }}"
+                value="{{ annee_fin or 2024 }}"
                 required
             >
         </div>
@@ -224,7 +237,7 @@ Comparaison
 document.addEventListener("DOMContentLoaded", () => {
 
     const MIN_YEAR = 2010;
-    const MAX_YEAR = 2023;
+    const MAX_YEAR = 2024;
 
     const sliderDebut = document.getElementById("annee_debut");
     const sliderFin = document.getElementById("annee_fin");
@@ -236,6 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const labelDebut = document.getElementById("anneeStartLabel");
     const labelFin = document.getElementById("anneeEndLabel");
     const info = document.getElementById("anneeSelectionInfo");
+    const progression = document.getElementById("anneeProgression");
 
     function mettreAJourAffichage() {
 
@@ -263,6 +277,14 @@ document.addEventListener("DOMContentLoaded", () => {
             info.textContent = "Comparaison sur une seule année";
         } else {
             info.textContent = `Période : ${debut} - ${fin}`;
+        }
+
+        const pctDebut = ((debut - MIN_YEAR) / (MAX_YEAR - MIN_YEAR)) * 100;
+        const pctFin = ((fin - MIN_YEAR) / (MAX_YEAR - MIN_YEAR)) * 100;
+
+        if (progression) {
+            progression.style.left = pctDebut + "%";
+            progression.style.width = (pctFin - pctDebut) + "%";
         }
     }
 
