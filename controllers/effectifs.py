@@ -58,7 +58,7 @@ def afficher():
         resultats = current_app.api_ameli.get_effectifs(prof.libelle, dept.code, annee, rafraichir=rafraichir_force)
         evolution = current_app.api_ameli.get_evolution_effectifs(prof.libelle, dept.code, rafraichir=rafraichir_force)
         
-        exportToCsv(resultats)
+        exportToCsv(evolution)
         
         return render_template("effectifs.html",
         prof=prof, dept=dept, annee=annee,
